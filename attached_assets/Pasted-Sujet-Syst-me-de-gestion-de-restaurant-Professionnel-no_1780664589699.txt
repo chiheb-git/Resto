@@ -1,0 +1,170 @@
+Sujet : Système de gestion de restaurant — Professionnel, normes mondiales, 3 rôles, 3 langues
+
+Bonjour,
+Je veux construire un système complet de gestion de restaurant, niveau professionnel international (normes app store / SaaS), avec trois interfaces distinctes connectées à une seule base de données.
+
+🏗️ Stack technique
+CoucheTechnologieApp mobile (client + admin)React Native + Next.jsSite web (vendeur)React + ViteBackend communNext.js API RoutesBase de donnéesNeon PostgreSQL (instance unique partagée)AuthNextAuth.js avec JWT + refresh tokensTemps réelWebSockets (socket.io) ou Supabase RealtimeNotifications pushExpo Notifications (mobile)QR Codebibliothèque qrcode.react / expo-barcode-scanneri18nreact-i18next (arabe RTL, français, anglais)Upload imagesCloudinary ou AWS S3Paiement (optionnel futur)Stripe-ready architecture
+
+🌍 Multilinguisme & Accessibilité
+
+3 langues : arabe (RTL), français, anglais
+Sélecteur de langue persistant dans chaque interface
+Support complet RTL pour l'arabe (layout miroir)
+Accessibilité WCAG 2.1 AA : contraste, taille de police, navigation clavier
+Responsive design mobile-first
+
+
+🔐 Sécurité (normes mondiales)
+
+Authentification JWT + OAuth 2.0 avec refresh token automatique
+Rôle-Based Access Control (RBAC) : client / vendeur / admin — accès strictement séparés
+HTTPS obligatoire, CORS configuré
+Chiffrement des données sensibles (bcrypt pour mots de passe)
+Protection contre : SQL injection, XSS, CSRF, brute force (rate limiting)
+Conformité GDPR : consentement cookies, droit à l'effacement
+Variables d'environnement sécurisées (.env strict, pas de secrets dans le code)
+Validation des données côté serveur (Zod ou Joi)
+Logs d'audit pour les actions admin/vendeur
+
+
+👤 Côté Client — App Mobile (React Native)
+Flux de commande :
+
+Scanner QR code → lié à un numéro de table précis
+Accès au menu sans compte (session anonyme liée à la table)
+Parcourir catégories → plats avec photos HD, description, allergènes, prix
+Ajouter au panier avec quantité modifiable
+Ajouter commentaire général
+Avant confirmation : personnaliser chaque plat (ex : "sans sel", "bien cuit"…)
+Récapitulatif de commande avec total
+Confirmer la commande
+Suivi en temps réel du statut (en attente / confirmée / refusée / prête)
+Notification push dès que le statut change
+Après confirmation vendeur : saisir numéro de table → montant affiché chez le vendeur
+
+Fonctionnalités supplémentaires (normes mondiales) :
+
+Indicateur d'allergènes sur chaque plat (gluten, lactose, noix…)
+Badge "populaire" / "nouveau" sur les plats (géré par l'admin)
+Affichage du temps d'attente estimé
+Historique des commandes de la session
+Évaluation rapide après réception (1–5 étoiles + commentaire court)
+Mode hors ligne gracieux : message clair si connexion perdue
+Animations fluides (transitions de pages, skeleton loaders)
+
+Design : ultra-professionnel, dark mode / light mode, animations 60fps, qualité App Store/Play Store
+
+🧾 Côté Vendeur — Site Web (React + Vite)
+Dashboard principal :
+
+Vue en colonnes Kanban : En attente → Confirmée → Prête → Livrée
+Chaque commande affiche : numéro de table, liste des plats, commentaires, heure, montant
+Confirmer ou refuser avec 1 clic (+ raison optionnelle si refus)
+Commandes non traitées restent en attente indéfiniment avec alerte visuelle + sonore
+Notification temps réel dès qu'une nouvelle commande arrive (son + badge)
+Recherche et filtrage des commandes par table / heure / statut
+Vue impression ticket (format 80mm thermique)
+Historique complet des commandes du jour avec export PDF/CSV
+Gestion de la disponibilité des plats (activer/désactiver un plat en temps réel)
+
+Normes supplémentaires :
+
+Session persistante sécurisée (reconnexion auto)
+Multi-onglets : synchronisation en temps réel entre plusieurs fenêtres ouvertes
+Responsive (tablette + desktop)
+
+
+⚙️ Côté Admin — App Mobile (React Native)
+Gestion du menu :
+
+Créer / modifier / supprimer des catégories (nom, icône, ordre d'affichage)
+Créer / modifier / supprimer des plats (nom, photo, description, prix, allergènes, badge, disponibilité)
+Réorganiser l'ordre des plats par drag & drop
+Activer / désactiver un plat sans le supprimer
+
+Gestion des tables :
+
+Générer un QR code pour chaque table (lié à un numéro unique)
+Afficher, imprimer ou partager le QR code
+Supprimer / désactiver un QR code (table fermée)
+Vue plan de salle avec statut de chaque table (libre / occupée / en attente)
+
+Statistiques et rapports (normes mondiales) :
+
+Dashboard : chiffre d'affaires par jour / semaine / mois / année
+Graphiques : courbes de vente, camembert par catégorie, barres par plat
+Plat le plus commandé par période
+Heure de pointe (créneau horaire le plus chargé)
+Taux de refus de commandes
+Nombre moyen de plats par commande
+Comparaison de périodes (cette semaine vs semaine dernière)
+Export des rapports en PDF et CSV
+Alertes : stock bas (si gestion stock activée), pic de commandes
+
+Gestion des comptes :
+
+Créer des comptes vendeur avec accès limité
+Réinitialisation de mot de passe
+Journal d'activité (qui a fait quoi et quand)
+
+
+🗃️ Base de données — Neon PostgreSQL
+Tables principales :
+users (id, role, email, password_hash, name, lang_pref, created_at)
+restaurants (id, name, logo, theme_color, timezone)
+tables (id, restaurant_id, number, qr_token, is_active)
+categories (id, restaurant_id, name_ar, name_fr, name_en, icon, order_index, is_active)
+dishes (id, category_id, name_ar, name_fr, name_en, description_ar/fr/en, price, image_url, allergens, is_popular, is_new, is_available)
+orders (id, table_id, status, total_price, note, created_at, updated_at)
+order_items (id, order_id, dish_id, quantity, custom_note, unit_price)
+order_ratings (id, order_id, stars, comment, created_at)
+audit_logs (id, user_id, action, target, timestamp)
+Indexation : sur status, created_at, table_id pour des requêtes rapides
+Migrations : gérées avec Drizzle ORM ou Prisma
+
+⚡ Performance & Qualité code (normes mondiales)
+
+Architecture : séparation claire services / controllers / routes / models
+State management : Zustand (mobile) + React Query (cache + sync serveur)
+Loading states : skeleton loaders sur toutes les pages
+Error boundaries : pages d'erreur personnalisées (404, 500, offline)
+Optimistic UI : mise à jour immédiate avant confirmation serveur
+Images : lazy loading, compression automatique, format WebP
+PWA (site vendeur) : accessible sans installation, icône + offline mode
+Tests : tests unitaires sur les fonctions critiques (calcul prix, validation commande)
+CI/CD ready : structure compatible GitHub Actions / Vercel deploy
+Documentation : README complet avec setup, variables d'environnement, architecture
+
+
+🎨 Design System (normes App Store)
+
+Design system cohérent entre les 3 interfaces (couleurs, typographie, spacing)
+Dark mode / Light mode sur toutes les interfaces
+Micro-animations et feedback haptique (mobile)
+Skeleton loaders et états vides illustrés
+Toasts / alertes non-intrusifs
+Police professionnelle (Inter, Nunito ou équivalent)
+Icônes cohérentes (Phosphor Icons ou Lucide)
+
+
+✅ Récapitulatif des normes respectées
+NormeDétailSécuritéRBAC, JWT, HTTPS, GDPR, validation ZodPerformanceReact Query, lazy loading, WebP, indexation DBAccessibilitéWCAG 2.1 AA, RTL, contraste, taille policeTemps réelWebSockets pour commandes et notificationsInternationalisationi18next, arabe RTL, français, anglaisCode qualityArchitecture modulaire, error boundaries, testsUXSkeleton loaders, optimistic UI, animations 60fpsExportPDF, CSV pour rapports admin
+
+Merci de structurer le projet avec une architecture de fichiers propre, les configurations initiales (Neon, NextAuth, i18next, WebSockets), et de commencer par le module de commande client qui est le cœur du système.
+
+Points clés que j'ai ajoutés par rapport à ta version initiale :
+
+Sécurité complète (RBAC, JWT, GDPR, protection injections) — indispensable pour les normes mondiales
+Allergènes sur les plats — obligation légale dans de nombreux pays
+Notifications push — expérience client pro
+Alerte sonore vendeur — critique pour ne rater aucune commande
+Vue Kanban pour le vendeur — standard dans les apps POS professionnelles
+Impression ticket thermique — besoin réel de tout restaurant
+Export PDF/CSV — pour la comptabilité et les rapports
+Plan de salle avec statut des tables — gestion visuelle professionnelle
+Drag & drop pour l'ordre des plats — confort admin
+Dark mode / Light mode — norme app store 2025
+PWA pour le site vendeur — utilisable sur tablette sans installation
+Tests et CI/CD ready — qualité code professionnelle
+Optimistic UI + skeleton loaders — fluidité perçue de niveau app commerciale

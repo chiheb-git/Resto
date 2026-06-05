@@ -1,0 +1,3 @@
+- [TanStack Query v5 orval hooks](tq-orval-query-opts.md) — generated hooks require `{ query: opts as any }` wrapper; queryKey is injected internally but strict in types
+- [DB numeric columns](db-numeric-price.md) — Drizzle numeric columns come back as strings; always wrap with Number() before arithmetic or comparisons
+- [restaurant_tables naming](db-table-naming.md) — DB table is named restaurant_tables (not tables) to avoid SQL keyword conflict; Drizzle var is tablesTable
