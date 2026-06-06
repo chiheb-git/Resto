@@ -17,6 +17,7 @@ import {
   Bar,
   Cell,
 } from "recharts";
+import { useQuery } from "@tanstack/react-query";
 
 type Period = "day" | "week" | "month" | "year";
 
@@ -31,6 +32,18 @@ function formatLabel(label: string, period: Period) {
   }
 }
 
+function StarDisplay({ stars }: { stars: number }) {
+  return (
+    <div style={{ display: "flex", gap: 2 }}>
+      {[1, 2, 3, 4, 5].map((s) => (
+        <span key={s} style={{ fontSize: 14, color: s <= stars ? "#fbbf24" : "rgba(255,255,255,0.15)" }}>
+          {s <= stars ? "★" : "☆"}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export default function AdminStats() {
   const { t } = useTranslation();
   const [period, setPeriod] = useState<Period>("week");
@@ -39,8 +52,36 @@ export default function AdminStats() {
   const { data: popular = [], isLoading: popLoading } = useGetPopularDishes({ limit: 8 });
   const { data: peakHours = [], isLoading: peakLoading } = useGetPeakHours();
 
-  const periods: Period[] = ["day", "week", "month", "year"];
+  /* Ratings depuis l'API */
+  const { data: ratings = [], isLoading: ratLoading } = useQuery({
+    queryKey: ["ratings"],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const r = await fetch("/api/ratings", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return r.json();
+    },
+  });
 
+  const typedRatings = ratings as {
+    id: number;
+    orderId: number;
+    stars: number;
+    comment: string | null;
+    createdAt: string;
+  }[];
+
+  const avgStars = typedRatings.length > 0
+    ? typedRatings.reduce((s, r) => s + r.stars, 0) / typedRatings.length
+    : 0;
+
+  const starCounts = [5, 4, 3, 2, 1].map((s) => ({
+    star: s,
+    count: typedRatings.filter((r) => r.stars === s).length,
+  }));
+
+  const periods: Period[] = ["day", "week", "month", "year"];
   const totalRevenue = (revenue as { revenue: number }[]).reduce((s, r) => s + r.revenue, 0);
   const totalOrders = (revenue as { orders: number }[]).reduce((s, r) => s + r.orders, 0);
 
@@ -48,7 +89,7 @@ export default function AdminStats() {
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-xl font-bold text-foreground">{t("statistics")}</h1>
-        <p className="text-sm text-muted-foreground mt-1">Revenue, popular dishes, and peak hours</p>
+        <p className="text-sm text-muted-foreground mt-1">Revenue, plats populaires, heures de pointe et notations</p>
       </div>
 
       {/* Revenue chart */}
@@ -57,7 +98,7 @@ export default function AdminStats() {
           <div>
             <h2 className="text-sm font-semibold text-foreground">{t("revenueOverTime")}</h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Total: {totalRevenue.toFixed(2)} € · {totalOrders} orders
+              Total: {totalRevenue.toFixed(2)} EUR · {totalOrders} commandes
             </p>
           </div>
           <div className="flex bg-muted rounded-lg p-0.5 gap-0.5">
@@ -93,7 +134,7 @@ export default function AdminStats() {
               <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip
                 contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", color: "hsl(var(--foreground))" }}
-                formatter={(val: number) => [`${val.toFixed(2)} €`, t("revenue")]}
+                formatter={(val: number) => [`${val.toFixed(2)} EUR`, t("revenue")]}
               />
               <Area type="monotone" dataKey="revenue" stroke="#f59e0b" strokeWidth={2} fill="url(#revenueGrad)" />
             </AreaChart>
@@ -107,11 +148,11 @@ export default function AdminStats() {
           <h2 className="text-sm font-semibold text-foreground mb-4">{t("popularDishes")}</h2>
           {popLoading ? (
             <div className="h-40 bg-muted animate-pulse rounded-lg" />
-          ) : (popular as { nameEn: string; totalOrdered: number }[]).length === 0 ? (
+          ) : (popular as { nameEn: string }[]).length === 0 ? (
             <div className="text-center py-8 text-muted-foreground text-sm">{t("noData")}</div>
           ) : (
             <div className="space-y-2">
-              {(popular as { nameEn: string; nameFr: string; nameAr: string; totalOrdered: number; imageUrl: string | null }[]).map((dish, i) => (
+              {(popular as { nameEn: string; nameFr: string; totalOrdered: number }[]).map((dish, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <span className="text-muted-foreground text-xs w-5 text-right">{i + 1}</span>
                   <div className="flex-1 min-w-0">
@@ -157,6 +198,86 @@ export default function AdminStats() {
             </ResponsiveContainer>
           )}
         </div>
+      </div>
+
+      {/* ===== SECTION NOTATIONS ===== */}
+      <div className="bg-card border border-border rounded-xl p-4">
+        <h2 className="text-sm font-semibold text-foreground mb-4">Notations des clients</h2>
+
+        {ratLoading ? (
+          <div className="h-40 bg-muted animate-pulse rounded-lg" />
+        ) : typedRatings.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            <div className="text-4xl mb-2">⭐</div>
+            <p className="text-sm">Aucune notation pour le moment</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-3 gap-6">
+
+            {/* Score global */}
+            <div style={{
+              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+              padding: "24px", background: "rgba(251,191,36,0.06)", borderRadius: 16,
+              border: "0.5px solid rgba(251,191,36,0.2)",
+            }}>
+              <div style={{ fontSize: 52, fontWeight: 800, color: "#fbbf24", lineHeight: 1 }}>
+                {avgStars.toFixed(1)}
+              </div>
+              <StarDisplay stars={Math.round(avgStars)} />
+              <p style={{ fontSize: 12, color: "rgba(245,245,240,0.4)", marginTop: 8 }}>
+                {typedRatings.length} avis au total
+              </p>
+            </div>
+
+            {/* Distribution par etoile */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, justifyContent: "center" }}>
+              {starCounts.map(({ star, count }) => (
+                <div key={star} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 12, color: "#fbbf24", width: 20, textAlign: "right", fontWeight: 700 }}>{star}</span>
+                  <span style={{ fontSize: 12 }}>★</span>
+                  <div style={{ flex: 1, height: 8, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
+                    <div style={{
+                      height: "100%", borderRadius: 4,
+                      background: "linear-gradient(90deg,#fbbf24,#f59e0b)",
+                      width: `${typedRatings.length > 0 ? (count / typedRatings.length) * 100 : 0}%`,
+                      transition: "width 0.5s ease",
+                    }} />
+                  </div>
+                  <span style={{ fontSize: 11, color: "rgba(245,245,240,0.4)", width: 24 }}>{count}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Derniers avis */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 180, overflowY: "auto" }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(245,245,240,0.4)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>
+                Derniers avis
+              </p>
+              {typedRatings.slice(0, 5).map((r) => (
+                <div key={r.id} style={{
+                  padding: "10px 12px", background: "rgba(255,255,255,0.03)",
+                  borderRadius: 10, border: "0.5px solid rgba(255,255,255,0.06)",
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                    <StarDisplay stars={r.stars} />
+                    <span style={{ fontSize: 10, color: "rgba(245,245,240,0.3)" }}>
+                      Commande #{r.orderId}
+                    </span>
+                  </div>
+                  {r.comment && (
+                    <p style={{ fontSize: 11, color: "rgba(245,245,240,0.55)", fontStyle: "italic", margin: 0 }}>
+                      "{r.comment}"
+                    </p>
+                  )}
+                  <p style={{ fontSize: 10, color: "rgba(245,245,240,0.25)", marginTop: 4 }}>
+                    {new Date(r.createdAt).toLocaleString("fr-FR")}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        )}
       </div>
     </div>
   );

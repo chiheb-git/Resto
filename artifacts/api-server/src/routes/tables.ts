@@ -1,7 +1,7 @@
-import { Router, IRouter } from "express";
+﻿import { Router, IRouter } from "express";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "crypto";
-import { db, tablesTable, ordersTable } from "@workspace/db";
+import { db, tablesTable, ordersTable, orderItemsTable } from "@workspace/db";
 import {
   ListTablesResponseItem,
   CreateTableBody,
@@ -115,6 +115,17 @@ router.delete("/tables/:id", requireAuth, requireRole("admin"), async (req, res)
     res.status(400).json({ error: params.error.message });
     return;
   }
+  await db.delete(orderItemsTable).where(
+    eq(orderItemsTable.orderId, 
+      db.select({ id: ordersTable.id }).from(ordersTable).where(eq(ordersTable.tableId, params.data.id)).limit(1)
+    )
+  );
+  await db.delete(ordersTable).where(eq(ordersTable.tableId, params.data.id));
+  const orders = await db.select().from(ordersTable).where(eq(ordersTable.tableId, params.data.id));
+  for (const order of orders) {
+    await db.delete(orderItemsTable).where(eq(orderItemsTable.orderId, order.id));
+  }
+  await db.delete(ordersTable).where(eq(ordersTable.tableId, params.data.id));
   const [table] = await db.delete(tablesTable).where(eq(tablesTable.id, params.data.id)).returning();
   if (!table) {
     res.status(404).json({ error: "Table not found" });
@@ -122,5 +133,6 @@ router.delete("/tables/:id", requireAuth, requireRole("admin"), async (req, res)
   }
   res.json({ success: true });
 });
-
 export default router;
+
+

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+﻿import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useGetMe } from "@workspace/api-client-react";
 
 interface User {
@@ -28,16 +28,20 @@ const AuthContext = createContext<AuthContextType>({
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem("user");
+    try { return saved ? JSON.parse(saved) : null; } catch { return null; }
+  });
 
   const { data: meData, isLoading, isError } = useGetMe({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    query: { enabled: !!token } as any,
+    query: { enabled: !!token, retry: false, staleTime: 1000 * 60 * 5 } as any,
   });
 
   useEffect(() => {
     if (meData) {
-      setUser(meData as User);
+      const u = meData as User;
+      setUser(u);
+      localStorage.setItem("user", JSON.stringify(u));
     }
   }, [meData]);
 
@@ -46,23 +50,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(null);
       setUser(null);
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
     }
   }, [isError]);
 
   const login = (newToken: string, newUser: User) => {
     localStorage.setItem("token", newToken);
+    localStorage.setItem("user", JSON.stringify(newUser));
     setToken(newToken);
     setUser(newUser);
   };
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };
 
+  const isLoadingState = !!token && !user && isLoading;
+
   return (
-    <AuthContext.Provider value={{ user, token, isLoading: !!token && isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading: isLoadingState, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

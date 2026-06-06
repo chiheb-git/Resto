@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   useListCategories,
@@ -45,7 +45,6 @@ function SortableCategoryItem({
   onClick: () => void;
   onDelete: (id: number) => void;
 }) {
-  const { t } = useTranslation();
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: cat.id });
   const lang = i18n.language as "fr" | "en" | "ar";
   const nameKey = `name${lang.charAt(0).toUpperCase() + lang.slice(1)}` as "nameEn" | "nameFr" | "nameAr";
@@ -59,12 +58,12 @@ function SortableCategoryItem({
         isActive ? "bg-primary/15 text-primary border border-primary/20" : "text-muted-foreground hover:text-foreground hover:bg-accent"
       }`}
     >
-      <span {...attributes} {...listeners} className="cursor-grab text-muted-foreground hover:text-foreground">⠿</span>
+      <span {...attributes} {...listeners} className="cursor-grab text-muted-foreground hover:text-foreground">::</span>
       <span className="flex-1 text-sm font-medium" onClick={onClick}>{name}</span>
       <button
         onClick={(e) => { e.stopPropagation(); onDelete(cat.id); }}
         className="text-xs text-destructive hover:opacity-70"
-      >✕</button>
+      >x</button>
     </div>
   );
 }
@@ -97,87 +96,170 @@ function DishModal({
     allergens: dish?.allergens?.join(", ") ?? "",
   });
 
+  const inputClass = "w-full px-2 py-2 rounded-lg bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50";
+  const labelClass = "block text-xs font-semibold mb-1";
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 overflow-y-auto">
       <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-lg my-4">
-        <h3 className="font-semibold text-foreground mb-4">{dish ? t("edit") : t("addDish")}</h3>
-        <div className="space-y-3">
+        <h3 className="font-semibold text-foreground mb-4 text-lg">
+          {dish ? t("edit") : t("addDish")}
+        </h3>
+
+        <div className="space-y-4">
+
+          {/* Categorie */}
           <div>
-            <label className="block text-xs font-medium text-foreground mb-1">{t("category")}</label>
-            <select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: Number(e.target.value) })}
-              className="w-full px-3 py-2 rounded-lg bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50">
-              {categories.map((c) => <option key={c.id} value={c.id}>{c.nameFr || c.nameEn}</option>)}
+            <label className={labelClass + " text-muted-foreground"}>{t("category")}</label>
+            <select
+              value={form.categoryId}
+              onChange={(e) => setForm({ ...form, categoryId: Number(e.target.value) })}
+              className={inputClass}
+            >
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>{c.nameFr || c.nameEn}</option>
+              ))}
             </select>
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            {(["nameFr", "nameEn", "nameAr"] as const).map((k) => (
-              <div key={k}>
-                <label className="block text-xs font-medium text-foreground mb-1">{k === "nameFr" ? "FR" : k === "nameEn" ? "EN" : "AR"}</label>
-                <input value={(form as Record<string, unknown>)[k] as string}
-                  onChange={(e) => setForm({ ...form, [k]: e.target.value })}
-                  dir={k === "nameAr" ? "rtl" : "ltr"}
-                  className="w-full px-2 py-2 rounded-lg bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
-              </div>
-            ))}
+
+          {/* Nom en 3 langues */}
+          <div>
+            <label className={labelClass + " text-foreground"}>Nom du plat</label>
+            <div className="grid grid-cols-3 gap-2">
+              {([
+                { key: "nameFr", label: "Francais", flag: "FR", dir: "ltr" },
+                { key: "nameEn", label: "Anglais", flag: "EN", dir: "ltr" },
+                { key: "nameAr", label: "Arabe", flag: "AR", dir: "rtl" },
+              ] as const).map(({ key, label, flag, dir }) => (
+                <div key={key}>
+                  <label className="block text-xs text-muted-foreground mb-1 font-medium">
+                    {flag} â€” {label}
+                  </label>
+                  <input
+                    value={(form as Record<string, unknown>)[key] as string}
+                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                    dir={dir}
+                    placeholder={label}
+                    className={inputClass}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            {(["descriptionFr", "descriptionEn", "descriptionAr"] as const).map((k) => (
-              <div key={k}>
-                <textarea value={(form as Record<string, unknown>)[k] as string}
-                  onChange={(e) => setForm({ ...form, [k]: e.target.value })}
-                  dir={k === "descriptionAr" ? "rtl" : "ltr"}
-                  rows={2}
-                  className="w-full px-2 py-2 rounded-lg bg-background border border-input text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" />
-              </div>
-            ))}
+
+          {/* Description en 3 langues */}
+          <div>
+            <label className={labelClass + " text-foreground"}>Description du plat</label>
+            <div className="grid grid-cols-3 gap-2">
+              {([
+                { key: "descriptionFr", label: "Francais", flag: "FR", dir: "ltr" },
+                { key: "descriptionEn", label: "Anglais", flag: "EN", dir: "ltr" },
+                { key: "descriptionAr", label: "Arabe", flag: "AR", dir: "rtl" },
+              ] as const).map(({ key, label, flag, dir }) => (
+                <div key={key}>
+                  <label className="block text-xs text-muted-foreground mb-1 font-medium">
+                    {flag} â€” {label}
+                  </label>
+                  <textarea
+                    value={(form as Record<string, unknown>)[key] as string}
+                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                    dir={dir}
+                    rows={3}
+                    placeholder={`Description en ${label}...`}
+                    className={inputClass + " resize-none text-xs"}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
+
+          {/* Prix et allergenes */}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-foreground mb-1">{t("price")} (€)</label>
-              <input type="number" step="0.01" min="0" value={form.price}
+              <label className={labelClass + " text-muted-foreground"}>{t("price")} (EUR)</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={form.price}
                 onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) })}
-                className="w-full px-3 py-2 rounded-lg bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                className={inputClass}
+              />
             </div>
             <div>
-              <label className="block text-xs font-medium text-foreground mb-1">{t("allergens")} (comma sep.)</label>
-              <input value={form.allergens}
+              <label className={labelClass + " text-muted-foreground"}>{t("allergens")} (virgule)</label>
+              <input
+                value={form.allergens}
                 onChange={(e) => setForm({ ...form, allergens: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                placeholder="gluten, lactose..."
+                className={inputClass}
+              />
             </div>
           </div>
+
+          {/* Image URL */}
           <div>
-            <label className="block text-xs font-medium text-foreground mb-1">{t("imageUrl")}</label>
-            <input value={form.imageUrl}
-              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-              placeholder="https://..."
-              className="w-full px-3 py-2 rounded-lg bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
+            <label className={labelClass + " text-muted-foreground"}>Image du plat</label>
+            <div className="flex gap-2 mb-2">
+              <input
+                value={form.imageUrl}
+                onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+                placeholder="https://... (URL image)"
+                className={inputClass + " flex-1"}
+              />
+              <label className="px-3 py-2 bg-primary/15 border border-primary/30 text-primary rounded-lg text-xs font-medium cursor-pointer hover:bg-primary/25 flex items-center gap-1 whitespace-nowrap">
+                Galerie
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setForm({ ...form, imageUrl: reader.result as string }); reader.readAsDataURL(file); }} />
+              </label>
+            </div>
+            {form.imageUrl && (
+              <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-border">
+                <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" />
+                <button onClick={() => setForm({ ...form, imageUrl: "" })} className="absolute top-1 right-1 w-5 h-5 bg-black/60 text-white rounded-full text-xs flex items-center justify-center">x</button>
+              </div>
+            )}
           </div>
-          <div className="flex gap-4">
-            {(["isPopular", "isNew", "isAvailable"] as const).map((k) => (
-              <label key={k} className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
-                <input type="checkbox" checked={(form as Record<string, unknown>)[k] as boolean}
-                  onChange={(e) => setForm({ ...form, [k]: e.target.checked })}
-                  className="rounded" />
-                {t(k === "isPopular" ? "isPopular" : k === "isNew" ? "isNew" : "available")}
+
+          {/* Options */}
+          <div className="flex gap-6 p-3 bg-muted/30 rounded-xl">
+            {([
+              { key: "isPopular", label: "Populaire" },
+              { key: "isNew", label: "Nouveau" },
+              { key: "isAvailable", label: "Disponible" },
+            ] as const).map(({ key, label }) => (
+              <label key={key} className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={(form as Record<string, unknown>)[key] as boolean}
+                  onChange={(e) => setForm({ ...form, [key]: e.target.checked })}
+                  className="rounded"
+                />
+                {label}
               </label>
             ))}
           </div>
         </div>
+
+        {/* Boutons */}
         <div className="flex gap-3 mt-5">
-          <button onClick={onClose}
-            className="flex-1 py-2.5 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-accent">
+          <button
+            onClick={onClose}
+            className="flex-1 py-2.5 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-accent"
+          >
             {t("cancel")}
           </button>
-          <button onClick={() => onSave({
-            ...form,
-            price: Number(form.price),
-            allergens: form.allergens ? form.allergens.split(",").map((s) => s.trim()).filter(Boolean) : [],
-            imageUrl: form.imageUrl || null,
-            descriptionAr: form.descriptionAr || null,
-            descriptionFr: form.descriptionFr || null,
-            descriptionEn: form.descriptionEn || null,
-          })}
-            className="flex-1 py-2.5 bg-primary text-white rounded-xl text-sm font-medium hover:opacity-90">
+          <button
+            onClick={() => onSave({
+              ...form,
+              price: Number(form.price),
+              allergens: form.allergens ? form.allergens.split(",").map((s) => s.trim()).filter(Boolean) : [],
+              imageUrl: form.imageUrl || null,
+              descriptionAr: form.descriptionAr || null,
+              descriptionFr: form.descriptionFr || null,
+              descriptionEn: form.descriptionEn || null,
+            })}
+            className="flex-1 py-2.5 bg-primary text-white rounded-xl text-sm font-medium hover:opacity-90"
+          >
             {t("save")}
           </button>
         </div>
@@ -228,23 +310,36 @@ export default function AdminMenu() {
     const newIndex = orderedCategories.findIndex((c) => c.id === over.id);
     const reordered = arrayMove(orderedCategories, oldIndex, newIndex);
     setCatOrder(reordered.map((c) => c.id));
-    reorderMutation.mutate({
-      data: { items: reordered.map((c, i) => ({ id: c.id, orderIndex: i + 1 })) },
-    }, { onSuccess: invalidateCats });
+    reorderMutation.mutate(
+      { data: { items: reordered.map((c, i) => ({ id: c.id, orderIndex: i + 1 })) } },
+      { onSuccess: invalidateCats }
+    );
   };
 
   const addCategory = () => {
-    if (!newCatName.fr) { toast.error("French name required"); return; }
+    if (!newCatName.fr) { toast.error("Nom francais requis"); return; }
     createCatMutation.mutate(
       { data: { nameFr: newCatName.fr, nameEn: newCatName.en || newCatName.fr, nameAr: newCatName.ar || newCatName.fr, icon: "utensils" } },
-      { onSuccess: () => { invalidateCats(); setNewCatName({ fr: "", en: "", ar: "" }); setShowAddCat(false); toast.success(t("success")); }, onError: () => toast.error(t("error")) }
+      {
+        onSuccess: () => {
+          invalidateCats();
+          setNewCatName({ fr: "", en: "", ar: "" });
+          setShowAddCat(false);
+          toast.success(t("success"));
+        },
+        onError: () => toast.error(t("error")),
+      }
     );
   };
 
   const deleteCategory = (id: number) => {
-    if (!confirm("Delete this category?")) return;
+    if (!confirm("Supprimer cette categorie ?")) return;
     deleteCatMutation.mutate({ id }, {
-      onSuccess: () => { invalidateCats(); if (selectedCat === id) setSelectedCat(null); toast.success(t("success")); },
+      onSuccess: () => {
+        invalidateCats();
+        if (selectedCat === id) setSelectedCat(null);
+        toast.success(t("success"));
+      },
       onError: () => toast.error(t("error")),
     });
   };
@@ -253,18 +348,24 @@ export default function AdminMenu() {
     if (dishModal === "add") {
       createDishMutation.mutate(
         { data: { categoryId: activeCatId!, ...data } as Parameters<typeof createDishMutation.mutate>[0]["data"] },
-        { onSuccess: () => { invalidateDishes(); setDishModal(null); toast.success(t("success")); }, onError: () => toast.error(t("error")) }
+        {
+          onSuccess: () => { invalidateDishes(); setDishModal(null); toast.success(t("success")); },
+          onError: () => toast.error(t("error")),
+        }
       );
     } else if (dishModal && typeof dishModal === "object") {
       updateDishMutation.mutate(
         { id: (dishModal as Dish).id, data },
-        { onSuccess: () => { invalidateDishes(); setDishModal(null); toast.success(t("success")); }, onError: () => toast.error(t("error")) }
+        {
+          onSuccess: () => { invalidateDishes(); setDishModal(null); toast.success(t("success")); },
+          onError: () => toast.error(t("error")),
+        }
       );
     }
   };
 
   const deleteDish = (id: number) => {
-    if (!confirm("Delete this dish?")) return;
+    if (!confirm("Supprimer ce plat ?")) return;
     deleteDishMutation.mutate({ id }, {
       onSuccess: () => { invalidateDishes(); toast.success(t("success")); },
       onError: () => toast.error(t("error")),
@@ -272,27 +373,40 @@ export default function AdminMenu() {
   };
 
   const toggleDish = (id: number) => {
-    toggleDishMutation.mutate({ id }, { onSuccess: invalidateDishes, onError: () => toast.error(t("error")) });
+    toggleDishMutation.mutate({ id }, {
+      onSuccess: invalidateDishes,
+      onError: () => toast.error(t("error")),
+    });
   };
 
   return (
     <div className="flex h-full">
-      {/* Category sidebar */}
+
+      {/* Sidebar categories */}
       <div className="w-52 border-e border-border bg-card/50 flex flex-col flex-shrink-0">
         <div className="flex items-center justify-between px-3 py-3 border-b border-border">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t("menu")}</span>
-          <button onClick={() => setShowAddCat(true)}
-            className="text-primary hover:opacity-70 text-lg leading-none">+</button>
+          <button
+            onClick={() => setShowAddCat(true)}
+            className="text-primary hover:opacity-70 text-lg leading-none"
+          >+</button>
         </div>
 
         {showAddCat && (
           <div className="p-2 border-b border-border space-y-1.5">
-            {(["fr", "en", "ar"] as const).map((l) => (
-              <input key={l} value={newCatName[l]}
-                onChange={(e) => setNewCatName({ ...newCatName, [l]: e.target.value })}
-                placeholder={`Name (${l.toUpperCase()})`}
-                dir={l === "ar" ? "rtl" : "ltr"}
-                className="w-full px-2 py-1.5 rounded-md bg-background border border-input text-xs text-foreground focus:outline-none" />
+            {([
+              { key: "fr", placeholder: "Nom (FR)" },
+              { key: "en", placeholder: "Name (EN)" },
+              { key: "ar", placeholder: "ط§ظ„ط§ط³ظ… (AR)" },
+            ] as const).map(({ key, placeholder }) => (
+              <input
+                key={key}
+                value={newCatName[key]}
+                onChange={(e) => setNewCatName({ ...newCatName, [key]: e.target.value })}
+                placeholder={placeholder}
+                dir={key === "ar" ? "rtl" : "ltr"}
+                className="w-full px-2 py-1.5 rounded-md bg-background border border-input text-xs text-foreground focus:outline-none"
+              />
             ))}
             <div className="flex gap-1">
               <button onClick={addCategory} className="flex-1 py-1 bg-primary text-white rounded text-xs">{t("add")}</button>
@@ -318,17 +432,21 @@ export default function AdminMenu() {
         </div>
       </div>
 
-      {/* Dish list */}
+      {/* Liste des plats */}
       <div className="flex-1 overflow-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div>
             <h1 className="text-lg font-bold text-foreground">
-              {activeCatId ? (orderedCategories.find((c) => c.id === activeCatId) as unknown as Record<string, string>)?.[nameKey] || t("menu") : t("menu")}
+              {activeCatId
+                ? (orderedCategories.find((c) => c.id === activeCatId) as unknown as Record<string, string>)?.[nameKey] || t("menu")
+                : t("menu")}
             </h1>
-            <p className="text-sm text-muted-foreground mt-0.5">{dishes.length} dishes</p>
+            <p className="text-sm text-muted-foreground mt-0.5">{dishes.length} plats</p>
           </div>
-          <button onClick={() => setDishModal("add")}
-            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:opacity-90">
+          <button
+            onClick={() => setDishModal("add")}
+            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:opacity-90"
+          >
             {t("addDish")}
           </button>
         </div>
@@ -336,42 +454,54 @@ export default function AdminMenu() {
         <div className="p-4 space-y-2">
           {dishes.length === 0 ? (
             <div className="text-center py-16 text-muted-foreground">
-              <div className="text-4xl mb-2">🍽</div>
+              <div className="text-4xl mb-2">ًںچ½ï¸ڈ</div>
               <p>{t("noData")}</p>
             </div>
           ) : (
             dishes.map((dish) => {
               const name = (dish as unknown as Record<string, string>)[nameKey] || dish.nameEn;
+              const descKey = `description${lang.charAt(0).toUpperCase() + lang.slice(1)}` as "descriptionEn" | "descriptionFr" | "descriptionAr";
+              const desc = (dish as unknown as Record<string, string>)[descKey] || dish.descriptionEn;
               return (
-                <div key={dish.id} className={`flex items-center gap-3 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}>
+                <div
+                  key={dish.id}
+                  className={`flex items-center gap-3 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}
+                >
                   {dish.imageUrl ? (
-                    <img src={dish.imageUrl} alt={name} className="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
+                    <img src={dish.imageUrl} alt={name} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
                   ) : (
-                    <div className="w-12 h-12 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-xl">🍽</div>
+                    <div className="w-14 h-14 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">ًںچ½ï¸ڈ</div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <p className="font-medium text-sm text-foreground truncate">{name}</p>
-                      {dish.isPopular && <span className="text-xs px-1.5 py-0.5 rounded bg-primary/20 text-primary">★</span>}
+                      {dish.isPopular && <span className="text-xs px-1.5 py-0.5 rounded bg-primary/20 text-primary">POP</span>}
                       {dish.isNew && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">NEW</span>}
                     </div>
-                    <p className="text-primary text-sm font-semibold">{Number(dish.price).toFixed(2)} €</p>
+                    {desc && <p className="text-xs text-muted-foreground truncate mt-0.5">{desc}</p>}
+                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} EUR</p>
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <button onClick={() => toggleDish(dish.id)}
+                    <button
+                      onClick={() => toggleDish(dish.id)}
                       className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
                         dish.isAvailable
                           ? "bg-green-500/10 border-green-500/30 text-green-400"
                           : "bg-muted border-border text-muted-foreground"
-                      }`}>
-                      {dish.isAvailable ? "●" : "○"}
+                      }`}
+                    >
+                      {dish.isAvailable ? "ON" : "OFF"}
                     </button>
-                    <button onClick={() => setDishModal(dish)}
-                      className="text-xs px-2.5 py-1.5 border border-border rounded-lg text-foreground hover:bg-accent">
+                    <button
+                      onClick={() => setDishModal(dish)}
+                      className="text-xs px-2.5 py-1.5 border border-border rounded-lg text-foreground hover:bg-accent"
+                    >
                       {t("edit")}
                     </button>
-                    <button onClick={() => deleteDish(dish.id)}
-                      className="text-xs px-2.5 py-1.5 text-destructive hover:bg-destructive/10 rounded-lg">
+                    <button
+                      onClick={() => deleteDish(dish.id)}
+                      className="text-xs px-2.5 py-1.5 text-destructive hover:bg-destructive/10 rounded-lg"
+                    >
                       {t("delete")}
                     </button>
                   </div>
@@ -393,3 +523,4 @@ export default function AdminMenu() {
     </div>
   );
 }
+

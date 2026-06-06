@@ -1,3 +1,18 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg-deep: #0A0A0F;
+  --bg-surface: #12121A;
+  --bg-card: #1A1A26;
+  --bg-card-hover: #20202E;
+  --bg-glass: rgba(255,255,255,0.04);
+  --text-primary: #F5F5F0;
+  --text-secondary: rgba(245,245,240,0.65);
+  --text-muted: rgba(245,245,240,0.35);
+  --border-subtle: rgba(255,255,255,0.06);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, sans-serif;
+}
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";

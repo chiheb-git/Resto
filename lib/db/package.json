@@ -9,17 +9,23 @@
   },
   "scripts": {
     "push": "drizzle-kit push --config ./drizzle.config.ts",
-    "push-force": "drizzle-kit push --force --config ./drizzle.config.ts"
+    "push-force": "drizzle-kit push --force --config ./drizzle.config.ts",
+    "seed": "pnpm exec tsx src/seed.ts"
   },
   "dependencies": {
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "^0.8.3",
+    "drizzle-zod": "^0.7.0",
+    "dotenv": "^16.3.1",
     "pg": "^8.20.0",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/pg": "^8.20.0",
-    "drizzle-kit": "^0.31.10"
+    "bcryptjs": "^3.0.3",
+    "drizzle-kit": "^0.31.10",
+    "esbuild": "0.27.3",
+    "@esbuild/win32-x64": "0.27.3",
+    "tsx": "^3.12.7"
   }
 }

@@ -1,5 +1,5 @@
-import { Router, IRouter } from "express";
-import { eq, and, desc, gte, lte, sql } from "drizzle-orm";
+﻿import { Router, IRouter } from "express";
+import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
 import { db, ordersTable, orderItemsTable, dishesTable, tablesTable, ratingsTable } from "@workspace/db";
 import {
   CreateOrderBody,
@@ -10,6 +10,7 @@ import {
   ListOrdersQueryParams,
 } from "@workspace/api-zod";
 import { requireAuth, requireRole } from "../middlewares/auth";
+import { getSocketServer } from "../lib/socket";
 
 const router: IRouter = Router();
 
@@ -115,7 +116,7 @@ router.post("/orders", async (req, res): Promise<void> => {
   const dishes = await db
     .select()
     .from(dishesTable)
-    .where(sql`${dishesTable.id} = ANY(ARRAY[${sql.join(dishIds.map((id) => sql`${id}`), sql`, `)}])`);
+    .where(inArray(dishesTable.id, dishIds));
 
   const dishMap = new Map(dishes.map((d) => [d.id, d]));
   for (const item of items) {
@@ -148,6 +149,12 @@ router.post("/orders", async (req, res): Promise<void> => {
   }
 
   const full = await buildOrderResponse(order);
+  const io = getSocketServer();
+  if (io) {
+    io.to("vendors").emit("vendor:new-order", full);
+    io.to(`order:${order.id}`).emit("order:updated", full);
+  }
+
   res.status(201).json(full);
 });
 
@@ -217,7 +224,14 @@ router.patch("/orders/:id/status", requireAuth, requireRole("vendor", "admin"), 
     return;
   }
   const full = await buildOrderResponse(order);
+  const io = getSocketServer();
+  if (io) {
+    io.to("vendors").emit("order:updated", full);
+    io.to(`order:${order.id}`).emit("order:updated", full);
+  }
   res.json(full);
 });
 
 export default router;
+
+

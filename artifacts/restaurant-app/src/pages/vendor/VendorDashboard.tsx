@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useListOrders, useUpdateOrderStatus, getListOrdersQueryKey, OrderStatusUpdateStatus } from "@workspace/api-client-react";
 import type { OrderWithItems } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import i18n from "@/i18n";
+import { getSocket } from "@/lib/socket";
 
 const STATUSES = ["pending", "confirmed", "ready", "delivered"] as const;
 type OrderStatus = "pending" | "confirmed" | "refused" | "ready" | "delivered";
@@ -146,8 +147,29 @@ export default function VendorDashboard() {
   const { data: orders = [], isLoading } = useListOrders(
     {},
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { query: { refetchInterval: 3000 } as any }
+    { query: { refetchOnWindowFocus: true } as any }
   );
+
+  useEffect(() => {
+    const socket = getSocket();
+
+    const handleNewOrder = () => {
+      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
+      toast.success(t("newOrder"));
+    };
+
+    const handleOrderUpdated = () => {
+      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
+    };
+
+    socket.on("vendor:new-order", handleNewOrder);
+    socket.on("order:updated", handleOrderUpdated);
+
+    return () => {
+      socket.off("vendor:new-order", handleNewOrder);
+      socket.off("order:updated", handleOrderUpdated);
+    };
+  }, [queryClient, t]);
 
   // Sound alert for new orders
   useEffect(() => {

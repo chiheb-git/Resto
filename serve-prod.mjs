@@ -1,0 +1,11 @@
+﻿import express from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import { fileURLToPath } from 'url';
+import path from 'path';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const app = express();
+app.use('/api', createProxyMiddleware({ target: 'http://localhost:4000', changeOrigin: true }));
+app.use('/socket.io', createProxyMiddleware({ target: 'http://localhost:4000', changeOrigin: true, ws: true }));
+app.use(express.static(path.join(__dirname, 'artifacts/restaurant-app/dist/public')));
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'artifacts/restaurant-app/dist/public/index.html')));
+app.listen(5173, '0.0.0.0', () => console.log('✅ Production server on port 5173'));
