@@ -368,10 +368,10 @@ export default function AdminMenu() {
   };
 
   return (
-    <div className="flex h-full">
+    <div style={{display:"flex",flexDirection:"column",height:"100%"}}>
 
       {/* Sidebar categories */}
-      <div className="w-52 border-e border-border bg-card/50 flex flex-col flex-shrink-0">
+      <div style={{width:"100%",borderBottom:"1px solid #2A2A2A",flexShrink:0}}>
         <div className="flex items-center justify-between px-3 py-3 border-b border-border">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t("menu")}</span>
           <button
