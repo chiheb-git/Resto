@@ -1,28 +1,5 @@
 ﻿
-:root, .dark {
-  --bg-primary: #0A0A0A;
-  --bg-card: #141414;
-  --bg-surface: #1C1C1C;
-  --bg-glass: rgba(20,20,20,0.8);
-  --border-subtle: #2A2A2A;
-  --text-primary: #FFFFFF;
-  --text-secondary: #CCCCCC;
-  --text-muted: #888888;
-  --font-display: Inter, sans-serif;
-  --font-body: Inter, sans-serif;
-}
-.light {
-  --bg-primary: #F5F5F0;
-  --bg-card: #FFFFFF;
-  --bg-surface: #F0EFEB;
-  --bg-glass: rgba(255,255,255,0.8);
-  --border-subtle: #E0DED8;
-  --text-primary: #111111;
-  --text-secondary: #444444;
-  --text-muted: #666666;
-  --font-display: Inter, sans-serif;
-  --font-body: Inter, sans-serif;
-}
+
 .dark { --color-bg: #0A0A0A; --color-card: #141414; --color-card2: #1C1C1C; --color-border: #2A2A2A; --color-text: #FFFFFF; --color-muted: #888888; }
 :root, .light { --color-bg: #F5F5F0; --color-card: #FFFFFF; --color-card2: #F0EFEB; --color-border: #E0DED8; --color-text: #111111; --color-muted: #666666; }
 
@@ -303,4 +280,16 @@
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
   }
+}
+
+.light {
+  --bg-deep: #F5F5F0 !important;
+  --bg-surface: #FFFFFF !important;
+  --bg-card: #F0EFEB !important;
+  --bg-card-hover: #E8E8E0 !important;
+  --bg-glass: rgba(255,255,255,0.8) !important;
+  --border-subtle: rgba(0,0,0,0.1) !important;
+  --text-primary: #111111 !important;
+  --text-secondary: rgba(0,0,0,0.65) !important;
+  --text-muted: rgba(0,0,0,0.35) !important;
 }
