@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   useListCategories,
@@ -133,7 +133,7 @@ function DishModal({
               ] as const).map(({ key, label, flag, dir }) => (
                 <div key={key}>
                   <label className="block text-xs text-muted-foreground mb-1 font-medium">
-                    {flag} â€” {label}
+                    {flag} — {label}
                   </label>
                   <input
                     value={(form as Record<string, unknown>)[key] as string}
@@ -158,7 +158,7 @@ function DishModal({
               ] as const).map(({ key, label, flag, dir }) => (
                 <div key={key}>
                   <label className="block text-xs text-muted-foreground mb-1 font-medium">
-                    {flag} â€” {label}
+                    {flag} — {label}
                   </label>
                   <textarea
                     value={(form as Record<string, unknown>)[key] as string}
@@ -176,7 +176,7 @@ function DishModal({
           {/* Prix et allergenes */}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className={labelClass + " text-muted-foreground"}>{t("price")} (DA)</label>
+              <label className={labelClass + " text-muted-foreground"}>{t("price")} (EUR)</label>
               <input
                 type="number"
                 step="0.01"
@@ -199,25 +199,13 @@ function DishModal({
 
           {/* Image URL */}
           <div>
-            <label className={labelClass + " text-muted-foreground"}>Image du plat</label>
-            <div className="flex gap-2 mb-2">
-              <input
-                value={form.imageUrl}
-                onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-                placeholder="https://... (URL image)"
-                className={inputClass + " flex-1"}
-              />
-              <label className="px-3 py-2 bg-primary/15 border border-primary/30 text-primary rounded-lg text-xs font-medium cursor-pointer hover:bg-primary/25 flex items-center gap-1 whitespace-nowrap">
-                Galerie
-                <input type="file" accept="image/*" className="hidden" onChange={(e) => { const file = e.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setForm({ ...form, imageUrl: reader.result as string }); reader.readAsDataURL(file); }} />
-              </label>
-            </div>
-            {form.imageUrl && (
-              <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-border">
-                <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" />
-                <button onClick={() => setForm({ ...form, imageUrl: "" })} className="absolute top-1 right-1 w-5 h-5 bg-black/60 text-white rounded-full text-xs flex items-center justify-center">x</button>
-              </div>
-            )}
+            <label className={labelClass + " text-muted-foreground"}>{t("imageUrl")}</label>
+            <input
+              value={form.imageUrl}
+              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+              placeholder="https://..."
+              className={inputClass}
+            />
           </div>
 
           {/* Options */}
@@ -380,10 +368,10 @@ export default function AdminMenu() {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full">
 
       {/* Sidebar categories */}
-      <div className="flex flex-row overflow-x-auto border-b border-border bg-card/50 flex-shrink-0 px-2 py-2 gap-2">
+      <div className="w-52 border-e border-border bg-card/50 flex flex-col flex-shrink-0">
         <div className="flex items-center justify-between px-3 py-3 border-b border-border">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t("menu")}</span>
           <button
@@ -397,7 +385,7 @@ export default function AdminMenu() {
             {([
               { key: "fr", placeholder: "Nom (FR)" },
               { key: "en", placeholder: "Name (EN)" },
-              { key: "ar", placeholder: "ط§ظ„ط§ط³ظ… (AR)" },
+              { key: "ar", placeholder: "الاسم (AR)" },
             ] as const).map(({ key, placeholder }) => (
               <input
                 key={key}
@@ -454,7 +442,7 @@ export default function AdminMenu() {
         <div className="p-4 space-y-2">
           {dishes.length === 0 ? (
             <div className="text-center py-16 text-muted-foreground">
-              <div className="text-4xl mb-2">ًںچ½ï¸ڈ</div>
+              <div className="text-4xl mb-2">🍽️</div>
               <p>{t("noData")}</p>
             </div>
           ) : (
@@ -470,7 +458,7 @@ export default function AdminMenu() {
                   {dish.imageUrl ? (
                     <img src={dish.imageUrl} alt={name} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
                   ) : (
-                    <div className="w-14 h-14 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">ًںچ½ï¸ڈ</div>
+                    <div className="w-14 h-14 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">🍽️</div>
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -479,7 +467,7 @@ export default function AdminMenu() {
                       {dish.isNew && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">NEW</span>}
                     </div>
                     {desc && <p className="text-xs text-muted-foreground truncate mt-0.5">{desc}</p>}
-                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} DA</p>
+                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} EUR</p>
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <button
@@ -523,4 +511,3 @@ export default function AdminMenu() {
     </div>
   );
 }
-
