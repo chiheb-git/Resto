@@ -1,10 +1,10 @@
-﻿
+﻿@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 .dark { --color-bg: #0A0A0A; --color-card: #141414; --color-card2: #1C1C1C; --color-border: #2A2A2A; --color-text: #FFFFFF; --color-muted: #888888; }
 :root, .light { --color-bg: #F5F5F0; --color-card: #FFFFFF; --color-card2: #F0EFEB; --color-border: #E0DED8; --color-text: #111111; --color-muted: #666666; }
 
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
 
 :root {
   --bg-deep: #0A0A0F;
