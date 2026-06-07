@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useListTables, useCreateTable, useUpdateTable, useDeleteTable, getListTablesQueryKey } from "@workspace/api-client-react";
 import type { Table } from "@workspace/api-client-react";
@@ -139,6 +139,7 @@ export default function AdminTables() {
     </div>
   );
 }
+
 
 
 
