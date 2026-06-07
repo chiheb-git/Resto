@@ -4,14 +4,9 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [react(), tailwindcss()],
   resolve: {
-    alias: {
-      "@": path.resolve(import.meta.dirname, "src"),
-    },
+    alias: { "@": path.resolve(import.meta.dirname, "src") },
     dedupe: ["react", "react-dom"],
   },
   root: path.resolve(import.meta.dirname),
@@ -19,24 +14,12 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, "dist"),
     emptyOutDir: true,
   },
-  server: { allowedHosts: ["stimuli-buddy-clavicle.ngrok-free.dev", ".ngrok-free.dev", ".ngrok-free.app"],
+  server: {
     port: 5173,
     host: "0.0.0.0",
     proxy: {
-      "/api": {
-        target: "http://localhost:4000",
-        changeOrigin: true,
-        headers: { "ngrok-skip-browser-warning": "true" },
-      },
-      "/socket.io": {
-        target: "http://localhost:4000",
-        changeOrigin: true,
-        ws: true,
-      },
+      "/api": { target: "http://localhost:4000", changeOrigin: true, rewrite: (p) => p.replace(/^\/api/, "") },
+      "/socket.io": { target: "http://localhost:4000", changeOrigin: true, ws: true },
     },
   },
 });
-
-
-
-
