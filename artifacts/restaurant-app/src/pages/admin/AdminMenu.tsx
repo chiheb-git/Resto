@@ -453,7 +453,7 @@ export default function AdminMenu() {
               return (
                 <div
                   key={dish.id}
-                  className={`flex items-center gap-3 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}
+                  style={{display:"flex",flexDirection:"column",gap:10,padding:12,background:"#141414",border:"1px solid #2A2A2A",borderRadius:16,opacity:dish.isAvailable?1:0.6}}
                 >
                   {dish.imageUrl ? (
                     <img src={dish.imageUrl} alt={name} className="w-16 h-16 object-cover rounded-lg flex-shrink-0" />
