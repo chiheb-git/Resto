@@ -462,7 +462,7 @@ function DishCard({ dish, onAdd, index }: { dish: Dish; onAdd: (dish: Dish) => v
           borderRadius: 12, padding: "6px 14px",
         }}>
           <span style={{ fontSize: 18, fontWeight: 700, color: "#FF6B35" }}>
-            {Number(dish.price).toFixed(2)}€
+            {Number(dish.price).toFixed(2)}DA
           </span>
         </div>
       </div>
@@ -648,7 +648,7 @@ function CustomizeModal({
           {/* Footer */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 20, gap: 16 }}>
             <span style={{ fontSize: 28, fontWeight: 700, color: "#FF6B35" }}>
-              {Number(dish.price).toFixed(2)}€
+              {Number(dish.price).toFixed(2)}DA
             </span>
             <button
               onClick={() => onConfirm(note)}
@@ -735,7 +735,7 @@ function CartView({
                   <p style={{ fontSize: 12, color: "#FF6B35", fontStyle: "italic", marginBottom: 4 }}>{item.customNote}</p>
                 )}
                 <p style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                  {(Number(item.dish.price) * item.quantity).toFixed(2)}€
+                  {(Number(item.dish.price) * item.quantity).toFixed(2)}DA
                 </p>
               </div>
               {/* Qty */}
@@ -799,7 +799,7 @@ function CartView({
         display: "flex", justifyContent: "space-between", alignItems: "center",
       }}>
         <span style={{ fontSize: 16, color: "var(--text-secondary)" }}>{t("orderTotal")}</span>
-        <span style={{ fontSize: 28, fontWeight: 700, color: "#FF6B35" }}>{cartTotal.toFixed(2)}€</span>
+        <span style={{ fontSize: 28, fontWeight: 700, color: "#FF6B35" }}>{cartTotal.toFixed(2)}DA</span>
       </div>
 
       {/* Confirm */}
@@ -947,7 +947,7 @@ function OrderTracker({ order }: { order: OrderWithItems }) {
             }}>
               <span style={{ color: "var(--text-primary)" }}>{item.quantity}× {dishName}</span>
               <span style={{ color: "var(--text-muted)" }}>
-                {(Number(item.unitPrice) * item.quantity).toFixed(2)}€
+                {(Number(item.unitPrice) * item.quantity).toFixed(2)}DA
               </span>
             </div>
           );
@@ -957,7 +957,7 @@ function OrderTracker({ order }: { order: OrderWithItems }) {
           paddingTop: 12, marginTop: 4, fontWeight: 700,
         }}>
           <span style={{ color: "var(--text-primary)" }}>{t("total")}</span>
-          <span style={{ color: "#FF6B35", fontSize: 20 }}>{Number(order.totalPrice).toFixed(2)}€</span>
+          <span style={{ color: "#FF6B35", fontSize: 20 }}>{Number(order.totalPrice).toFixed(2)}DA</span>
         </div>
       </div>
 
