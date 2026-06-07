@@ -6,7 +6,7 @@ const SL:Record<string,string>={pending:"En attente",confirmed:"Confirmee",refus
 export default function AdminDashboard(){
   const { theme } = useTheme();
   const isDark = theme !== "light";
-  const BG = isDark ? BG : "#F5F5F0";
+  const BG = isDark ? "#0A0A0A" : "#F5F5F0";
   const CARD = isDark ? CARD : TEXT;
   const BORDER = isDark ? BORDER : "#E0DED8";
   const TEXT = isDark ? TEXT : "#111111";
