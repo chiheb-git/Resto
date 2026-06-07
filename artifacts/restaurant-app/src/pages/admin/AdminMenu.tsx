@@ -479,44 +479,48 @@ export default function AdminMenu() {
               return (
                 <div
                   key={dish.id}
-                  className={`flex flex-wrap items-center gap-3 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}
+                  className={`flex flex-col gap-2 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}
                 >
-                  {dish.imageUrl ? (
-                    <img src={dish.imageUrl} alt={name} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
-                  ) : (
-                    <div className="w-14 h-14 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">🍽️</div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <p className="font-medium text-sm text-foreground truncate">{name}</p>
-                      {dish.isPopular && <span className="text-xs px-1.5 py-0.5 rounded bg-primary/20 text-primary">POP</span>}
-                      {dish.isNew && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">NEW</span>}
+                  {/* Top row: image + info */}
+                  <div className="flex items-center gap-3">
+                    {dish.imageUrl ? (
+                      <img src={dish.imageUrl} alt={name} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
+                    ) : (
+                      <div className="w-14 h-14 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">🍽️</div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className="font-medium text-sm text-foreground">{name}</p>
+                        {dish.isPopular && <span className="text-xs px-1.5 py-0.5 rounded bg-primary/20 text-primary">POP</span>}
+                        {dish.isNew && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">NEW</span>}
+                      </div>
+                      {desc && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{desc}</p>}
+                      <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} €</p>
                     </div>
-                    {desc && <p className="text-xs text-muted-foreground truncate mt-0.5">{desc}</p>}
-                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} EUR</p>
                   </div>
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                  {/* Bottom row: actions */}
+                  <div className="flex items-center gap-2 w-full">
                     <button
                       onClick={() => toggleDish(dish.id)}
-                      className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
+                      className={`flex-1 text-xs py-2 rounded-lg border transition-colors font-medium ${
                         dish.isAvailable
                           ? "bg-green-500/10 border-green-500/30 text-green-400"
                           : "bg-muted border-border text-muted-foreground"
                       }`}
                     >
-                      {dish.isAvailable ? "ON" : "OFF"}
+                      {dish.isAvailable ? "✓ Disponible" : "✗ Indisponible"}
                     </button>
                     <button
                       onClick={() => setDishModal(dish)}
-                      className="text-xs px-2.5 py-1.5 border border-border rounded-lg text-foreground hover:bg-accent"
+                      className="flex-1 text-xs py-2 border border-border rounded-lg text-foreground hover:bg-accent font-medium"
                     >
-                      {t("edit")}
+                      ✏️ Modifier
                     </button>
                     <button
                       onClick={() => deleteDish(dish.id)}
-                      className="text-xs px-2.5 py-1.5 text-destructive hover:bg-destructive/10 rounded-lg"
+                      className="text-xs px-3 py-2 text-destructive hover:bg-destructive/10 rounded-lg border border-destructive/20"
                     >
-                      {t("delete")}
+                      🗑️
                     </button>
                   </div>
                 </div>
