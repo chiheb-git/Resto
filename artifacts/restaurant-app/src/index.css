@@ -293,3 +293,19 @@
   --text-secondary: rgba(0,0,0,0.65) !important;
   --text-muted: rgba(0,0,0,0.35) !important;
 }
+
+.light {
+  --bg-deep: #FAFAF8 !important;
+  --bg-surface: #F5F4F0 !important;
+  --bg-card: #FFFFFF !important;
+  --bg-card-hover: #F0EFE8 !important;
+  --bg-glass: rgba(250,250,248,0.9) !important;
+  --border-subtle: rgba(0,0,0,0.08) !important;
+  --text-primary: #1A1A1A !important;
+  --text-secondary: rgba(26,26,26,0.7) !important;
+  --text-muted: rgba(26,26,26,0.45) !important;
+}
+.light .menu-hero {
+  background: linear-gradient(135deg, #1A0A00 0%, #2D1500 50%, #1A0A00 100%) !important;
+}
+
