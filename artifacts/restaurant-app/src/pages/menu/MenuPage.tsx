@@ -1029,6 +1029,13 @@ export default function MenuPage() {
   const params = useParams<{ token: string }>();
   const [, navigate] = useLocation();
   const { theme, setTheme } = useTheme();
+  const isDark = theme !== "light";
+  const BG = isDark ? "#0A0A0A" : "#F5F5F0";
+  const CARD = isDark ? "#141414" : "#FFFFFF";
+  const CARD2 = isDark ? "#1C1C1C" : "#F0EFEB";
+  const BORDER = isDark ? "#2A2A2A" : "#E0DED8";
+  const TEXT = isDark ? "#FFFFFF" : "#111111";
+  const MUTED = isDark ? "#888888" : "#666666";
   const lang = i18n.language;
 
   const [cart, setCart] = useState<CartItem[]>([]);
