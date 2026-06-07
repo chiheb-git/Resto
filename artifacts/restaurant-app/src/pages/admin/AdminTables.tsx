@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
 
 const STATUS_COLORS: Record<string, string> = { free: "bg-green-500/20 text-green-400", occupied: "bg-red-500/20 text-red-400", waiting: "bg-amber-500/20 text-amber-400" };
-const BASE_URL = "http://192.168.43.251:5173";
+const BASE_URL = "https://resto-restaurant-app-ten.vercel.app";
 
 function getQrUrl(table: Table) {
   const base = import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
@@ -139,6 +139,7 @@ export default function AdminTables() {
     </div>
   );
 }
+
 
 
 
