@@ -1,8 +1,16 @@
 ﻿import { useGetDashboardStats, useGetOrdersByStatus } from "@workspace/api-client-react";
-const CARD="#141414",BORDER="#2A2A2A",TEXT="#fff",MUTED="#888",ORANGE="#FF6B00";
+import { useTheme } from "next-themes";
+const CARD=CARD,BORDER=BORDER,TEXT="#fff",MUTED="#888",ORANGE="#FF6B00";
 const COLORS=["#FF6B00","#0096FF","#FF3232","#00D264","#888"];
 const SL:Record<string,string>={pending:"En attente",confirmed:"Confirmee",refused:"Refusee",ready:"Prete",delivered:"Livree"};
 export default function AdminDashboard(){
+  const { theme } = useTheme();
+  const isDark = theme !== "light";
+  const BG = isDark ? BG : "#F5F5F0";
+  const CARD = isDark ? CARD : TEXT;
+  const BORDER = isDark ? BORDER : "#E0DED8";
+  const TEXT = isDark ? TEXT : "#111111";
+  const MUTED = isDark ? MUTED : "#666666";
   const{data:stats,isLoading}=useGetDashboardStats({query:{refetchInterval:10000}as any});
   const{data:obs=[]}=useGetOrdersByStatus({query:{refetchInterval:10000}as any});
   if(isLoading||!stats)return <div style={{padding:16,color:TEXT}}>Chargement...</div>;
@@ -17,7 +25,7 @@ export default function AdminDashboard(){
     {l:"Plats",v:stats.totalDishes,c:"#A855F7"},
   ];
   return(
-    <div style={{padding:16,background:"#0A0A0A",minHeight:"100vh",fontFamily:"Inter,sans-serif"}}>
+    <div style={{padding:16,background:BG,minHeight:"100vh",fontFamily:"Inter,sans-serif"}}>
       <h1 style={{fontSize:20,fontWeight:800,color:TEXT,marginBottom:4}}>Dashboard</h1>
       <p style={{fontSize:12,color:MUTED,marginBottom:20}}>Performance du jour</p>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
