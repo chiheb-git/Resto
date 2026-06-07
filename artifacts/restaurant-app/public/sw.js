@@ -1,4 +1,4 @@
-﻿const CACHE = "restaurantos-v1";
+﻿const CACHE = "restaurantos-v2";
 const ASSETS = ["/", "/index.html"];
 
 self.addEventListener("install", (e) => {
