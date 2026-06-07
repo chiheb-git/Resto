@@ -16,7 +16,7 @@ export default defineConfig({
   },
   root: path.resolve(import.meta.dirname),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: path.resolve(import.meta.dirname, "dist"),
     emptyOutDir: true,
   },
   server: { allowedHosts: ["stimuli-buddy-clavicle.ngrok-free.dev", ".ngrok-free.dev", ".ngrok-free.app"],
@@ -36,6 +36,7 @@ export default defineConfig({
     },
   },
 });
+
 
 
 
