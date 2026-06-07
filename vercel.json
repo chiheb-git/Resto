@@ -1,0 +1,1 @@
+﻿{"outputDirectory":"artifacts/restaurant-app/dist","buildCommand":"pnpm --dir artifacts/restaurant-app run build","installCommand":"pnpm install --shamefully-hoist"}
