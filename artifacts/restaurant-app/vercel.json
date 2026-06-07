@@ -1,6 +1,1 @@
-﻿{
-  "buildCommand": "vite build --config vite.config.ts",
-  "outputDirectory": "dist",
-  "installCommand": "pnpm install --shamefully-hoist",
-  "framework": "vite"
-}
+﻿{"outputDirectory":"dist"}
