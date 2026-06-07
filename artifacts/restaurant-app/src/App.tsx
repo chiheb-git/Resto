@@ -23,7 +23,7 @@ import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminStats from "@/pages/admin/AdminStats";
 
 const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
-setBaseUrl(`${BASE}`);
+setBaseUrl(import.meta.env.VITE_API_URL || `${BASE}`);
 setAuthTokenGetter(() => localStorage.getItem("token"));
 
 const queryClient = new QueryClient({
