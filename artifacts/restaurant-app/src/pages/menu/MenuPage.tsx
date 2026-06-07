@@ -1029,7 +1029,7 @@ export default function MenuPage() {
   const params = useParams<{ token: string }>();
   const [, navigate] = useLocation();
   const { theme, setTheme } = useTheme();
-  const isDark = theme !== "light";
+  const isDark = true;
   const BG = isDark ? "#0A0A0A" : "#F5F5F0";
   const CARD = isDark ? "#141414" : "#FFFFFF";
   const CARD2 = isDark ? "#1C1C1C" : "#F0EFEB";
@@ -1263,7 +1263,7 @@ export default function MenuPage() {
             }}>{l.toUpperCase()}</button>
           ))}
           <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={() => {}}
             style={{
               width: 34, height: 34, borderRadius: 10,
               border: "0.5px solid rgba(255,255,255,0.08)",
