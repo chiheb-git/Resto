@@ -403,7 +403,7 @@ export default function AdminMenu() {
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+        <div style={{display:"flex",flexDirection:"row",overflowX:"auto",padding:"8px 12px",gap:8,msOverflowStyle:"none",scrollbarWidth:"none"}}>
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
             <SortableContext items={orderedCategories.map((c) => c.id)} strategy={verticalListSortingStrategy}>
               {orderedCategories.map((cat) => (
