@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, boolean, numeric, timestamp } from "drizzle-orm/pg-core";
+﻿import { pgTable, serial, text, integer, boolean, numeric, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 import { categoriesTable } from "./categories";
@@ -18,9 +18,11 @@ export const dishesTable = pgTable("dishes", {
   isPopular: boolean("is_popular").notNull().default(false),
   isNew: boolean("is_new").notNull().default(true),
   isAvailable: boolean("is_available").notNull().default(true),
+  currency: text("currency").notNull().default("DZD"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const insertDishSchema = createInsertSchema(dishesTable).omit({ id: true, createdAt: true });
 export type InsertDish = z.infer<typeof insertDishSchema>;
 export type Dish = typeof dishesTable.$inferSelect;
+

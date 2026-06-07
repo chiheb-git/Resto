@@ -197,41 +197,15 @@ function DishModal({
             </div>
           </div>
 
-          {/* Image URL ou Galerie */}
+          {/* Image URL */}
           <div>
-            <label className={labelClass + " text-muted-foreground"}>Image du plat</label>
-            <div className="flex gap-2 mb-2">
-              <input
-                value={form.imageUrl}
-                onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-                placeholder="https://... (URL de l'image)"
-                className={inputClass + " flex-1"}
-              />
-              <label className="px-3 py-2 bg-primary/15 border border-primary/30 text-primary rounded-lg text-xs font-medium cursor-pointer hover:bg-primary/25 flex items-center gap-1 whitespace-nowrap">
-                📁 Galerie
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = () => setForm({ ...form, imageUrl: reader.result as string });
-                    reader.readAsDataURL(file);
-                  }}
-                />
-              </label>
-            </div>
-            {form.imageUrl && (
-              <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-border">
-                <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" />
-                <button
-                  onClick={() => setForm({ ...form, imageUrl: "" })}
-                  className="absolute top-1 right-1 w-5 h-5 bg-black/60 text-white rounded-full text-xs flex items-center justify-center hover:bg-black"
-                >x</button>
-              </div>
-            )}
+            <label className={labelClass + " text-muted-foreground"}>{t("imageUrl")}</label>
+            <input
+              value={form.imageUrl}
+              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+              placeholder="https://..."
+              className={inputClass}
+            />
           </div>
 
           {/* Options */}
@@ -394,10 +368,10 @@ export default function AdminMenu() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-full">
+    <div className="flex h-full">
 
       {/* Sidebar categories */}
-      <div className="md:w-52 w-full border-b md:border-b-0 md:border-e border-border bg-card/50 flex flex-col flex-shrink-0">
+      <div className="w-52 border-e border-border bg-card/50 flex flex-col flex-shrink-0">
         <div className="flex items-center justify-between px-3 py-3 border-b border-border">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t("menu")}</span>
           <button
@@ -429,7 +403,7 @@ export default function AdminMenu() {
           </div>
         )}
 
-        <div className="flex md:flex-col flex-row overflow-x-auto md:overflow-y-auto p-2 gap-1 md:space-y-1">
+        <div className="flex-1 overflow-y-auto p-2 space-y-1">
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
             <SortableContext items={orderedCategories.map((c) => c.id)} strategy={verticalListSortingStrategy}>
               {orderedCategories.map((cat) => (
@@ -479,48 +453,44 @@ export default function AdminMenu() {
               return (
                 <div
                   key={dish.id}
-                  className={`flex flex-col gap-2 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}
+                  className={`flex items-center gap-3 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}
                 >
-                  {/* Top row: image + info */}
-                  <div className="flex items-center gap-3">
-                    {dish.imageUrl ? (
-                      <img src={dish.imageUrl} alt={name} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
-                    ) : (
-                      <div className="w-14 h-14 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">🍽️</div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <p className="font-medium text-sm text-foreground">{name}</p>
-                        {dish.isPopular && <span className="text-xs px-1.5 py-0.5 rounded bg-primary/20 text-primary">POP</span>}
-                        {dish.isNew && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">NEW</span>}
-                      </div>
-                      {desc && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{desc}</p>}
-                      <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} €</p>
+                  {dish.imageUrl ? (
+                    <img src={dish.imageUrl} alt={name} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
+                  ) : (
+                    <div className="w-14 h-14 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">🍽️</div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <p className="font-medium text-sm text-foreground truncate">{name}</p>
+                      {dish.isPopular && <span className="text-xs px-1.5 py-0.5 rounded bg-primary/20 text-primary">POP</span>}
+                      {dish.isNew && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">NEW</span>}
                     </div>
+                    {desc && <p className="text-xs text-muted-foreground truncate mt-0.5">{desc}</p>}
+                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} EUR</p>
                   </div>
-                  {/* Bottom row: actions */}
-                  <div className="flex items-center gap-2 w-full">
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
                     <button
                       onClick={() => toggleDish(dish.id)}
-                      className={`flex-1 text-xs py-2 rounded-lg border transition-colors font-medium ${
+                      className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
                         dish.isAvailable
                           ? "bg-green-500/10 border-green-500/30 text-green-400"
                           : "bg-muted border-border text-muted-foreground"
                       }`}
                     >
-                      {dish.isAvailable ? "✓ Disponible" : "✗ Indisponible"}
+                      {dish.isAvailable ? "ON" : "OFF"}
                     </button>
                     <button
                       onClick={() => setDishModal(dish)}
-                      className="flex-1 text-xs py-2 border border-border rounded-lg text-foreground hover:bg-accent font-medium"
+                      className="text-xs px-2.5 py-1.5 border border-border rounded-lg text-foreground hover:bg-accent"
                     >
-                      ✏️ Modifier
+                      {t("edit")}
                     </button>
                     <button
                       onClick={() => deleteDish(dish.id)}
-                      className="text-xs px-3 py-2 text-destructive hover:bg-destructive/10 rounded-lg border border-destructive/20"
+                      className="text-xs px-2.5 py-1.5 text-destructive hover:bg-destructive/10 rounded-lg"
                     >
-                      🗑️
+                      {t("delete")}
                     </button>
                   </div>
                 </div>
