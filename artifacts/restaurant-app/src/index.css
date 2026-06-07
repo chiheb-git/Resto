@@ -1,4 +1,29 @@
-﻿.dark { --color-bg: #0A0A0A; --color-card: #141414; --color-card2: #1C1C1C; --color-border: #2A2A2A; --color-text: #FFFFFF; --color-muted: #888888; }
+﻿
+:root, .dark {
+  --bg-primary: #0A0A0A;
+  --bg-card: #141414;
+  --bg-surface: #1C1C1C;
+  --bg-glass: rgba(20,20,20,0.8);
+  --border-subtle: #2A2A2A;
+  --text-primary: #FFFFFF;
+  --text-secondary: #CCCCCC;
+  --text-muted: #888888;
+  --font-display: Inter, sans-serif;
+  --font-body: Inter, sans-serif;
+}
+.light {
+  --bg-primary: #F5F5F0;
+  --bg-card: #FFFFFF;
+  --bg-surface: #F0EFEB;
+  --bg-glass: rgba(255,255,255,0.8);
+  --border-subtle: #E0DED8;
+  --text-primary: #111111;
+  --text-secondary: #444444;
+  --text-muted: #666666;
+  --font-display: Inter, sans-serif;
+  --font-body: Inter, sans-serif;
+}
+.dark { --color-bg: #0A0A0A; --color-card: #141414; --color-card2: #1C1C1C; --color-border: #2A2A2A; --color-text: #FFFFFF; --color-muted: #888888; }
 :root, .light { --color-bg: #F5F5F0; --color-card: #FFFFFF; --color-card2: #F0EFEB; --color-border: #E0DED8; --color-text: #111111; --color-muted: #666666; }
 
 
