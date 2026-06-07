@@ -197,15 +197,41 @@ function DishModal({
             </div>
           </div>
 
-          {/* Image URL */}
+          {/* Image URL ou Galerie */}
           <div>
-            <label className={labelClass + " text-muted-foreground"}>{t("imageUrl")}</label>
-            <input
-              value={form.imageUrl}
-              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-              placeholder="https://..."
-              className={inputClass}
-            />
+            <label className={labelClass + " text-muted-foreground"}>Image du plat</label>
+            <div className="flex gap-2 mb-2">
+              <input
+                value={form.imageUrl}
+                onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+                placeholder="https://... (URL de l'image)"
+                className={inputClass + " flex-1"}
+              />
+              <label className="px-3 py-2 bg-primary/15 border border-primary/30 text-primary rounded-lg text-xs font-medium cursor-pointer hover:bg-primary/25 flex items-center gap-1 whitespace-nowrap">
+                📁 Galerie
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = () => setForm({ ...form, imageUrl: reader.result as string });
+                    reader.readAsDataURL(file);
+                  }}
+                />
+              </label>
+            </div>
+            {form.imageUrl && (
+              <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-border">
+                <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" />
+                <button
+                  onClick={() => setForm({ ...form, imageUrl: "" })}
+                  className="absolute top-1 right-1 w-5 h-5 bg-black/60 text-white rounded-full text-xs flex items-center justify-center hover:bg-black"
+                >x</button>
+              </div>
+            )}
           </div>
 
           {/* Options */}
@@ -368,10 +394,10 @@ export default function AdminMenu() {
   };
 
   return (
-    <div className="flex h-full">
+    <div className="flex flex-col md:flex-row h-full">
 
       {/* Sidebar categories */}
-      <div className="w-52 border-e border-border bg-card/50 flex flex-col flex-shrink-0">
+      <div className="md:w-52 w-full border-b md:border-b-0 md:border-e border-border bg-card/50 flex flex-col flex-shrink-0">
         <div className="flex items-center justify-between px-3 py-3 border-b border-border">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t("menu")}</span>
           <button
@@ -403,7 +429,7 @@ export default function AdminMenu() {
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+        <div className="flex md:flex-col flex-row overflow-x-auto md:overflow-y-auto p-2 gap-1 md:space-y-1">
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
             <SortableContext items={orderedCategories.map((c) => c.id)} strategy={verticalListSortingStrategy}>
               {orderedCategories.map((cat) => (
@@ -453,7 +479,7 @@ export default function AdminMenu() {
               return (
                 <div
                   key={dish.id}
-                  className={`flex items-center gap-3 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}
+                  className={`flex flex-wrap items-center gap-3 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}
                 >
                   {dish.imageUrl ? (
                     <img src={dish.imageUrl} alt={name} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
