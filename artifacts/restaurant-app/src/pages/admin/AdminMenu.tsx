@@ -176,7 +176,7 @@ function DishModal({
           {/* Prix et allergenes */}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className={labelClass + " text-muted-foreground"}>{t("price")} (EUR)</label>
+              <label className={labelClass + " text-muted-foreground"}>{t("price")} (DA)</label>
               <input
                 type="number"
                 step="0.01"
@@ -456,18 +456,18 @@ export default function AdminMenu() {
                   className={`flex items-center gap-3 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}
                 >
                   {dish.imageUrl ? (
-                    <img src={dish.imageUrl} alt={name} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
+                    <img src={dish.imageUrl} alt={name} className="w-16 h-16 object-cover rounded-lg flex-shrink-0" />
                   ) : (
                     <div className="w-14 h-14 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">🍽️</div>
                   )}
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <p className="font-medium text-sm text-foreground truncate">{name}</p>
                       {dish.isPopular && <span className="text-xs px-1.5 py-0.5 rounded bg-primary/20 text-primary">POP</span>}
                       {dish.isNew && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">NEW</span>}
                     </div>
                     {desc && <p className="text-xs text-muted-foreground truncate mt-0.5">{desc}</p>}
-                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} EUR</p>
+                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} DA</p>
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <button
