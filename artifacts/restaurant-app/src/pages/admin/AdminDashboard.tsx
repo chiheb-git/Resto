@@ -1,119 +1,46 @@
-﻿import { useTranslation } from "react-i18next";
-import { useGetDashboardStats, useGetOrdersByStatus } from "@workspace/api-client-react";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
-
-const COLORS = ["#f59e0b", "#3b82f6", "#ef4444", "#22c55e", "#6b7280"];
-const STATUS_LABELS: Record<string, string> = {
-  pending: "En attente",
-  confirmed: "Confirmée",
-  refused: "Refusée",
-  ready: "Prête",
-  delivered: "Livrée",
-};
-
-function StatCard({ label, value, icon, accent }: { label: string; value: string | number; icon: string; accent?: string }) {
-  return (
-    <div className="bg-card border border-border rounded-xl p-4 flex items-start gap-3">
-      <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xl flex-shrink-0 ${accent ?? "bg-primary/15"}`}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-xs text-muted-foreground font-medium">{label}</p>
-        <p className="text-2xl font-bold text-foreground mt-0.5">{value}</p>
-      </div>
-    </div>
-  );
-}
-
-export default function AdminDashboard() {
-  const { t } = useTranslation();
-  const { data: stats, isLoading } = useGetDashboardStats({ query: { refetchInterval: 10000 } as any });
-  const { data: ordersByStatus = [] } = useGetOrdersByStatus({ query: { refetchInterval: 10000 } as any });
-
-  if (isLoading || !stats) {
-    return (
-      <div className="p-6 grid grid-cols-2 lg:grid-cols-3 gap-4">
-        {[...Array(6)].map((_, i) => <div key={i} className="h-24 bg-muted animate-pulse rounded-xl" />)}
-      </div>
-    );
-  }
-
-  const pieData = (ordersByStatus as { status: string; count: number }[]).map((d) => ({
-    name: STATUS_LABELS[d.status] ?? d.status,
-    value: d.count,
-  }));
-
-  const totalOrders = pieData.reduce((s, d) => s + d.value, 0);
-
-  return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-foreground">{t("dashboard")}</h1>
-        <p className="text-sm text-muted-foreground mt-1">Overview of today's performance</p>
-      </div>
-
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard label={t("todayRevenue")} value={`${Number(stats.todayRevenue).toFixed(2)} €`} icon="💰" accent="bg-amber-500/15" />
-        <StatCard label={t("todayOrders")} value={stats.todayOrders} icon="📋" accent="bg-blue-500/15" />
-        <StatCard label={t("pendingOrders")} value={stats.pendingOrders} icon="⏳" accent="bg-orange-500/15" />
-        <StatCard label={t("avgRating")} value={`${Number(stats.avgRating).toFixed(1)} ★`} icon="⭐" accent="bg-yellow-500/15" />
-        <StatCard label={t("activeTables")} value={stats.activeTables} icon="🪑" accent="bg-green-500/15" />
-        <StatCard label={t("totalDishes")} value={stats.totalDishes} icon="🍽️" accent="bg-purple-500/15" />
-      </div>
-
-      <div className="bg-card border border-border rounded-xl p-4">
-        <h2 className="text-sm font-semibold text-foreground mb-4">{t("ordersByStatus")}</h2>
-        {pieData.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground gap-2">
-            <span className="text-4xl">📭</span>
-            <p className="text-sm">Aucune commande aujourd'hui</p>
+﻿import { useGetDashboardStats, useGetOrdersByStatus } from "@workspace/api-client-react";
+const CARD="#141414",BORDER="#2A2A2A",TEXT="#fff",MUTED="#888",ORANGE="#FF6B00";
+const COLORS=["#FF6B00","#0096FF","#FF3232","#00D264","#888"];
+const SL:Record<string,string>={pending:"En attente",confirmed:"Confirmee",refused:"Refusee",ready:"Prete",delivered:"Livree"};
+export default function AdminDashboard(){
+  const{data:stats,isLoading}=useGetDashboardStats({query:{refetchInterval:10000}as any});
+  const{data:obs=[]}=useGetOrdersByStatus({query:{refetchInterval:10000}as any});
+  if(isLoading||!stats)return <div style={{padding:16,color:TEXT}}>Chargement...</div>;
+  const pie=(obs as{status:string;count:number}[]).map(d=>({name:SL[d.status]??d.status,value:d.count}));
+  const tot=pie.reduce((s,d)=>s+d.value,0);
+  const cards=[
+    {l:"Revenu du jour",v:Number(stats.todayRevenue).toFixed(2)+" DA",c:ORANGE},
+    {l:"Commandes",v:stats.todayOrders,c:"#0096FF"},
+    {l:"En attente",v:stats.pendingOrders,c:"#FFB400"},
+    {l:"Note moy.",v:Number(stats.avgRating).toFixed(1)+"/5",c:"#FFD700"},
+    {l:"Tables",v:stats.activeTables,c:"#00D264"},
+    {l:"Plats",v:stats.totalDishes,c:"#A855F7"},
+  ];
+  return(
+    <div style={{padding:16,background:"#0A0A0A",minHeight:"100vh",fontFamily:"Inter,sans-serif"}}>
+      <h1 style={{fontSize:20,fontWeight:800,color:TEXT,marginBottom:4}}>Dashboard</h1>
+      <p style={{fontSize:12,color:MUTED,marginBottom:20}}>Performance du jour</p>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
+        {cards.map(s=>(
+          <div key={s.l} style={{background:CARD,border:"1px solid "+BORDER,borderRadius:16,padding:14}}>
+            <div style={{fontSize:20,fontWeight:800,color:s.c,marginBottom:4}}>{String(s.v)}</div>
+            <div style={{fontSize:11,color:MUTED}}>{s.l}</div>
           </div>
-        ) : (
-          <div className="flex items-center gap-6">
-            <div style={{ position: "relative", width: 180, height: 180, flexShrink: 0 }}>
-              <ResponsiveContainer width={180} height={180}>
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={80}
-                    paddingAngle={pieData.length > 1 ? 3 : 0}
-                    dataKey="value"
-                    startAngle={90}
-                    endAngle={-270}
-                  >
-                    {pieData.map((_, i) => (
-                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value, name) => [value, name]} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div style={{
-                position: "absolute", top: "50%", left: "50%",
-                transform: "translate(-50%,-50%)",
-                textAlign: "center", pointerEvents: "none"
-              }}>
-                <div style={{ fontSize: 22, fontWeight: 700, color: "#F5F5F0" }}>{totalOrders}</div>
-                <div style={{ fontSize: 10, color: "rgba(245,245,240,0.4)", textTransform: "uppercase", letterSpacing: "0.08em" }}>total</div>
-              </div>
-            </div>
-            <div className="space-y-3 flex-1">
-              {pieData.map((item, i) => (
-                <div key={item.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                    <span className="text-sm text-foreground">{item.name}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-foreground">{item.value}</span>
-                    <span className="text-xs text-muted-foreground">({Math.round(item.value / totalOrders * 100)}%)</span>
-                  </div>
+        ))}
+      </div>
+      <div style={{background:CARD,border:"1px solid "+BORDER,borderRadius:16,padding:16}}>
+        <p style={{fontSize:14,fontWeight:700,color:TEXT,marginBottom:12}}>Par statut</p>
+        {pie.length===0?<p style={{color:MUTED,textAlign:"center"}}>Aucune commande</p>:(
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {pie.map((item,i)=>(
+              <div key={item.name} style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <div style={{width:10,height:10,borderRadius:"50%",background:COLORS[i%COLORS.length]}}/>
+                  <span style={{fontSize:13,color:TEXT}}>{item.name}</span>
                 </div>
-              ))}
-            </div>
+                <span style={{fontSize:13,fontWeight:700,color:COLORS[i%COLORS.length]}}>{item.value} ({tot?Math.round(item.value/tot*100):0}%)</span>
+              </div>
+            ))}
           </div>
         )}
       </div>
