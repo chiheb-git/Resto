@@ -39,7 +39,7 @@ export default function VendorPayment() {
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 28 }}>
         {[
-          { label: "En attente", value: String(readyOrders.length), sub: formatPrice(totalPending) + " DA", color: ORANGE },
+          { label: "En attente", value: String(readyOrders.length), sub: formatPrice(totalPending), color: ORANGE },
           { label: "Payees", value: String(paidOrders.length), sub: formatPrice(totalPaid), color: GREEN },
           { label: "Total encaisse", value: formatPrice(totalPaid), sub: paidOrders.length + " commandes", color: "#0096FF" },
         ].map((s) => (
