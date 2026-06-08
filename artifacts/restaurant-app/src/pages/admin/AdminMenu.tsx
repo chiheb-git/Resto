@@ -282,8 +282,8 @@ export default function AdminMenu() {
   const sensors = useSensors(useSensor(PointerSensor));
   useEffect(() => {
     const refresh = () => { invalidateCats(); invalidateDishes(); };
-    socket.on("menu:updated", refresh);
-    return () => { socket.off("menu:updated", refresh); };
+    getSocket().on("menu:updated", refresh);
+    return () => { getSocket().off("menu:updated", refresh); };
   }, []);
   const invalidateCats = () => queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
   const invalidateDishes = () => queryClient.invalidateQueries({ queryKey: getListDishesQueryKey() });
