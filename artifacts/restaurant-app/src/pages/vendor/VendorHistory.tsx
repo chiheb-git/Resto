@@ -19,13 +19,14 @@ const STATUS_ICONS: Record<string, string> = {
 
 export default function VendorHistory() {
   const { t } = useTranslation();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, ready: currencyReady } = useCurrency();
   const today = new Date().toISOString().split("T")[0];
   const [date, setDate] = useState(today);
   const lang = i18n.language as "fr" | "en" | "ar";
   const nameKey = `name${lang.charAt(0).toUpperCase() + lang.slice(1)}` as "nameEn" | "nameFr" | "nameAr";
 
   const { data: orders = [], isLoading } = useListOrders({ date });
+  if (!currencyReady) return null;
   const typedOrders = orders as OrderWithItems[];
 
   /* ---- Stats ---- */

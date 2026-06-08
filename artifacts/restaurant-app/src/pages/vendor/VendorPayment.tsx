@@ -11,7 +11,8 @@ export default function VendorPayment() {
   const queryClient = useQueryClient();
   const lang = i18n.language as "fr" | "en" | "ar";
   const nameKey = ("name" + lang.charAt(0).toUpperCase() + lang.slice(1)) as "nameEn" | "nameFr" | "nameAr";
-  const { formatPrice } = useCurrency();
+  const { formatPrice, ready: currencyReady } = useCurrency();
+  if (!currencyReady) return null;
   const updateStatus = useUpdateOrderStatus();
   const { data: orders = [] } = useListOrders({}, { query: { refetchInterval: 5000 } as any });
   useEffect(() => {

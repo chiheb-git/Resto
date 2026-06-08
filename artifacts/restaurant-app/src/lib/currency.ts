@@ -44,8 +44,9 @@ export function formatPrice(price: number | string, currency?: Currency): string
 
 export function useCurrency() {
   const [currency, setCurrencyState] = useState<Currency>(getCurrency());
+  const [ready, setReady] = useState(false);
   useEffect(() => {
-    fetchCurrencyFromServer().then(c => setCurrencyState(c));
+    fetchCurrencyFromServer().then(c => { setCurrencyState(c); setReady(true); });
     const handler = () => setCurrencyState(getCurrency());
     window.addEventListener("currency-change", handler);
     const socketHandler = (data: { key: string; value: string }) => {
@@ -62,6 +63,7 @@ export function useCurrency() {
   }, []);
   return {
     currency,
+    ready,
     formatPrice: (price: number | string) => formatPrice(price, currency),
   };
 }

@@ -73,7 +73,8 @@ function OrderCard({ order, onConfirm, onRefuse, onReady, onDeliver }: {
 }) {
   const { t } = useTranslation();
   const lang = i18n.language as "fr" | "en" | "ar";
-  const { formatPrice } = useCurrency();
+  const { formatPrice, ready: currencyReady } = useCurrency();
+  if (!currencyReady) return null;
   const nameKey = `name${lang.charAt(0).toUpperCase() + lang.slice(1)}` as "nameEn" | "nameFr" | "nameAr";
 
   return (
