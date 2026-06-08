@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   useListCategories,
@@ -176,7 +176,7 @@ function DishModal({
           {/* Prix et allergenes */}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className={labelClass + " text-muted-foreground"}>{t("price")} (DA)</label>
+              <label className={labelClass + " text-muted-foreground"}>{t("price")} (EUR)</label>
               <input
                 type="number"
                 step="0.01"
@@ -368,10 +368,10 @@ export default function AdminMenu() {
   };
 
   return (
-    <div style={{display:"flex",flexDirection:"column",height:"100%"}}>
+    <div className="flex h-full">
 
       {/* Sidebar categories */}
-      <div style={{width:"100%",borderBottom:"1px solid #2A2A2A",flexShrink:0}}>
+      <div className="w-52 border-e border-border bg-card/50 flex flex-col flex-shrink-0">
         <div className="flex items-center justify-between px-3 py-3 border-b border-border">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t("menu")}</span>
           <button
@@ -403,7 +403,7 @@ export default function AdminMenu() {
           </div>
         )}
 
-        <div style={{display:"flex",flexDirection:"row",overflowX:"auto",padding:"8px 12px",gap:8,msOverflowStyle:"none",scrollbarWidth:"none"}}>
+        <div className="flex-1 overflow-y-auto p-2 space-y-1">
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
             <SortableContext items={orderedCategories.map((c) => c.id)} strategy={verticalListSortingStrategy}>
               {orderedCategories.map((cat) => (
@@ -453,21 +453,21 @@ export default function AdminMenu() {
               return (
                 <div
                   key={dish.id}
-                  style={{display:"flex",flexDirection:"column",gap:10,padding:12,background:"var(--card)",border:"1px solid var(--border)",borderRadius:16,opacity:dish.isAvailable?1:0.6}}
+                  className={`flex items-center gap-3 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}
                 >
                   {dish.imageUrl ? (
-                    <img src={dish.imageUrl} alt={name} className="w-16 h-16 object-cover rounded-lg flex-shrink-0" />
+                    <img src={dish.imageUrl} alt={name} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
                   ) : (
                     <div className="w-14 h-14 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">🍽️</div>
                   )}
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <p className="font-medium text-sm text-foreground truncate">{name}</p>
                       {dish.isPopular && <span className="text-xs px-1.5 py-0.5 rounded bg-primary/20 text-primary">POP</span>}
                       {dish.isNew && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">NEW</span>}
                     </div>
                     {desc && <p className="text-xs text-muted-foreground truncate mt-0.5">{desc}</p>}
-                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} DA</p>
+                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} EUR</p>
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <button
