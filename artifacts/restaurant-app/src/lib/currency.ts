@@ -49,18 +49,18 @@ export function useCurrency() {
     fetchCurrencyFromServer().then(c => { setCurrencyState(c); setReady(true); });
     const handler = () => setCurrencyState(getCurrency());
     window.addEventListener("currency-change", handler);
+    const s = getSocket();
     const socketHandler = (data: { key: string; value: string }) => {
       if (data.key === "currency") {
         localStorage.setItem(STORAGE_KEY, data.value);
         setCurrencyState(data.value as Currency);
       }
     };
-    const s = getSocket();
-    const socketHandler = (data: { key: string; value: string }) => {
-      if (data.key === "currency") { localStorage.setItem(STORAGE_KEY, data.value); setCurrencyState(data.value as Currency); }
-    };
     s.on("settings:updated", socketHandler);
-    return () => { window.removeEventListener("currency-change", handler); s.off("settings:updated", socketHandler); };
+    return () => {
+      window.removeEventListener("currency-change", handler);
+      s.off("settings:updated", socketHandler);
+    };
   }, []);
   return {
     currency,
