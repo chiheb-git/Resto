@@ -280,6 +280,11 @@ export default function AdminMenu() {
   const dishes = rawDishes as Dish[];
 
   const sensors = useSensors(useSensor(PointerSensor));
+  useEffect(() => {
+    const refresh = () => { invalidateCats(); invalidateDishes(); };
+    socket.on("menu:updated", refresh);
+    return () => { socket.off("menu:updated", refresh); };
+  }, []);
   const invalidateCats = () => queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
   const invalidateDishes = () => queryClient.invalidateQueries({ queryKey: getListDishesQueryKey() });
 

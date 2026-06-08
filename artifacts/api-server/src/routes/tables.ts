@@ -1,6 +1,7 @@
 ﻿import { Router, IRouter } from "express";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "crypto";
+import { getSocketServer } from "../lib/socket.js";
 import { db, tablesTable, ordersTable, orderItemsTable } from "@workspace/db";
 import {
   ListTablesResponseItem,
@@ -49,6 +50,7 @@ router.post("/tables", requireAuth, requireRole("admin"), async (req, res): Prom
     .insert(tablesTable)
     .values({ number: parsed.data.number, qrToken })
     .returning();
+  const ioT1 = getSocketServer(); if (ioT1) ioT1.emit("tables:updated", { type: "table:created" });
   res.status(201).json(ListTablesResponseItem.parse({ ...table, status: "free" }));
 });
 

@@ -1077,6 +1077,7 @@ export default function MenuPage() {
       }
     };
     socket.on("order:updated", handleUpdatedOrder);
+    socket.on("menu:updated", () => { queryClient.invalidateQueries({ queryKey: ["listDishes"] }); queryClient.invalidateQueries({ queryKey: ["listCategories"] }); });
     if (activeOrderId) socket.emit("subscribeOrder", { orderId: activeOrderId, tableToken: params.token });
     return () => { socket.off("order:updated", handleUpdatedOrder); };
   }, [activeOrder?.id, orderId, queryClient, table?.id, params.token, t]);

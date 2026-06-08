@@ -1,5 +1,6 @@
-import { Router, IRouter } from "express";
+﻿import { Router, IRouter } from "express";
 import { eq, asc } from "drizzle-orm";
+import { getSocketServer } from "../lib/socket.js";
 import { db, categoriesTable } from "@workspace/db";
 import {
   ListCategoriesResponseItem,
@@ -31,10 +32,12 @@ router.post("/categories", requireAuth, requireRole("admin"), async (req, res): 
     return;
   }
   const [cat] = await db.insert(categoriesTable).values(parsed.data).returning();
+  const ioC1 = getSocketServer(); if (ioC1) ioC1.emit("menu:updated", { type: "category:created" });
   res.status(201).json(ListCategoriesResponseItem.parse(cat));
 });
 
 router.get("/categories/reorder", (_req, res): void => {
+  const ioC2 = getSocketServer(); if (ioC2) ioC2.emit("menu:updated", { type: "category:updated" });
   res.json({ success: true });
 });
 
@@ -50,6 +53,7 @@ router.patch("/categories/reorder", requireAuth, requireRole("admin"), async (re
       .set({ orderIndex: item.orderIndex })
       .where(eq(categoriesTable.id, item.id));
   }
+  const ioC2 = getSocketServer(); if (ioC2) ioC2.emit("menu:updated", { type: "category:updated" });
   res.json({ success: true });
 });
 
@@ -101,6 +105,7 @@ router.delete("/categories/:id", requireAuth, requireRole("admin"), async (req, 
     res.status(404).json({ error: "Category not found" });
     return;
   }
+  const ioC2 = getSocketServer(); if (ioC2) ioC2.emit("menu:updated", { type: "category:updated" });
   res.json({ success: true });
 });
 

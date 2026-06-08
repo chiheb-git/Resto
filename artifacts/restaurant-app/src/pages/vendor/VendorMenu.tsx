@@ -1,5 +1,7 @@
 ﻿import { useTranslation } from "react-i18next";
 import { useCurrency } from "@/lib/currency";
+import { socket } from "@/lib/socket";
+import { useEffect } from "react";
 import { useListDishes, useToggleDishAvailability, getListDishesQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -11,6 +13,11 @@ export default function VendorMenu() {
   const queryClient = useQueryClient();
   const lang = i18n.language as "fr" | "en" | "ar";
   const { formatPrice } = useCurrency();
+  useEffect(() => {
+    const refresh = () => queryClient.invalidateQueries({ queryKey: getListDishesQueryKey() });
+    socket.on("menu:updated", refresh);
+    return () => { socket.off("menu:updated", refresh); };
+  }, []);
   const nameKey = `name${lang.charAt(0).toUpperCase() + lang.slice(1)}` as "nameEn" | "nameFr" | "nameAr";
 
   const { data: dishes = [], isLoading } = useListDishes({});

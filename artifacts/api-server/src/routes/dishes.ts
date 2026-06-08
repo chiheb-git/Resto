@@ -1,5 +1,6 @@
-import { Router, IRouter } from "express";
+﻿import { Router, IRouter } from "express";
 import { eq, ilike, and } from "drizzle-orm";
+import { getSocketServer } from "../lib/socket.js";
 import { db, dishesTable } from "@workspace/db";
 import {
   ListDishesResponseItem,
@@ -49,6 +50,7 @@ router.post("/dishes", requireAuth, requireRole("admin"), async (req, res): Prom
     .insert(dishesTable)
     .values({ ...parsed.data, price: String(parsed.data.price) })
     .returning();
+  const io1 = getSocketServer(); if (io1) io1.emit("menu:updated", { type: "dish:created" });
   res.status(201).json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price) }));
 });
 
@@ -63,6 +65,7 @@ router.get("/dishes/:id", async (req, res): Promise<void> => {
     res.status(404).json({ error: "Dish not found" });
     return;
   }
+  const io2 = getSocketServer(); if (io2) io2.emit("menu:updated", { type: "dish:updated" });
   res.json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price) }));
 });
 
@@ -90,6 +93,7 @@ router.patch("/dishes/:id", requireAuth, requireRole("admin", "vendor"), async (
     res.status(404).json({ error: "Dish not found" });
     return;
   }
+  const io2 = getSocketServer(); if (io2) io2.emit("menu:updated", { type: "dish:updated" });
   res.json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price) }));
 });
 
@@ -104,6 +108,7 @@ router.delete("/dishes/:id", requireAuth, requireRole("admin"), async (req, res)
     res.status(404).json({ error: "Dish not found" });
     return;
   }
+  const io3 = getSocketServer(); if (io3) io3.emit("menu:updated", { type: "dish:deleted" });
   res.json({ success: true });
 });
 
@@ -123,6 +128,7 @@ router.patch("/dishes/:id/toggle-availability", requireAuth, requireRole("admin"
     .set({ isAvailable: !existing.isAvailable })
     .where(eq(dishesTable.id, params.data.id))
     .returning();
+  const io2 = getSocketServer(); if (io2) io2.emit("menu:updated", { type: "dish:updated" });
   res.json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price) }));
 });
 
