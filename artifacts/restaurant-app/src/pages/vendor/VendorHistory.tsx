@@ -180,7 +180,7 @@ export default function VendorHistory() {
           { label: "Chiffre d'affaires", value: `${formatPrice(totalRevenue)}`, icon: "💰", color: "#FF6B35" },
           { label: "Livrées", value: delivered, icon: "🎉", color: "#4ade80" },
           { label: "En attente", value: pending, icon: "⏳", color: "#fbbf24" },
-          { label: "Ticket moyen", value: typedOrders.length > 0 ? formatPrice(totalRevenue/typedOrders.length) : formatPrice(0), icon: "📈", color: "#c084fc" },
+          { label: "Ticket moyen", value: currencyReady ? (typedOrders.length > 0 ? formatPrice(totalRevenue/typedOrders.length) : formatPrice(0)) : "...", icon: "📈", color: "#c084fc" },
         ].map((stat, i) => (
           <div key={i} style={{
             background: "rgba(26,26,38,1)",
@@ -258,7 +258,7 @@ export default function VendorHistory() {
                       {STATUS_ICONS[order.status]} {st.label}
                     </span>
                   </div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "#FF6B35" }}>{formatPrice(order.totalPrice)}</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#FF6B35" }}>{currencyReady ? formatPrice(order.totalPrice) : "..."}</div>
                   <div style={{ fontSize: 12, color: "rgba(245,245,240,0.4)" }}>{new Date(order.createdAt).toLocaleTimeString("fr-FR")}</div>
                   <div style={{ fontSize: 12, color: "rgba(245,245,240,0.5)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {order.items.map(i => `${i.quantity}× ${i.dish ? ((i.dish as unknown as Record<string,string>)[nameKey] || i.dish.nameEn) : "?"}`).join(" · ")}
