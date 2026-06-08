@@ -257,7 +257,7 @@ export default function VendorHistory() {
                       {STATUS_ICONS[order.status]} {st.label}
                     </span>
                   </div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "#FF6B35" }}>{formatPrice(order.totalPrice)} €</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#FF6B35" }}>{formatPrice(order.totalPrice)}</div>
                   <div style={{ fontSize: 12, color: "rgba(245,245,240,0.4)" }}>{new Date(order.createdAt).toLocaleTimeString("fr-FR")}</div>
                   <div style={{ fontSize: 12, color: "rgba(245,245,240,0.5)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {order.items.map(i => `${i.quantity}× ${i.dish ? ((i.dish as unknown as Record<string,string>)[nameKey] || i.dish.nameEn) : "?"}`).join(" · ")}
