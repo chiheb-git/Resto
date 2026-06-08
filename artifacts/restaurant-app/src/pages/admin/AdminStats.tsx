@@ -1,4 +1,5 @@
 ﻿import { useState } from "react";
+import { useCurrency } from "@/lib/currency";
 import { useTranslation } from "react-i18next";
 import {
   useGetRevenueStats,
@@ -283,3 +284,4 @@ export default function AdminStats() {
     </div>
   );
 }
+
