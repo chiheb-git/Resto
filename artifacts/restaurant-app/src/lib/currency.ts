@@ -6,6 +6,7 @@ export function getCurrency(): Currency {
 export function setCurrency(c: Currency) {
   localStorage.setItem(STORAGE_KEY, c);
   window.dispatchEvent(new Event("currency-change"));
+  // cross-tab: storage event is fired automatically by the browser
 }
 export function formatPrice(price: number | string, currency?: Currency): string {
   const c = currency ?? getCurrency();
@@ -20,8 +21,10 @@ export function useCurrency() {
   const [currency, setCurrencyState] = useState<Currency>(getCurrency());
   useEffect(() => {
     const handler = () => setCurrencyState(getCurrency());
+    const storageHandler = (e: StorageEvent) => { if (e.key === "restaurantos_currency") setCurrencyState(getCurrency()); };
     window.addEventListener("currency-change", handler);
-    return () => window.removeEventListener("currency-change", handler);
+    window.addEventListener("storage", storageHandler);
+    return () => { window.removeEventListener("currency-change", handler); window.removeEventListener("storage", storageHandler); };
   }, []);
   return {
     currency,
