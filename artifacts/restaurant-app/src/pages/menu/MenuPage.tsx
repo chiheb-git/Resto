@@ -1,4 +1,4 @@
-﻿import { useCurrency } from "@/lib/currency";
+﻿import { useCurrency, formatPrice } from "@/lib/currency";
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useLocation } from "wouter";
@@ -1079,7 +1079,7 @@ export default function MenuPage() {
     return () => { socket.off("order:updated", handleUpdatedOrder); };
   }, [activeOrder?.id, orderId, queryClient, table?.id, params.token, t]);
 
-  const { formatPrice } = useCurrency();
+  // formatPrice imported directly from @/lib/currency
   const cartTotal = cart.reduce((s, i) => s + Number(i.dish.price) * i.quantity, 0);
   const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
 
