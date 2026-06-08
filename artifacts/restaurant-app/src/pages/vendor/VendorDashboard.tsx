@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useCurrency } from "@/lib/currency";
 import { useListOrders, useUpdateOrderStatus, getListOrdersQueryKey, OrderStatusUpdateStatus } from "@workspace/api-client-react";
 import type { OrderWithItems } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -72,6 +73,7 @@ function OrderCard({ order, onConfirm, onRefuse, onReady, onDeliver }: {
 }) {
   const { t } = useTranslation();
   const lang = i18n.language as "fr" | "en" | "ar";
+  const { formatPrice } = useCurrency();
   const nameKey = `name${lang.charAt(0).toUpperCase() + lang.slice(1)}` as "nameEn" | "nameFr" | "nameAr";
 
   return (

@@ -1,5 +1,6 @@
 ﻿import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useCurrency, getCurrency } from "@/lib/currency";
 import { useListOrders } from "@workspace/api-client-react";
 import type { OrderWithItems } from "@workspace/api-client-react";
 import i18n from "@/i18n";
@@ -18,6 +19,7 @@ const STATUS_ICONS: Record<string, string> = {
 
 export default function VendorHistory() {
   const { t } = useTranslation();
+  const { formatPrice } = useCurrency();
   const today = new Date().toISOString().split("T")[0];
   const [date, setDate] = useState(today);
   const lang = i18n.language as "fr" | "en" | "ar";
@@ -40,7 +42,7 @@ export default function VendorHistory() {
       "N° Commande":  `#${o.id}`,
       "Table":        `Table ${o.table?.number ?? "?"}`,
       "Statut":       STATUS_BADGE[o.status]?.label ?? o.status,
-      "Total (€)":    Number(o.totalPrice).toFixed(2),
+      "Total":    Number(o.totalPrice).toFixed(2),
       "Heure":        new Date(o.createdAt).toLocaleTimeString("fr-FR"),
       "Date":         new Date(o.createdAt).toLocaleDateString("fr-FR"),
       "Articles":     o.items.map(i =>
@@ -60,7 +62,7 @@ export default function VendorHistory() {
     /* Ligne titre fusionnée */
     const titleWs: Record<string, unknown> = {
       A1: { v: `📋 Historique des Commandes — ${new Date(date).toLocaleDateString("fr-FR", { weekday:"long", year:"numeric", month:"long", day:"numeric" })}`, t: "s" },
-      A2: { v: `Total commandes: ${typedOrders.length}  |  Chiffre d'affaires: ${totalRevenue.toFixed(2)} €  |  Livrées: ${delivered}  |  En attente: ${pending}`, t: "s" },
+      A2: { v: `Total commandes: ${typedOrders.length}  |  Chiffre d'affaires: ${formatPrice(totalRevenue)}  |  Livrées: ${delivered}  |  En attente: ${pending}`, t: "s" },
     };
 
     /* Copier les données après 2 lignes de titre */
@@ -78,7 +80,7 @@ export default function VendorHistory() {
     const headers = ["N° Commande", "Table", "Statut", "Total (€)", "Heure", "Date", "Articles", "Note"];
     const allRows = [
       [`RESTAURANTOS — Rapport du ${new Date(date).toLocaleDateString("fr-FR")}`],
-      [`${typedOrders.length} commandes | CA: ${totalRevenue.toFixed(2)} € | Livrées: ${delivered} | En attente: ${pending}`],
+      [`${typedOrders.length} commandes | CA: ${formatPrice(totalRevenue)} | Livrées: ${delivered} | En attente: ${pending}`],
       [],
       headers,
       ...dataRows,
@@ -107,10 +109,10 @@ export default function VendorHistory() {
       [],
       ["Métrique", "Valeur"],
       ["Total commandes", typedOrders.length],
-      ["Chiffre d'affaires", `${totalRevenue.toFixed(2)} €`],
+      ["Chiffre d'affaires", `${formatPrice(totalRevenue)}`],
       ["Commandes livrées", delivered],
       ["En attente", pending],
-      ["Ticket moyen", typedOrders.length > 0 ? `${(totalRevenue / typedOrders.length).toFixed(2)} €` : "0 €"],
+      ["Ticket moyen", typedOrders.length > 0 ? `${formatPrice(totalRevenue / typedOrders.length)}` : "0 €"],
       [],
       ["Date rapport", new Date(date).toLocaleDateString("fr-FR")],
       ["Généré par", "RestaurantOS Pro"],
@@ -174,7 +176,7 @@ export default function VendorHistory() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 12, marginBottom: 24 }}>
         {[
           { label: "Commandes", value: typedOrders.length, icon: "📋", color: "#60a5fa" },
-          { label: "Chiffre d'affaires", value: `${totalRevenue.toFixed(2)} €`, icon: "💰", color: "#FF6B35" },
+          { label: "Chiffre d'affaires", value: `${formatPrice(totalRevenue)}`, icon: "💰", color: "#FF6B35" },
           { label: "Livrées", value: delivered, icon: "🎉", color: "#4ade80" },
           { label: "En attente", value: pending, icon: "⏳", color: "#fbbf24" },
           { label: "Ticket moyen", value: typedOrders.length > 0 ? `${(totalRevenue/typedOrders.length).toFixed(2)} €` : "0 €", icon: "📈", color: "#c084fc" },
@@ -280,7 +282,7 @@ export default function VendorHistory() {
                 Total · {typedOrders.length} commande{typedOrders.length > 1 ? "s" : ""}
               </span>
               <span style={{ fontSize: 20, fontWeight: 700, color: "#FF6B35" }}>
-                {totalRevenue.toFixed(2)} €
+                {formatPrice(totalRevenue)}
               </span>
             </div>
           )}

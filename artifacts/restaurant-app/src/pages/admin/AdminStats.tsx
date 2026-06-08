@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   useGetRevenueStats,
@@ -81,6 +81,7 @@ export default function AdminStats() {
     count: typedRatings.filter((r) => r.stars === s).length,
   }));
 
+  const { formatPrice } = useCurrency();
   const periods: Period[] = ["day", "week", "month", "year"];
   const totalRevenue = (revenue as { revenue: number }[]).reduce((s, r) => s + r.revenue, 0);
   const totalOrders = (revenue as { orders: number }[]).reduce((s, r) => s + r.orders, 0);
@@ -98,7 +99,7 @@ export default function AdminStats() {
           <div>
             <h2 className="text-sm font-semibold text-foreground">{t("revenueOverTime")}</h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Total: {totalRevenue.toFixed(2)} EUR · {totalOrders} commandes
+              Total: {formatPrice(totalRevenue)} · {totalOrders} commandes
             </p>
           </div>
           <div className="flex bg-muted rounded-lg p-0.5 gap-0.5">
@@ -134,7 +135,7 @@ export default function AdminStats() {
               <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip
                 contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", color: "hsl(var(--foreground))" }}
-                formatter={(val: number) => [`${val.toFixed(2)} EUR`, t("revenue")]}
+                formatter={(val: number) => [formatPrice(val), t("revenue")]}
               />
               <Area type="monotone" dataKey="revenue" stroke="#f59e0b" strokeWidth={2} fill="url(#revenueGrad)" />
             </AreaChart>

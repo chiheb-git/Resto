@@ -1,4 +1,5 @@
-﻿import { useState, useEffect, useRef } from "react";
+﻿import { useCurrency } from "@/lib/currency";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useLocation } from "wouter";
 import { useTheme } from "next-themes";
@@ -462,7 +463,7 @@ function DishCard({ dish, onAdd, index }: { dish: Dish; onAdd: (dish: Dish) => v
           borderRadius: 12, padding: "6px 14px",
         }}>
           <span style={{ fontSize: 18, fontWeight: 700, color: "#FF6B35" }}>
-            {Number(dish.price).toFixed(2)}DA
+            {formatPrice(dish.price)}
           </span>
         </div>
       </div>
@@ -648,7 +649,7 @@ function CustomizeModal({
           {/* Footer */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 20, gap: 16 }}>
             <span style={{ fontSize: 28, fontWeight: 700, color: "#FF6B35" }}>
-              {Number(dish.price).toFixed(2)}DA
+              {formatPrice(dish.price)}
             </span>
             <button
               onClick={() => onConfirm(note)}
@@ -735,7 +736,7 @@ function CartView({
                   <p style={{ fontSize: 12, color: "#FF6B35", fontStyle: "italic", marginBottom: 4 }}>{item.customNote}</p>
                 )}
                 <p style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                  {(Number(item.dish.price) * item.quantity).toFixed(2)}DA
+                  {formatPrice(Number(item.dish.price) * item.quantity)}
                 </p>
               </div>
               {/* Qty */}
@@ -799,7 +800,7 @@ function CartView({
         display: "flex", justifyContent: "space-between", alignItems: "center",
       }}>
         <span style={{ fontSize: 16, color: "var(--text-secondary)" }}>{t("orderTotal")}</span>
-        <span style={{ fontSize: 28, fontWeight: 700, color: "#FF6B35" }}>{cartTotal.toFixed(2)}DA</span>
+        <span style={{ fontSize: 28, fontWeight: 700, color: "#FF6B35" }}>{formatPrice(cartTotal)}</span>
       </div>
 
       {/* Confirm */}
@@ -957,7 +958,7 @@ function OrderTracker({ order }: { order: OrderWithItems }) {
           paddingTop: 12, marginTop: 4, fontWeight: 700,
         }}>
           <span style={{ color: "var(--text-primary)" }}>{t("total")}</span>
-          <span style={{ color: "#FF6B35", fontSize: 20 }}>{Number(order.totalPrice).toFixed(2)}DA</span>
+          <span style={{ color: "#FF6B35", fontSize: 20 }}>{formatPrice(order.totalPrice)}</span>
         </div>
       </div>
 
@@ -1078,6 +1079,7 @@ export default function MenuPage() {
     return () => { socket.off("order:updated", handleUpdatedOrder); };
   }, [activeOrder?.id, orderId, queryClient, table?.id, params.token, t]);
 
+  const { formatPrice } = useCurrency();
   const cartTotal = cart.reduce((s, i) => s + Number(i.dish.price) * i.quantity, 0);
   const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
 

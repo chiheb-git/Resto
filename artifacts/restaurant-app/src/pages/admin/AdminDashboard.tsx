@@ -1,4 +1,5 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
+import { useCurrency, setCurrency, type Currency } from "@/lib/currency";
 import { useGetDashboardStats, useGetOrdersByStatus } from "@workspace/api-client-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
@@ -27,6 +28,7 @@ function StatCard({ label, value, icon, accent }: { label: string; value: string
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
+  const { currency, formatPrice } = useCurrency();
   const { data: stats, isLoading } = useGetDashboardStats({ query: { refetchInterval: 10000 } as any });
   const { data: ordersByStatus = [] } = useGetOrdersByStatus({ query: { refetchInterval: 10000 } as any });
 
@@ -48,12 +50,19 @@ export default function AdminDashboard() {
   return (
     <div className="p-6 space-y-6">
       <div>
+        <div className="flex items-center gap-3">
         <h1 className="text-xl font-bold text-foreground">{t("dashboard")}</h1>
+        <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)} className="text-xs border border-border rounded-lg px-2 py-1 bg-background text-foreground">
+          <option value="DZD">🇩🇿 Dinar (DA)</option>
+          <option value="EUR">🇪🇺 Euro (€)</option>
+          <option value="USD">🇺🇸 Dollar ($)</option>
+        </select>
+      </div>
         <p className="text-sm text-muted-foreground mt-1">Overview of today's performance</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard label={t("todayRevenue")} value={`${Number(stats.todayRevenue).toFixed(2)} €`} icon="💰" accent="bg-amber-500/15" />
+        <StatCard label={t("todayRevenue")} value={formatPrice(stats.todayRevenue)} icon="💰" accent="bg-amber-500/15" />
         <StatCard label={t("todayOrders")} value={stats.todayOrders} icon="📋" accent="bg-blue-500/15" />
         <StatCard label={t("pendingOrders")} value={stats.pendingOrders} icon="⏳" accent="bg-orange-500/15" />
         <StatCard label={t("avgRating")} value={`${Number(stats.avgRating).toFixed(1)} ★`} icon="⭐" accent="bg-yellow-500/15" />
