@@ -6,7 +6,7 @@ export function getCurrency(): Currency {
 export function setCurrency(c: Currency) {
   localStorage.setItem(STORAGE_KEY, c);
   window.dispatchEvent(new Event("currency-change"));
-  // cross-tab: storage event is fired automatically by the browser
+  // cross-tab sync: storage event fires in other tabs automatically
 }
 export function formatPrice(price: number | string, currency?: Currency): string {
   const c = currency ?? getCurrency();
