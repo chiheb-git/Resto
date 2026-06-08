@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   useListCategories,
@@ -90,6 +90,7 @@ function DishModal({
     descriptionEn: dish?.descriptionEn ?? "",
     price: dish?.price ?? 0,
     imageUrl: dish?.imageUrl ?? "",
+    currency: (dish as any)?.currency ?? "DZD",
     isPopular: dish?.isPopular ?? false,
     isNew: dish?.isNew ?? false,
     isAvailable: dish?.isAvailable ?? true,
@@ -176,7 +177,9 @@ function DishModal({
           {/* Prix et allergenes */}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className={labelClass + " text-muted-foreground"}>{t("price")} (EUR)</label>
+              <label className={labelClass + " text-foreground"}>Prix et Devise</label>
+              <div className="grid grid-cols-2 gap-2">
+              <div>
               <input
                 type="number"
                 step="0.01"
@@ -187,6 +190,19 @@ function DishModal({
               />
             </div>
             <div>
+              <label className={labelClass + " text-muted-foreground"}></div>
+              <div>
+                <label className="block text-xs text-muted-foreground mb-1">Devise</label>
+                <select value={(form as any).currency} onChange={(e) => setForm({...form, currency: e.target.value} as any)} className={inputClass}>
+                  <option value="DZD">Dinar (DA)</option>
+                  <option value="EUR">Euro (EUR)</option>
+                  <option value="USD">Dollar ($)</option>
+                </select>
+              </div>
+              </div>
+              <div className="mt-1 px-3 py-2 bg-primary/10 rounded-lg text-sm font-bold text-primary">
+                Prix: {Number(form.price).toFixed(2)} {(form as any).currency === "DZD" ? "DA" : (form as any).currency === "EUR" ? "EUR" : "$"}
+              </div>
               <label className={labelClass + " text-muted-foreground"}>{t("allergens")} (virgule)</label>
               <input
                 value={form.allergens}
