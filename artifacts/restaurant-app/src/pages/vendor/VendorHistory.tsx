@@ -112,7 +112,7 @@ export default function VendorHistory() {
       ["Chiffre d'affaires", `${formatPrice(totalRevenue)}`],
       ["Commandes livrées", delivered],
       ["En attente", pending],
-      ["Ticket moyen", typedOrders.length > 0 ? `${formatPrice(totalRevenue / typedOrders.length)}` : "0 €"],
+      ["Ticket moyen", typedOrders.length > 0 ? `${formatPrice(totalRevenue / typedOrders.length)}` : formatPrice(0)],
       [],
       ["Date rapport", new Date(date).toLocaleDateString("fr-FR")],
       ["Généré par", "RestaurantOS Pro"],
