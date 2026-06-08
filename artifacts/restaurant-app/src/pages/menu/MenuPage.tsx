@@ -358,7 +358,7 @@ function StatusBadge({ status }: { status: string }) {
 /* ============================================================
    DISH CARD 3D
    ============================================================ */
-function DishCard({ dish, onAdd, index }: { dish: Dish; onAdd: (dish: Dish) => void; index: number }) {
+function DishCard({ dish, onAdd, index, formatPrice }: { dish: Dish; onAdd: (dish: Dish) => void; index: number; formatPrice: (p: number|string) => string }) {
   const { t } = useTranslation();
   const lang = i18n.language;
   const name = getLangName(dish as unknown as Record<string, unknown>, lang);
@@ -547,11 +547,12 @@ function DishCard({ dish, onAdd, index }: { dish: Dish; onAdd: (dish: Dish) => v
    CUSTOMIZE MODAL (bottom sheet)
    ============================================================ */
 function CustomizeModal({
-  dish, lang, onConfirm, onClose,
+  dish, lang, onConfirm, onClose, formatPrice,
 }: {
   dish: Dish; lang: string;
   onConfirm: (note: string) => void;
   onClose: () => void;
+  formatPrice: (p: number|string) => string;
 }) {
   const { t } = useTranslation();
   const [note, setNote] = useState("");
@@ -679,12 +680,12 @@ function CustomizeModal({
    ============================================================ */
 function CartView({
   cart, setCart, orderNote, setOrderNote,
-  cartTotal, onPlaceOrder, isPending, lang,
+  cartTotal, onPlaceOrder, isPending, lang, formatPrice,
 }: {
   cart: CartItem[]; setCart: (c: CartItem[]) => void;
   orderNote: string; setOrderNote: (n: string) => void;
   cartTotal: number; onPlaceOrder: () => void;
-  isPending: boolean; lang: string;
+  isPending: boolean; lang: string; formatPrice: (p: number|string) => string;
 }) {
   const { t } = useTranslation();
 
@@ -827,7 +828,7 @@ function CartView({
 /* ============================================================
    ORDER TRACKER
    ============================================================ */
-function OrderTracker({ order }: { order: OrderWithItems }) {
+function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPrice: (p: number|string) => string }) {
   const { t } = useTranslation();
   const lang = i18n.language;
   const [rating, setRating] = useState(0);
@@ -1026,6 +1027,7 @@ function OrderTracker({ order }: { order: OrderWithItems }) {
    MAIN PAGE
    ============================================================ */
 export default function MenuPage() {
+  const { formatPrice: fp } = useCurrency();
   const { t } = useTranslation();
   const params = useParams<{ token: string }>();
   const [, navigate] = useLocation();
@@ -1358,7 +1360,7 @@ export default function MenuPage() {
               gap: 20, padding: "0 24px 120px",
             }}>
               {dishes?.map((dish, i) => (
-                <DishCard key={dish.id} dish={dish} onAdd={handleAddDish} index={i} />
+                <DishCard key={dish.id} dish={dish} onAdd={handleAddDish} index={i} formatPrice={fp} />
               ))}
               {dishes?.length === 0 && (
                 <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "60px 0" }}>
@@ -1376,14 +1378,14 @@ export default function MenuPage() {
             cart={cart} setCart={setCart}
             orderNote={orderNote} setOrderNote={setOrderNote}
             cartTotal={cartTotal} onPlaceOrder={placeOrder}
-            isPending={createOrder.isPending} lang={lang}
+            isPending={createOrder.isPending} lang={lang} formatPrice={fp}
           />
         )}
 
         {/* TRACKING VIEW */}
         {view === "tracking" && (
           activeOrder
-            ? <OrderTracker order={activeOrder as unknown as OrderWithItems} />
+            ? <OrderTracker order={activeOrder as unknown as OrderWithItems} formatPrice={fp} />
             : (
               <div style={{ textAlign: "center", padding: "80px 24px" }}>
                 <div style={{ fontSize: 72, marginBottom: 16 }}>📋</div>
@@ -1435,7 +1437,7 @@ export default function MenuPage() {
           dish={customizeItem}
           lang={lang}
           onConfirm={handleConfirmAdd}
-          onClose={() => setCustomizeItem(null)}
+          onClose={() => setCustomizeItem(null)} formatPrice={fp}
         />
       )}
     </div>
