@@ -39,7 +39,7 @@ export default function VendorPayment() {
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 28 }}>
         {[
-          { label: "En attente", value: String(readyOrders.length), sub: formatPrice(totalPending) + " DA", color: ORANGE },
+          { label: "En attente", value: String(readyOrders.length), sub: formatPrice(totalPending), color: ORANGE },
           { label: "Payees", value: String(paidOrders.length), sub: formatPrice(totalPaid), color: GREEN },
           { label: "Total encaisse", value: formatPrice(totalPaid), sub: paidOrders.length + " commandes", color: "#0096FF" },
         ].map((s) => (
@@ -72,7 +72,7 @@ export default function VendorPayment() {
                   </div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <p style={{ fontSize: 22, fontWeight: 800, color: ORANGE, marginBottom: 8 }}>{Number(order.totalPrice).toFixed(2)} DA</p>
+                  <p style={{ fontSize: 22, fontWeight: 800, color: ORANGE, marginBottom: 8 }}>{formatPrice(order.totalPrice)}</p>
                   <button onClick={() => markPaid(order.id)} disabled={updateStatus.isPending} style={{ padding: "10px 20px", background: GREEN, color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
                     Paiement recu
                   </button>
@@ -83,7 +83,7 @@ export default function VendorPayment() {
         )}
       </div>
       <div>
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: TEXT, marginBottom: 14 }}>Commandes payees - Total: {formatPrice(totalPaid)} DA</h2>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: TEXT, marginBottom: 14 }}>Commandes payees - Total: {formatPrice(totalPaid)}</h2>
         {paidOrders.length === 0 ? (
           <div style={{ background: CARD, border: "1px solid " + BORDER, borderRadius: 16, padding: 32, textAlign: "center" }}>
             <p style={{ color: MUTED }}>Aucune commande payee</p>
@@ -98,12 +98,12 @@ export default function VendorPayment() {
                 <span style={{ fontWeight: 700, color: GREEN }}>#{(order as any).table?.number ?? "?"}</span>
                 <span style={{ fontSize: 12, color: MUTED }}>{order.items.map(getName).join(", ")}</span>
                 <span style={{ fontSize: 12, color: MUTED }}>{new Date(order.createdAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</span>
-                <span style={{ textAlign: "right", fontWeight: 700, color: GREEN }}>{Number(order.totalPrice).toFixed(2)} DA</span>
+                <span style={{ textAlign: "right", fontWeight: 700, color: GREEN }}>{formatPrice(order.totalPrice)}</span>
               </div>
             ))}
             <div style={{ display: "grid", gridTemplateColumns: "60px 1fr 1fr 100px", padding: "12px 16px", background: "rgba(0,210,100,0.08)", borderTop: "2px solid rgba(0,210,100,0.3)" }}>
               <span style={{ fontWeight: 800, color: TEXT, gridColumn: "1 / 4" }}>TOTAL ENCAISSE</span>
-              <span style={{ textAlign: "right", fontWeight: 800, color: GREEN, fontSize: 16 }}>{formatPrice(totalPaid)} DA</span>
+              <span style={{ textAlign: "right", fontWeight: 800, color: GREEN, fontSize: 16 }}>{formatPrice(totalPaid)}</span>
             </div>
           </div>
         )}
