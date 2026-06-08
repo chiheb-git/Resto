@@ -948,7 +948,7 @@ function OrderTracker({ order }: { order: OrderWithItems }) {
             }}>
               <span style={{ color: "var(--text-primary)" }}>{item.quantity}× {dishName}</span>
               <span style={{ color: "var(--text-muted)" }}>
-                {(Number(item.unitPrice) * item.quantity).toFixed(2)}DA
+                {formatPrice(Number(item.unitPrice) * item.quantity)}
               </span>
             </div>
           );
