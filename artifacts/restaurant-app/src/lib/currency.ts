@@ -1,15 +1,35 @@
-﻿export type Currency = "DZD" | "EUR" | "USD";
+﻿import { useState, useEffect } from "react";
+export type Currency = "DZD" | "EUR" | "USD";
 const STORAGE_KEY = "restaurantos_currency";
-const channel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("currency_sync") : null;
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 export function getCurrency(): Currency {
   return (localStorage.getItem(STORAGE_KEY) as Currency) ?? "DZD";
 }
 
-export function setCurrency(c: Currency) {
-  localStorage.setItem(STORAGE_KEY, c);
-  window.dispatchEvent(new Event("currency-change"));
-  channel?.postMessage(c);
+export async function fetchCurrencyFromServer(): Promise<Currency> {
+  try {
+    const res = await fetch(`${API_URL}/api/settings/currency`);
+    const data = await res.json();
+    const c = data.value as Currency;
+    localStorage.setItem(STORAGE_KEY, c);
+    window.dispatchEvent(new Event("currency-change"));
+    return c;
+  } catch {
+    return getCurrency();
+  }
+}
+
+export async function saveCurrencyToServer(c: Currency, token: string): Promise<void> {
+  try {
+    await fetch(`${API_URL}/api/settings/currency`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ value: c }),
+    });
+    localStorage.setItem(STORAGE_KEY, c);
+    window.dispatchEvent(new Event("currency-change"));
+  } catch {}
 }
 
 export function formatPrice(price: number | string, currency?: Currency): string {
@@ -21,22 +41,16 @@ export function formatPrice(price: number | string, currency?: Currency): string
   return `${n}`;
 }
 
-import { useState, useEffect } from "react";
 export function useCurrency() {
   const [currency, setCurrencyState] = useState<Currency>(getCurrency());
   useEffect(() => {
+    fetchCurrencyFromServer().then(c => setCurrencyState(c));
     const handler = () => setCurrencyState(getCurrency());
-    const bcHandler = (e: MessageEvent) => { setCurrencyState(e.data as Currency); };
     window.addEventListener("currency-change", handler);
-    channel?.addEventListener("message", bcHandler);
-    return () => {
-      window.removeEventListener("currency-change", handler);
-      channel?.removeEventListener("message", bcHandler);
-    };
+    return () => window.removeEventListener("currency-change", handler);
   }, []);
   return {
     currency,
-    setCurrency: (c: Currency) => { setCurrency(c); setCurrencyState(c); },
     formatPrice: (price: number | string) => formatPrice(price, currency),
   };
 }

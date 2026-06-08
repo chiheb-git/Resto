@@ -1,5 +1,5 @@
 ﻿import { useTranslation } from "react-i18next";
-import { useCurrency, setCurrency, type Currency } from "@/lib/currency";
+import { useCurrency, saveCurrencyToServer, type Currency } from "@/lib/currency";
 import { useGetDashboardStats, useGetOrdersByStatus } from "@workspace/api-client-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
@@ -52,7 +52,7 @@ export default function AdminDashboard() {
       <div>
         <div className="flex items-center gap-3">
         <h1 className="text-xl font-bold text-foreground">{t("dashboard")}</h1>
-        <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)} className="text-xs border border-border rounded-lg px-2 py-1 bg-background text-foreground">
+        <select value={currency} onChange={(e) => { const token = localStorage.getItem("token") ?? ""; saveCurrencyToServer(e.target.value as Currency, token); }} className="text-xs border border-border rounded-lg px-2 py-1 bg-background text-foreground">
           <option value="DZD">🇩🇿 Dinar (DA)</option>
           <option value="EUR">🇪🇺 Euro (€)</option>
           <option value="USD">🇺🇸 Dollar ($)</option>
