@@ -1,10 +1,9 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   useListCategories,
   useListDishes,
   useCreateCategory,
-  useUpdateCategory,
   useDeleteCategory,
   useCreateDish,
   useUpdateDish,
@@ -34,222 +33,198 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-function SortableCategoryItem({
-  cat,
-  isActive,
-  onClick,
-  onDelete,
-}: {
-  cat: Category;
-  isActive: boolean;
-  onClick: () => void;
-  onDelete: (id: number) => void;
+/* ---- Devise ---- */
+type Currency = "DZD" | "EUR" | "USD";
+const CURRENCIES: { value: Currency; label: string; symbol: string }[] = [
+  { value: "DZD", label: "Dinar (DA)", symbol: "DA" },
+  { value: "EUR", label: "Euro (€)",   symbol: "€"  },
+  { value: "USD", label: "Dollar ($)", symbol: "$"  },
+];
+function formatPrice(price: number, currency: string) {
+  const cur = CURRENCIES.find(c => c.value === currency) ?? CURRENCIES[0];
+  if (currency === "DZD") return `${Number(price).toFixed(2)} ${cur.symbol}`;
+  return `${cur.symbol}${Number(price).toFixed(2)}`;
+}
+
+function SortableCategoryItem({ cat, isActive, onClick, onDelete }: {
+  cat: Category; isActive: boolean; onClick: () => void; onDelete: (id: number) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: cat.id });
   const lang = i18n.language as "fr" | "en" | "ar";
   const nameKey = `name${lang.charAt(0).toUpperCase() + lang.slice(1)}` as "nameEn" | "nameFr" | "nameAr";
   const name = (cat as unknown as Record<string, string>)[nameKey] || cat.nameEn;
-
   return (
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer select-none transition-colors ${
+      className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer select-none transition-colors whitespace-nowrap ${
         isActive ? "bg-primary/15 text-primary border border-primary/20" : "text-muted-foreground hover:text-foreground hover:bg-accent"
       }`}
     >
-      <span {...attributes} {...listeners} className="cursor-grab text-muted-foreground hover:text-foreground">::</span>
+      <span {...attributes} {...listeners} className="cursor-grab text-muted-foreground">::</span>
       <span className="flex-1 text-sm font-medium" onClick={onClick}>{name}</span>
-      <button
-        onClick={(e) => { e.stopPropagation(); onDelete(cat.id); }}
-        className="text-xs text-destructive hover:opacity-70"
-      >x</button>
+      <button onClick={(e) => { e.stopPropagation(); onDelete(cat.id); }} className="text-xs text-destructive hover:opacity-70">x</button>
     </div>
   );
 }
 
-function DishModal({
-  dish,
-  categories,
-  onClose,
-  onSave,
-}: {
-  dish?: Dish;
-  categories: Category[];
-  onClose: () => void;
-  onSave: (data: Record<string, unknown>) => void;
+function DishModal({ dish, categories, onClose, onSave }: {
+  dish?: Dish; categories: Category[]; onClose: () => void; onSave: (data: Record<string, unknown>) => void;
 }) {
   const { t } = useTranslation();
   const [form, setForm] = useState({
     categoryId: dish?.categoryId ?? (categories[0]?.id ?? 0),
-    nameAr: dish?.nameAr ?? "",
-    nameFr: dish?.nameFr ?? "",
-    nameEn: dish?.nameEn ?? "",
+    nameAr:        dish?.nameAr ?? "",
+    nameFr:        dish?.nameFr ?? "",
+    nameEn:        dish?.nameEn ?? "",
     descriptionAr: dish?.descriptionAr ?? "",
     descriptionFr: dish?.descriptionFr ?? "",
     descriptionEn: dish?.descriptionEn ?? "",
-    price: dish?.price ?? 0,
-    imageUrl: dish?.imageUrl ?? "",
-    isPopular: dish?.isPopular ?? false,
-    isNew: dish?.isNew ?? false,
-    isAvailable: dish?.isAvailable ?? true,
-    allergens: dish?.allergens?.join(", ") ?? "",
+    price:         dish?.price ?? 0,
+    currency:      (dish as any)?.currency ?? "DZD",
+    imageUrl:      dish?.imageUrl ?? "",
+    isPopular:     dish?.isPopular ?? false,
+    isNew:         dish?.isNew ?? false,
+    isAvailable:   dish?.isAvailable ?? true,
+    allergens:     dish?.allergens?.join(", ") ?? "",
   });
 
   const inputClass = "w-full px-2 py-2 rounded-lg bg-background border border-input text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50";
   const labelClass = "block text-xs font-semibold mb-1";
+  const currentSymbol = CURRENCIES.find(c => c.value === form.currency)?.symbol ?? "DA";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 overflow-y-auto">
       <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-lg my-4">
-        <h3 className="font-semibold text-foreground mb-4 text-lg">
-          {dish ? t("edit") : t("addDish")}
-        </h3>
-
+        <h3 className="font-semibold text-foreground mb-4 text-lg">{dish ? t("edit") : t("addDish")}</h3>
         <div className="space-y-4">
 
           {/* Categorie */}
           <div>
             <label className={labelClass + " text-muted-foreground"}>{t("category")}</label>
-            <select
-              value={form.categoryId}
-              onChange={(e) => setForm({ ...form, categoryId: Number(e.target.value) })}
-              className={inputClass}
-            >
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.nameFr || c.nameEn}</option>
-              ))}
+            <select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: Number(e.target.value) })} className={inputClass}>
+              {categories.map((c) => <option key={c.id} value={c.id}>{c.nameFr || c.nameEn}</option>)}
             </select>
           </div>
 
-          {/* Nom en 3 langues */}
+          {/* Nom 3 langues */}
           <div>
             <label className={labelClass + " text-foreground"}>Nom du plat</label>
             <div className="grid grid-cols-3 gap-2">
               {([
                 { key: "nameFr", label: "Francais", flag: "FR", dir: "ltr" },
-                { key: "nameEn", label: "Anglais", flag: "EN", dir: "ltr" },
-                { key: "nameAr", label: "Arabe", flag: "AR", dir: "rtl" },
+                { key: "nameEn", label: "Anglais",  flag: "EN", dir: "ltr" },
+                { key: "nameAr", label: "Arabe",    flag: "AR", dir: "rtl" },
               ] as const).map(({ key, label, flag, dir }) => (
                 <div key={key}>
-                  <label className="block text-xs text-muted-foreground mb-1 font-medium">
-                    {flag} — {label}
-                  </label>
-                  <input
-                    value={(form as Record<string, unknown>)[key] as string}
-                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                    dir={dir}
-                    placeholder={label}
-                    className={inputClass}
-                  />
+                  <label className="block text-xs text-muted-foreground mb-1 font-medium">{flag} — {label}</label>
+                  <input value={(form as any)[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} dir={dir} placeholder={label} className={inputClass} />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Description en 3 langues */}
+          {/* Description 3 langues */}
           <div>
             <label className={labelClass + " text-foreground"}>Description du plat</label>
             <div className="grid grid-cols-3 gap-2">
               {([
                 { key: "descriptionFr", label: "Francais", flag: "FR", dir: "ltr" },
-                { key: "descriptionEn", label: "Anglais", flag: "EN", dir: "ltr" },
-                { key: "descriptionAr", label: "Arabe", flag: "AR", dir: "rtl" },
+                { key: "descriptionEn", label: "Anglais",  flag: "EN", dir: "ltr" },
+                { key: "descriptionAr", label: "Arabe",    flag: "AR", dir: "rtl" },
               ] as const).map(({ key, label, flag, dir }) => (
                 <div key={key}>
-                  <label className="block text-xs text-muted-foreground mb-1 font-medium">
-                    {flag} — {label}
-                  </label>
-                  <textarea
-                    value={(form as Record<string, unknown>)[key] as string}
-                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                    dir={dir}
-                    rows={3}
-                    placeholder={`Description en ${label}...`}
-                    className={inputClass + " resize-none text-xs"}
-                  />
+                  <label className="block text-xs text-muted-foreground mb-1 font-medium">{flag} — {label}</label>
+                  <textarea value={(form as any)[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} dir={dir} rows={3} placeholder={`Description en ${label}...`} className={inputClass + " resize-none text-xs"} />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Prix et allergenes */}
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className={labelClass + " text-muted-foreground"}>{t("price")} (DA)</label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                value={form.price}
-                onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) })}
-                className={inputClass}
-              />
+          {/* Prix + Devise */}
+          <div>
+            <label className={labelClass + " text-foreground"}>Prix et Devise</label>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-xs text-muted-foreground mb-1 font-medium">Prix ({currentSymbol})</label>
+                <input
+                  type="number" step="0.01" min="0"
+                  value={form.price}
+                  onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) })}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-muted-foreground mb-1 font-medium">Devise</label>
+                <select value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })} className={inputClass}>
+                  <option value="DZD">🇩🇿 Dinar Algerien (DA)</option>
+                  <option value="EUR">🇪🇺 Euro (€)</option>
+                  <option value="USD">🇺🇸 Dollar ($)</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <label className={labelClass + " text-muted-foreground"}>{t("allergens")} (virgule)</label>
-              <input
-                value={form.allergens}
-                onChange={(e) => setForm({ ...form, allergens: e.target.value })}
-                placeholder="gluten, lactose..."
-                className={inputClass}
-              />
+            {/* Preview prix */}
+            <div className="mt-2 px-3 py-2 bg-primary/10 rounded-lg border border-primary/20 text-sm font-bold text-primary">
+              Prix affiche : {formatPrice(Number(form.price), form.currency)}
             </div>
           </div>
 
-          {/* Image URL */}
+          {/* Allergenes */}
           <div>
-            <label className={labelClass + " text-muted-foreground"}>{t("imageUrl")}</label>
-            <input
-              value={form.imageUrl}
-              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-              placeholder="https://..."
-              className={inputClass}
-            />
+            <label className={labelClass + " text-muted-foreground"}>{t("allergens")} (virgule)</label>
+            <input value={form.allergens} onChange={(e) => setForm({ ...form, allergens: e.target.value })} placeholder="gluten, lactose..." className={inputClass} />
+          </div>
+
+          {/* Image */}
+          <div>
+            <label className={labelClass + " text-muted-foreground"}>Image du plat</label>
+            <div className="flex gap-2 mb-2">
+              <input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} placeholder="https://..." className={inputClass + " flex-1"} />
+              <label className="px-3 py-2 bg-primary/15 border border-primary/30 text-primary rounded-lg text-xs font-medium cursor-pointer hover:bg-primary/25 flex items-center gap-1 whitespace-nowrap">
+                Galerie
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = () => setForm({ ...form, imageUrl: reader.result as string });
+                  reader.readAsDataURL(file);
+                }} />
+              </label>
+            </div>
+            {form.imageUrl && (
+              <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-border">
+                <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" />
+                <button onClick={() => setForm({ ...form, imageUrl: "" })} className="absolute top-1 right-1 w-5 h-5 bg-black/60 text-white rounded-full text-xs flex items-center justify-center">x</button>
+              </div>
+            )}
           </div>
 
           {/* Options */}
           <div className="flex gap-6 p-3 bg-muted/30 rounded-xl">
             {([
               { key: "isPopular", label: "Populaire" },
-              { key: "isNew", label: "Nouveau" },
+              { key: "isNew",     label: "Nouveau"   },
               { key: "isAvailable", label: "Disponible" },
             ] as const).map(({ key, label }) => (
               <label key={key} className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={(form as Record<string, unknown>)[key] as boolean}
-                  onChange={(e) => setForm({ ...form, [key]: e.target.checked })}
-                  className="rounded"
-                />
+                <input type="checkbox" checked={(form as any)[key]} onChange={(e) => setForm({ ...form, [key]: e.target.checked })} className="rounded" />
                 {label}
               </label>
             ))}
           </div>
         </div>
 
-        {/* Boutons */}
         <div className="flex gap-3 mt-5">
-          <button
-            onClick={onClose}
-            className="flex-1 py-2.5 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-accent"
-          >
-            {t("cancel")}
-          </button>
-          <button
-            onClick={() => onSave({
-              ...form,
-              price: Number(form.price),
-              allergens: form.allergens ? form.allergens.split(",").map((s) => s.trim()).filter(Boolean) : [],
-              imageUrl: form.imageUrl || null,
-              descriptionAr: form.descriptionAr || null,
-              descriptionFr: form.descriptionFr || null,
-              descriptionEn: form.descriptionEn || null,
-            })}
-            className="flex-1 py-2.5 bg-primary text-white rounded-xl text-sm font-medium hover:opacity-90"
-          >
-            {t("save")}
-          </button>
+          <button onClick={onClose} className="flex-1 py-2.5 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-accent">{t("cancel")}</button>
+          <button onClick={() => onSave({
+            ...form,
+            price: Number(form.price),
+            allergens: form.allergens ? form.allergens.split(",").map((s) => s.trim()).filter(Boolean) : [],
+            imageUrl: form.imageUrl || null,
+            descriptionAr: form.descriptionAr || null,
+            descriptionFr: form.descriptionFr || null,
+            descriptionEn: form.descriptionEn || null,
+          })} className="flex-1 py-2.5 bg-primary text-white rounded-xl text-sm font-medium hover:opacity-90">{t("save")}</button>
         </div>
       </div>
     </div>
@@ -270,7 +245,6 @@ export default function AdminMenu() {
 
   const { data: rawCategories = [] } = useListCategories({ includeInactive: true });
   const categories = rawCategories as Category[];
-
   const orderedCategories = catOrder.length > 0
     ? [...categories].sort((a, b) => catOrder.indexOf(a.id) - catOrder.indexOf(b.id))
     : categories;
@@ -298,103 +272,57 @@ export default function AdminMenu() {
     const newIndex = orderedCategories.findIndex((c) => c.id === over.id);
     const reordered = arrayMove(orderedCategories, oldIndex, newIndex);
     setCatOrder(reordered.map((c) => c.id));
-    reorderMutation.mutate(
-      { data: { items: reordered.map((c, i) => ({ id: c.id, orderIndex: i + 1 })) } },
-      { onSuccess: invalidateCats }
-    );
+    reorderMutation.mutate({ data: { items: reordered.map((c, i) => ({ id: c.id, orderIndex: i + 1 })) } }, { onSuccess: invalidateCats });
   };
 
   const addCategory = () => {
     if (!newCatName.fr) { toast.error("Nom francais requis"); return; }
     createCatMutation.mutate(
       { data: { nameFr: newCatName.fr, nameEn: newCatName.en || newCatName.fr, nameAr: newCatName.ar || newCatName.fr, icon: "utensils" } },
-      {
-        onSuccess: () => {
-          invalidateCats();
-          setNewCatName({ fr: "", en: "", ar: "" });
-          setShowAddCat(false);
-          toast.success(t("success"));
-        },
-        onError: () => toast.error(t("error")),
-      }
+      { onSuccess: () => { invalidateCats(); setNewCatName({ fr: "", en: "", ar: "" }); setShowAddCat(false); toast.success(t("success")); }, onError: () => toast.error(t("error")) }
     );
   };
 
   const deleteCategory = (id: number) => {
     if (!confirm("Supprimer cette categorie ?")) return;
-    deleteCatMutation.mutate({ id }, {
-      onSuccess: () => {
-        invalidateCats();
-        if (selectedCat === id) setSelectedCat(null);
-        toast.success(t("success"));
-      },
-      onError: () => toast.error(t("error")),
-    });
+    deleteCatMutation.mutate({ id }, { onSuccess: () => { invalidateCats(); if (selectedCat === id) setSelectedCat(null); toast.success(t("success")); }, onError: () => toast.error(t("error")) });
   };
 
   const saveDish = (data: Record<string, unknown>) => {
     if (dishModal === "add") {
       createDishMutation.mutate(
-        { data: { categoryId: activeCatId!, ...data } as Parameters<typeof createDishMutation.mutate>[0]["data"] },
-        {
-          onSuccess: () => { invalidateDishes(); setDishModal(null); toast.success(t("success")); },
-          onError: () => toast.error(t("error")),
-        }
+        { data: { categoryId: activeCatId!, ...data } as any },
+        { onSuccess: () => { invalidateDishes(); setDishModal(null); toast.success(t("success")); }, onError: () => toast.error(t("error")) }
       );
     } else if (dishModal && typeof dishModal === "object") {
       updateDishMutation.mutate(
         { id: (dishModal as Dish).id, data },
-        {
-          onSuccess: () => { invalidateDishes(); setDishModal(null); toast.success(t("success")); },
-          onError: () => toast.error(t("error")),
-        }
+        { onSuccess: () => { invalidateDishes(); setDishModal(null); toast.success(t("success")); }, onError: () => toast.error(t("error")) }
       );
     }
   };
 
   const deleteDish = (id: number) => {
     if (!confirm("Supprimer ce plat ?")) return;
-    deleteDishMutation.mutate({ id }, {
-      onSuccess: () => { invalidateDishes(); toast.success(t("success")); },
-      onError: () => toast.error(t("error")),
-    });
+    deleteDishMutation.mutate({ id }, { onSuccess: () => { invalidateDishes(); toast.success(t("success")); }, onError: () => toast.error(t("error")) });
   };
 
   const toggleDish = (id: number) => {
-    toggleDishMutation.mutate({ id }, {
-      onSuccess: invalidateDishes,
-      onError: () => toast.error(t("error")),
-    });
+    toggleDishMutation.mutate({ id }, { onSuccess: invalidateDishes, onError: () => toast.error(t("error")) });
   };
 
   return (
-    <div style={{display:"flex",flexDirection:"column",height:"100%"}}>
-
-      {/* Sidebar categories */}
-      <div style={{width:"100%",borderBottom:"1px solid #2A2A2A",flexShrink:0}}>
+    <div className="flex flex-col md:flex-row h-full">
+      {/* Sidebar */}
+      <div className="md:w-52 w-full border-b md:border-b-0 md:border-e border-border bg-card/50 flex flex-col flex-shrink-0">
         <div className="flex items-center justify-between px-3 py-3 border-b border-border">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t("menu")}</span>
-          <button
-            onClick={() => setShowAddCat(true)}
-            className="text-primary hover:opacity-70 text-lg leading-none"
-          >+</button>
+          <button onClick={() => setShowAddCat(true)} className="text-primary hover:opacity-70 text-lg leading-none">+</button>
         </div>
-
         {showAddCat && (
           <div className="p-2 border-b border-border space-y-1.5">
-            {([
-              { key: "fr", placeholder: "Nom (FR)" },
-              { key: "en", placeholder: "Name (EN)" },
-              { key: "ar", placeholder: "الاسم (AR)" },
-            ] as const).map(({ key, placeholder }) => (
-              <input
-                key={key}
-                value={newCatName[key]}
-                onChange={(e) => setNewCatName({ ...newCatName, [key]: e.target.value })}
-                placeholder={placeholder}
-                dir={key === "ar" ? "rtl" : "ltr"}
-                className="w-full px-2 py-1.5 rounded-md bg-background border border-input text-xs text-foreground focus:outline-none"
-              />
+            {([{ key: "fr", placeholder: "Nom (FR)" }, { key: "en", placeholder: "Name (EN)" }, { key: "ar", placeholder: "الاسم (AR)" }] as const).map(({ key, placeholder }) => (
+              <input key={key} value={newCatName[key]} onChange={(e) => setNewCatName({ ...newCatName, [key]: e.target.value })} placeholder={placeholder} dir={key === "ar" ? "rtl" : "ltr"} className="w-full px-2 py-1.5 rounded-md bg-background border border-input text-xs text-foreground focus:outline-none" />
             ))}
             <div className="flex gap-1">
               <button onClick={addCategory} className="flex-1 py-1 bg-primary text-white rounded text-xs">{t("add")}</button>
@@ -402,41 +330,27 @@ export default function AdminMenu() {
             </div>
           </div>
         )}
-
-        <div style={{display:"flex",flexDirection:"row",overflowX:"auto",padding:"8px 12px",gap:8,msOverflowStyle:"none",scrollbarWidth:"none"}}>
+        <div className="flex md:flex-col flex-row overflow-x-auto md:overflow-y-auto p-2 gap-1 md:space-y-1">
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
             <SortableContext items={orderedCategories.map((c) => c.id)} strategy={verticalListSortingStrategy}>
               {orderedCategories.map((cat) => (
-                <SortableCategoryItem
-                  key={cat.id}
-                  cat={cat}
-                  isActive={activeCatId === cat.id}
-                  onClick={() => setSelectedCat(cat.id)}
-                  onDelete={deleteCategory}
-                />
+                <SortableCategoryItem key={cat.id} cat={cat} isActive={activeCatId === cat.id} onClick={() => setSelectedCat(cat.id)} onDelete={deleteCategory} />
               ))}
             </SortableContext>
           </DndContext>
         </div>
       </div>
 
-      {/* Liste des plats */}
+      {/* Plats */}
       <div className="flex-1 overflow-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div>
             <h1 className="text-lg font-bold text-foreground">
-              {activeCatId
-                ? (orderedCategories.find((c) => c.id === activeCatId) as unknown as Record<string, string>)?.[nameKey] || t("menu")
-                : t("menu")}
+              {activeCatId ? (orderedCategories.find((c) => c.id === activeCatId) as any)?.[nameKey] || t("menu") : t("menu")}
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">{dishes.length} plats</p>
           </div>
-          <button
-            onClick={() => setDishModal("add")}
-            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:opacity-90"
-          >
-            {t("addDish")}
-          </button>
+          <button onClick={() => setDishModal("add")} className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:opacity-90">{t("addDish")}</button>
         </div>
 
         <div className="p-4 space-y-2">
@@ -447,51 +361,34 @@ export default function AdminMenu() {
             </div>
           ) : (
             dishes.map((dish) => {
-              const name = (dish as unknown as Record<string, string>)[nameKey] || dish.nameEn;
-              const descKey = `description${lang.charAt(0).toUpperCase() + lang.slice(1)}` as "descriptionEn" | "descriptionFr" | "descriptionAr";
-              const desc = (dish as unknown as Record<string, string>)[descKey] || dish.descriptionEn;
+              const name = (dish as any)[nameKey] || dish.nameEn;
+              const descKey = `description${lang.charAt(0).toUpperCase() + lang.slice(1)}` as any;
+              const desc = (dish as any)[descKey] || dish.descriptionEn;
+              const currency = (dish as any).currency || "DZD";
               return (
-                <div
-                  key={dish.id}
-                  style={{display:"flex",flexDirection:"column",gap:10,padding:12,background:"var(--card)",border:"1px solid var(--border)",borderRadius:16,opacity:dish.isAvailable?1:0.6}}
-                >
-                  {dish.imageUrl ? (
-                    <img src={dish.imageUrl} alt={name} className="w-16 h-16 object-cover rounded-lg flex-shrink-0" />
-                  ) : (
-                    <div className="w-14 h-14 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">🍽️</div>
-                  )}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <p className="font-medium text-sm text-foreground truncate">{name}</p>
-                      {dish.isPopular && <span className="text-xs px-1.5 py-0.5 rounded bg-primary/20 text-primary">POP</span>}
-                      {dish.isNew && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">NEW</span>}
+                <div key={dish.id} className={`flex flex-col gap-2 p-3 bg-card border border-border rounded-xl ${!dish.isAvailable ? "opacity-60" : ""}`}>
+                  <div className="flex items-center gap-3">
+                    {dish.imageUrl ? (
+                      <img src={dish.imageUrl} alt={name} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" />
+                    ) : (
+                      <div className="w-14 h-14 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">🍽️</div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className="font-medium text-sm text-foreground">{name}</p>
+                        {dish.isPopular && <span className="text-xs px-1.5 py-0.5 rounded bg-primary/20 text-primary">POP</span>}
+                        {dish.isNew && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">NEW</span>}
+                      </div>
+                      {desc && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{desc}</p>}
+                      <p className="text-primary text-sm font-semibold mt-0.5">{formatPrice(Number(dish.price), currency)}</p>
                     </div>
-                    {desc && <p className="text-xs text-muted-foreground truncate mt-0.5">{desc}</p>}
-                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} DA</p>
                   </div>
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <button
-                      onClick={() => toggleDish(dish.id)}
-                      className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
-                        dish.isAvailable
-                          ? "bg-green-500/10 border-green-500/30 text-green-400"
-                          : "bg-muted border-border text-muted-foreground"
-                      }`}
-                    >
-                      {dish.isAvailable ? "ON" : "OFF"}
+                  <div className="flex items-center gap-2 w-full">
+                    <button onClick={() => toggleDish(dish.id)} className={`flex-1 text-xs py-2 rounded-lg border transition-colors font-medium ${dish.isAvailable ? "bg-green-500/10 border-green-500/30 text-green-400" : "bg-muted border-border text-muted-foreground"}`}>
+                      {dish.isAvailable ? "✓ Disponible" : "✗ Indisponible"}
                     </button>
-                    <button
-                      onClick={() => setDishModal(dish)}
-                      className="text-xs px-2.5 py-1.5 border border-border rounded-lg text-foreground hover:bg-accent"
-                    >
-                      {t("edit")}
-                    </button>
-                    <button
-                      onClick={() => deleteDish(dish.id)}
-                      className="text-xs px-2.5 py-1.5 text-destructive hover:bg-destructive/10 rounded-lg"
-                    >
-                      {t("delete")}
-                    </button>
+                    <button onClick={() => setDishModal(dish)} className="flex-1 text-xs py-2 border border-border rounded-lg text-foreground hover:bg-accent font-medium">Modifier</button>
+                    <button onClick={() => deleteDish(dish.id)} className="text-xs px-3 py-2 text-destructive hover:bg-destructive/10 rounded-lg border border-destructive/20">🗑️</button>
                   </div>
                 </div>
               );
@@ -501,12 +398,7 @@ export default function AdminMenu() {
       </div>
 
       {dishModal !== null && (
-        <DishModal
-          dish={dishModal === "add" ? undefined : dishModal as Dish}
-          categories={orderedCategories}
-          onClose={() => setDishModal(null)}
-          onSave={saveDish}
-        />
+        <DishModal dish={dishModal === "add" ? undefined : dishModal as Dish} categories={orderedCategories} onClose={() => setDishModal(null)} onSave={saveDish} />
       )}
     </div>
   );
