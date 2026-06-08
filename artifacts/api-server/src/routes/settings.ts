@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { settings } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 import { requireAuth, requireRole } from "../middlewares/auth.js";
+import { getSocketServer } from "../lib/socket.js";
 
 const router = Router();
 
@@ -22,6 +23,8 @@ router.put("/:key", requireAuth, requireRole("admin"), async (req, res) => {
     await db.insert(settings).values({ key: req.params.key, value })
       .onConflictDoUpdate({ target: settings.key, set: { value, updatedAt: new Date() } });
     res.json({ key: req.params.key, value });
+    const io = getSocketServer();
+    if (io) io.emit("settings:updated", { key: req.params.key, value });
   } catch (e) {
     res.status(500).json({ error: "Server error" });
   }

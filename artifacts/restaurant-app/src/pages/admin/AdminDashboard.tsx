@@ -1,5 +1,7 @@
 ﻿import { useTranslation } from "react-i18next";
 import { useCurrency, saveCurrencyToServer, type Currency } from "@/lib/currency";
+import { socket } from "@/lib/socket";
+import { useEffect } from "react";
 import { useGetDashboardStats, useGetOrdersByStatus } from "@workspace/api-client-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
@@ -29,6 +31,12 @@ function StatCard({ label, value, icon, accent }: { label: string; value: string
 export default function AdminDashboard() {
   const { t } = useTranslation();
   const { currency, formatPrice } = useCurrency();
+  useEffect(() => {
+    const refresh = () => { queryClient.invalidateQueries({ queryKey: ["dashboardStats"] }); queryClient.invalidateQueries({ queryKey: ["ordersByStatus"] }); };
+    socket.on("vendor:new-order", refresh);
+    socket.on("order:updated", refresh);
+    return () => { socket.off("vendor:new-order", refresh); socket.off("order:updated", refresh); };
+  }, []);
   const { data: stats, isLoading } = useGetDashboardStats({ query: { refetchInterval: 10000 } as any });
   const { data: ordersByStatus = [] } = useGetOrdersByStatus({ query: { refetchInterval: 10000 } as any });
 
