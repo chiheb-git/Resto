@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from "react";
-import { socket } from "@/lib/socket";
+import { getSocket } from "@/lib/socket";
 export type Currency = "DZD" | "EUR" | "USD";
 const STORAGE_KEY = "restaurantos_currency";
 const API_URL = import.meta.env.VITE_API_URL || "";
@@ -55,11 +55,12 @@ export function useCurrency() {
         setCurrencyState(data.value as Currency);
       }
     };
-    socket.on("settings:updated", socketHandler);
-    return () => {
-      window.removeEventListener("currency-change", handler);
-      socket.off("settings:updated", socketHandler);
+    const s = getSocket();
+    const socketHandler = (data: { key: string; value: string }) => {
+      if (data.key === "currency") { localStorage.setItem(STORAGE_KEY, data.value); setCurrencyState(data.value as Currency); }
     };
+    s.on("settings:updated", socketHandler);
+    return () => { window.removeEventListener("currency-change", handler); s.off("settings:updated", socketHandler); };
   }, []);
   return {
     currency,

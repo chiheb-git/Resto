@@ -1375,7 +1375,7 @@ export default function MenuPage() {
 
         {/* CART VIEW */}
         {view === "cart" && (
-          <CartView formatPrice={fp}
+          <CartView
             cart={cart} setCart={setCart}
             orderNote={orderNote} setOrderNote={setOrderNote}
             cartTotal={cartTotal} onPlaceOrder={placeOrder}
@@ -1434,7 +1434,7 @@ export default function MenuPage() {
 
       {/* Customize modal */}
       {customizeItem && (
-        <CustomizeModal formatPrice={fp}
+        <CustomizeModal
           dish={customizeItem}
           lang={lang}
           onConfirm={handleConfirmAdd}
