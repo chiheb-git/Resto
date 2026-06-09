@@ -484,7 +484,7 @@ export default function AdminMenu() {
                       {dish.isNew && <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/20 text-green-400">NEW</span>}
                     </div>
                     {desc && <p className="text-xs text-muted-foreground truncate mt-0.5">{desc}</p>}
-                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} DA</p>
+                    <p className="text-primary text-sm font-semibold mt-0.5">{Number(dish.price).toFixed(2)} DA{(dish as any).priceLarge != null ? ` / ${Number((dish as any).priceLarge).toFixed(2)} DA` : ""}</p>
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <button
