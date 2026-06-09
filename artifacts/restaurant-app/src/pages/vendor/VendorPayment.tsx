@@ -12,7 +12,6 @@ export default function VendorPayment() {
   const lang = i18n.language as "fr" | "en" | "ar";
   const nameKey = ("name" + lang.charAt(0).toUpperCase() + lang.slice(1)) as "nameEn" | "nameFr" | "nameAr";
   const { formatPrice, ready: currencyReady } = useCurrency();
-  if (!currencyReady) return null;
   const updateStatus = useUpdateOrderStatus();
   const { data: orders = [] } = useListOrders({}, { query: { refetchInterval: 5000 } as any });
   useEffect(() => {
@@ -21,6 +20,7 @@ export default function VendorPayment() {
     socket.on("vendor:new-order", refresh); socket.on("order:updated", refresh);
     return () => { socket.off("vendor:new-order", refresh); socket.off("order:updated", refresh); };
   }, [queryClient]);
+  if (!currencyReady) return null;
   const readyOrders = (orders as OrderWithItems[]).filter((o) => o.status === "ready");
   const paidOrders = (orders as OrderWithItems[]).filter((o) => o.status === "delivered");
   const totalPaid = paidOrders.reduce((s, o) => s + Number(o.totalPrice), 0);
