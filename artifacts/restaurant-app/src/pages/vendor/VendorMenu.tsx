@@ -1,6 +1,6 @@
 ﻿import { useTranslation } from "react-i18next";
-import { useCurrency } from "@/lib/currency";
 import { getSocket } from "@/lib/socket";
+import { useCurrency } from "@/lib/currency";
 import { useEffect } from "react";
 import { useListDishes, useToggleDishAvailability, getListDishesQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
