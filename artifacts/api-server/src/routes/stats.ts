@@ -13,7 +13,7 @@ router.get("/stats/dashboard", requireAuth, requireRole("vendor", "admin"), asyn
   const [todayRevenue] = await db
     .select({ total: sql<number>`COALESCE(SUM(${ordersTable.totalPrice}::numeric), 0)` })
     .from(ordersTable)
-    .where(and(gte(ordersTable.createdAt, today), eq(ordersTable.status, "delivered")));
+    .where(and(gte(ordersTable.createdAt, today), sql`${ordersTable.status} IN ('delivered', 'paid')`));
 
   const [todayOrders] = await db
     .select({ cnt: count() })
@@ -85,7 +85,7 @@ router.get("/stats/revenue", requireAuth, requireRole("admin"), async (req, res)
       orders: sql<number>`COUNT(*)`,
     })
     .from(ordersTable)
-    .where(gte(ordersTable.createdAt, startDate))
+    .where(and(gte(ordersTable.createdAt, startDate), sql`${ordersTable.status} IN ('delivered', 'paid')`))
     .groupBy(sql`DATE_TRUNC('${sql.raw(truncUnit)}', ${ordersTable.createdAt})`)
     .orderBy(sql`DATE_TRUNC('${sql.raw(truncUnit)}', ${ordersTable.createdAt})`);
 
