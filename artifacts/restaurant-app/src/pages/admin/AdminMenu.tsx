@@ -93,6 +93,7 @@ function DishModal({
     isPopular: dish?.isPopular ?? false,
     isNew: dish?.isNew ?? false,
     isAvailable: dish?.isAvailable ?? true,
+    priceLarge: (dish as any)?.priceLarge ?? "",
     allergens: dish?.allergens?.join(", ") ?? "",
   });
 
@@ -513,4 +514,6 @@ export default function AdminMenu() {
     </div>
   );
 }
+
+
 
