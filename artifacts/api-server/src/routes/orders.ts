@@ -1,4 +1,4 @@
-import { Router, IRouter } from "express";
+﻿import { Router, IRouter } from "express";
 import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
 import { db, ordersTable, orderItemsTable, dishesTable, tablesTable, ratingsTable } from "@workspace/db";
 import {
@@ -139,11 +139,12 @@ router.post("/orders", async (req, res): Promise<void> => {
 
   for (const item of items) {
     const dish = dishMap.get(item.dishId)!;
+    const itemPrice = (item.customNote?.includes('[Grande]') && (dish as any).priceLarge != null) ? Number((dish as any).priceLarge) : Number(dish.price);
     await db.insert(orderItemsTable).values({
       orderId: order.id,
       dishId: item.dishId,
       quantity: item.quantity,
-      unitPrice: dish.price,
+      unitPrice: String(itemPrice),
       customNote: item.customNote ?? null,
     });
   }
