@@ -1,4 +1,5 @@
 ﻿import { Router, IRouter } from "express";
+import { z } from "zod";
 import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
 import { db, ordersTable, orderItemsTable, dishesTable, tablesTable, ratingsTable } from "@workspace/db";
 import {
@@ -207,7 +208,8 @@ router.patch("/orders/:id/status", requireAuth, requireRole("vendor", "admin"), 
     res.status(400).json({ error: params.error.message });
     return;
   }
-  const parsed = UpdateOrderStatusBody.safeParse(req.body);
+  const LocalStatusBody = z.object({ status: z.enum(["confirmed", "refused", "ready", "delivered", "paid"]), refusalReason: z.string().optional() });
+  const parsed = LocalStatusBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
     return;
