@@ -25,6 +25,8 @@ interface CartItem {
   dish: Dish;
   quantity: number;
   customNote?: string;
+  selectedSize?: "normale" | "grande";
+  unitPrice: number;
 }
 
 /* ============================================================
@@ -461,10 +463,18 @@ function DishCard({ dish, onAdd, index, formatPrice }: { dish: Dish; onAdd: (dis
           background: "rgba(10,10,15,0.85)", backdropFilter: "blur(12px)",
           border: "0.5px solid rgba(255,107,53,0.4)",
           borderRadius: 12, padding: "6px 14px",
+          display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2,
         }}>
-          <span style={{ fontSize: 18, fontWeight: 700, color: "#FF6B35" }}>
-            {formatPrice(dish.price)}
-          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ fontSize: 10, color: "rgba(255,107,53,0.7)", fontWeight: 600 }}>Normale</span>
+            <span style={{ fontSize: 18, fontWeight: 700, color: "#FF6B35" }}>{formatPrice(dish.price)}</span>
+          </div>
+          {(dish as any).priceLarge != null && (
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ fontSize: 10, color: "rgba(255,159,28,0.7)", fontWeight: 600 }}>Grande</span>
+              <span style={{ fontSize: 16, fontWeight: 700, color: "#FF9F1C" }}>{formatPrice((dish as any).priceLarge)}</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -550,12 +560,15 @@ function CustomizeModal({
   dish, lang, onConfirm, onClose, formatPrice,
 }: {
   dish: Dish; lang: string;
-  onConfirm: (note: string) => void;
+  onConfirm: (note: string, size: "normale" | "grande", price: number) => void;
   onClose: () => void;
   formatPrice: (p: number|string) => string;
 }) {
   const { t } = useTranslation();
   const [note, setNote] = useState("");
+  const hasLarge = (dish as any).priceLarge != null;
+  const [selectedSize, setSelectedSize] = useState<"normale" | "grande">("normale");
+  const currentPrice = selectedSize === "grande" && hasLarge ? (dish as any).priceLarge : dish.price;
   const name = getLangName(dish as unknown as Record<string, unknown>, lang);
   const desc = getLangDesc(dish as unknown as Record<string, unknown>, lang);
 
@@ -626,6 +639,30 @@ function CustomizeModal({
             </div>
           )}
 
+          {/* Choix taille si priceLarge existe */}
+          {hasLarge && (
+            <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+              {(["normale", "grande"] as const).map((size) => (
+                <button
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  style={{
+                    flex: 1, padding: "12px 0", borderRadius: 14, border: "none",
+                    background: selectedSize === size
+                      ? "linear-gradient(135deg,#FF6B35,#FF9F1C)"
+                      : "var(--bg-surface)",
+                    color: selectedSize === size ? "white" : "var(--text-secondary)",
+                    fontWeight: 700, fontSize: 14, cursor: "pointer",
+                    border: selectedSize === size ? "none" : "0.5px solid var(--border-subtle)",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  {size === "normale" ? `🍽️ Normale — ${formatPrice(dish.price)}` : `🍗 Grande — ${formatPrice((dish as any).priceLarge)}`}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Note input */}
           <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)", display: "block", marginBottom: 8 }}>
             ✏️ {t("specialRequest")}
@@ -650,10 +687,10 @@ function CustomizeModal({
           {/* Footer */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 20, gap: 16 }}>
             <span style={{ fontSize: 28, fontWeight: 700, color: "#FF6B35" }}>
-              {formatPrice(dish.price)}
+              {formatPrice(currentPrice)}
             </span>
             <button
-              onClick={() => onConfirm(note)}
+              onClick={() => onConfirm(note, selectedSize, Number(currentPrice))}
               style={{
                 flex: 1, height: 52, borderRadius: 16, border: "none",
                 background: "linear-gradient(135deg,#FF6B35,#FF9F1C)",
@@ -737,7 +774,7 @@ function CartView({
                   <p style={{ fontSize: 12, color: "#FF6B35", fontStyle: "italic", marginBottom: 4 }}>{item.customNote}</p>
                 )}
                 <p style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                  {formatPrice(Number(item.dish.price) * item.quantity)}
+                  {item.selectedSize === "grande" ? "🍗 Grande" : "🍽️ Normale"} — {formatPrice(item.unitPrice * item.quantity)}
                 </p>
               </div>
               {/* Qty */}
@@ -1083,18 +1120,19 @@ export default function MenuPage() {
   }, [activeOrder?.id, orderId, queryClient, table?.id, params.token, t]);
 
   // formatPrice imported directly from @/lib/currency
-  const cartTotal = cart.reduce((s, i) => s + Number(i.dish.price) * i.quantity, 0);
+  const cartTotal = cart.reduce((s, i) => s + (i.unitPrice || Number(i.dish.price)) * i.quantity, 0);
   const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
 
   const handleAddDish = (dish: Dish) => setCustomizeItem(dish);
 
-  const handleConfirmAdd = (note: string) => {
+  const handleConfirmAdd = (note: string, size: "normale" | "grande" = "normale", unitPrice: number = 0) => {
     if (!customizeItem) return;
-    const existing = cart.find((c) => c.dish.id === customizeItem.id && c.customNote === (note || undefined));
+    const price = unitPrice || Number(customizeItem.price);
+    const existing = cart.find((c) => c.dish.id === customizeItem.id && c.customNote === (note || undefined) && c.selectedSize === size);
     if (existing) {
       setCart(cart.map((c) => c === existing ? { ...c, quantity: c.quantity + 1 } : c));
     } else {
-      setCart([...cart, { dish: customizeItem, quantity: 1, customNote: note || undefined }]);
+      setCart([...cart, { dish: customizeItem, quantity: 1, customNote: note || undefined, selectedSize: size, unitPrice: price }]);
     }
     setCustomizeItem(null);
     toast.success("🛒 " + t("addToCart"));
@@ -1107,7 +1145,7 @@ export default function MenuPage() {
         data: {
           tableId: table.id,
           note: orderNote || undefined,
-          items: cart.map((c) => ({ dishId: c.dish.id, quantity: c.quantity, customNote: c.customNote })),
+          items: cart.map((c) => ({ dishId: c.dish.id, quantity: c.quantity, customNote: [c.selectedSize === "grande" ? "[Grande]" : "[Normale]", c.customNote].filter(Boolean).join(" — ") || undefined })),
         },
       },
       {
@@ -1444,3 +1482,4 @@ export default function MenuPage() {
     </div>
   );
 }
+

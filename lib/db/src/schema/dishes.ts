@@ -18,6 +18,7 @@ export const dishesTable = pgTable("dishes", {
   isPopular: boolean("is_popular").notNull().default(false),
   isNew: boolean("is_new").notNull().default(true),
   isAvailable: boolean("is_available").notNull().default(true),
+  priceLarge: numeric("price_large", { precision: 10, scale: 2 }),
   currency: text("currency").notNull().default("DZD"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
@@ -25,4 +26,5 @@ export const dishesTable = pgTable("dishes", {
 export const insertDishSchema = createInsertSchema(dishesTable).omit({ id: true, createdAt: true });
 export type InsertDish = z.infer<typeof insertDishSchema>;
 export type Dish = typeof dishesTable.$inferSelect;
+
 

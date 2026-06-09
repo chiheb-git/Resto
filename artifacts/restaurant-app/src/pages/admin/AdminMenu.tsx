@@ -240,6 +240,7 @@ function DishModal({
             onClick={() => onSave({
               ...form,
               price: Number(form.price),
+              priceLarge: form.priceLarge !== "" && form.priceLarge !== null ? Number(form.priceLarge) : null,
               allergens: form.allergens ? form.allergens.split(",").map((s) => s.trim()).filter(Boolean) : [],
               imageUrl: form.imageUrl || null,
               descriptionAr: form.descriptionAr || null,
@@ -512,3 +513,4 @@ export default function AdminMenu() {
     </div>
   );
 }
+

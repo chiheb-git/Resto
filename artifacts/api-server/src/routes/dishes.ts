@@ -37,7 +37,7 @@ router.get("/dishes", async (req, res): Promise<void> => {
   }
 
   const dishes = await query;
-  res.json(dishes.map((d) => ListDishesResponseItem.parse({ ...d, price: Number(d.price) })));
+  res.json(dishes.map((d) => ListDishesResponseItem.parse({ ...d, price: Number(d.price), priceLarge: d.priceLarge != null ? Number(d.priceLarge) : null })));
 });
 
 router.post("/dishes", requireAuth, requireRole("admin"), async (req, res): Promise<void> => {
@@ -48,10 +48,10 @@ router.post("/dishes", requireAuth, requireRole("admin"), async (req, res): Prom
   }
   const [dish] = await db
     .insert(dishesTable)
-    .values({ ...parsed.data, price: String(parsed.data.price) })
+    .values({ ...parsed.data, price: String(parsed.data.price), priceLarge: parsed.data.priceLarge != null ? String(parsed.data.priceLarge) : null })
     .returning();
   const io1 = getSocketServer(); if (io1) io1.emit("menu:updated", { type: "dish:created" });
-  res.status(201).json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price) }));
+  res.status(201).json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price), priceLarge: dish.priceLarge != null ? Number(dish.priceLarge) : null }));
 });
 
 router.get("/dishes/:id", async (req, res): Promise<void> => {
@@ -66,7 +66,7 @@ router.get("/dishes/:id", async (req, res): Promise<void> => {
     return;
   }
   const io2 = getSocketServer(); if (io2) io2.emit("menu:updated", { type: "dish:updated" });
-  res.json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price) }));
+  res.json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price), priceLarge: dish.priceLarge != null ? Number(dish.priceLarge) : null }));
 });
 
 router.patch("/dishes/:id", requireAuth, requireRole("admin", "vendor"), async (req, res): Promise<void> => {
@@ -84,6 +84,9 @@ router.patch("/dishes/:id", requireAuth, requireRole("admin", "vendor"), async (
   if (parsed.data.price !== undefined) {
     updateData.price = String(parsed.data.price);
   }
+  if (parsed.data.priceLarge !== undefined) {
+    updateData.priceLarge = parsed.data.priceLarge != null ? String(parsed.data.priceLarge) : null;
+  }
   const [dish] = await db
     .update(dishesTable)
     .set(updateData)
@@ -94,7 +97,7 @@ router.patch("/dishes/:id", requireAuth, requireRole("admin", "vendor"), async (
     return;
   }
   const io2 = getSocketServer(); if (io2) io2.emit("menu:updated", { type: "dish:updated" });
-  res.json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price) }));
+  res.json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price), priceLarge: dish.priceLarge != null ? Number(dish.priceLarge) : null }));
 });
 
 router.delete("/dishes/:id", requireAuth, requireRole("admin"), async (req, res): Promise<void> => {
@@ -129,7 +132,8 @@ router.patch("/dishes/:id/toggle-availability", requireAuth, requireRole("admin"
     .where(eq(dishesTable.id, params.data.id))
     .returning();
   const io2 = getSocketServer(); if (io2) io2.emit("menu:updated", { type: "dish:updated" });
-  res.json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price) }));
+  res.json(ListDishesResponseItem.parse({ ...dish, price: Number(dish.price), priceLarge: dish.priceLarge != null ? Number(dish.priceLarge) : null }));
 });
 
 export default router;
+
