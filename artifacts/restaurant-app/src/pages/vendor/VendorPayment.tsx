@@ -41,7 +41,6 @@ export default function VendorPayment() {
         body: JSON.stringify({ totalPrice: price }),
       });
       queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
-      });
       queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
       toast.success("Prix modifie !");
       setEditPrice(null);
