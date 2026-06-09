@@ -1478,6 +1478,19 @@ export default function MenuPage() {
           onClose={() => setCustomizeItem(null)} formatPrice={fp}
         />
       )}
+      {/* Developer credit */}
+      <div style={{
+        position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 10,
+        textAlign: "center", padding: "5px 0", fontSize: 10,
+        background: "rgba(0,0,0,0.35)", backdropFilter: "blur(8px)",
+        letterSpacing: "0.12em", color: "rgba(255,255,255,0.35)",
+        fontWeight: 500, pointerEvents: "none", userSelect: "none",
+      }}>
+        DEVELOPED BY{" "}
+        <span style={{ color: "rgba(255,107,53,0.7)", fontWeight: 700 }}>
+          MEGHRAOUI CHIHEB
+        </span>
+      </div>
     </div>
   );
 }
