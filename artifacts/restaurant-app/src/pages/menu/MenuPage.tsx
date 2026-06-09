@@ -1,4 +1,4 @@
-﻿import { useCurrency, formatPrice } from "@/lib/currency";
+import { useCurrency, formatPrice } from "@/lib/currency";
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useLocation } from "wouter";
@@ -43,8 +43,8 @@ function getLangDesc(item: Record<string, unknown>, lang: string): string {
 }
 
 const FOOD_EMOJIS: Record<string, string> = {
-  pizza: "🍕", burger: "🍔", pasta: "🍝", salad: "🥗", soup: "🍲",
-  dessert: "🍮", drink: "🥤", coffee: "☕", default: "🍽️",
+  pizza: "??", burger: "??", pasta: "??", salad: "??", soup: "??",
+  dessert: "??", drink: "??", coffee: "?", default: "???",
 };
 function getFoodEmoji(name: string): string {
   const n = name.toLowerCase();
@@ -176,7 +176,7 @@ function HeroBanner({ tableNumber }: { tableNumber: number | string }) {
         }}>
           <span style={{ width:6, height:6, borderRadius:"50%", background:"#FF6B35", display:"inline-block", boxShadow:"0 0 6px #FF6B35" }}/>
           <span style={{ fontSize:10, fontWeight:700, color:"#FF9F1C", letterSpacing:"0.12em", textTransform:"uppercase" }}>
-            Table {tableNumber} · Bienvenue
+            Table {tableNumber} � Bienvenue
           </span>
         </div>
 
@@ -203,7 +203,7 @@ function HeroBanner({ tableNumber }: { tableNumber: number | string }) {
           fontFamily:"'DM Sans',-apple-system,sans-serif",
           letterSpacing:"0.01em", lineHeight:1.5,
         }}>
-          Découvrez nos plats préparés avec passion
+          D�couvrez nos plats pr�par�s avec passion
         </p>
 
         {/* Divider line animated */}
@@ -337,11 +337,11 @@ function HeroBanner({ tableNumber }: { tableNumber: number | string }) {
 function StatusBadge({ status }: { status: string }) {
   const { t } = useTranslation();
   const conf: Record<string, { bg: string; color: string; icon: string }> = {
-    pending:   { bg: "rgba(251,191,36,0.15)",  color: "#fbbf24", icon: "⏳" },
-    confirmed: { bg: "rgba(59,130,246,0.15)",  color: "#60a5fa", icon: "✅" },
-    refused:   { bg: "rgba(239,68,68,0.15)",   color: "#f87171", icon: "❌" },
-    ready:     { bg: "rgba(34,197,94,0.15)",   color: "#4ade80", icon: "🔔" },
-    delivered: { bg: "rgba(148,163,184,0.15)", color: "#94a3b8", icon: "🎉" },
+    pending:   { bg: "rgba(251,191,36,0.15)",  color: "#fbbf24", icon: "?" },
+    confirmed: { bg: "rgba(59,130,246,0.15)",  color: "#60a5fa", icon: "?" },
+    refused:   { bg: "rgba(239,68,68,0.15)",   color: "#f87171", icon: "?" },
+    ready:     { bg: "rgba(34,197,94,0.15)",   color: "#4ade80", icon: "??" },
+    delivered: { bg: "rgba(148,163,184,0.15)", color: "#94a3b8", icon: "??" },
   };
   const c = conf[status] ?? conf.pending;
   return (
@@ -454,7 +454,7 @@ function DishCard({ dish, onAdd, index, formatPrice }: { dish: Dish; onAdd: (dis
               background: "rgba(255,107,53,0.9)", color: "white",
               fontSize: 10, fontWeight: 700, letterSpacing: "0.06em",
               textTransform: "uppercase", backdropFilter: "blur(8px)",
-            }}>🔥 POP</span>
+            }}>?? POP</span>
           )}
         </div>
         {/* Price on image */}
@@ -535,7 +535,7 @@ function DishCard({ dish, onAdd, index, formatPrice }: { dish: Dish; onAdd: (dis
                 : "0 4px 16px rgba(255,107,53,0.35)",
             }}
           >
-            {added ? "✓ Ajouté !" : `+ ${t("addToCart")}`}
+            {added ? "? Ajout� !" : `+ ${t("addToCart")}`}
           </button>
         ) : (
           <div style={{
@@ -622,7 +622,7 @@ function CustomizeModal({
               background: "var(--bg-glass)", color: "var(--text-secondary)",
               cursor: "pointer", fontSize: 18, display: "flex",
               alignItems: "center", justifyContent: "center",
-            }}>✕</button>
+            }}>?</button>
           </div>
 
           {/* Allergens */}
@@ -657,7 +657,7 @@ function CustomizeModal({
                     transition: "all 0.2s",
                   }}
                 >
-                  {size === "normale" ? `🍽️ Normale — ${formatPrice(dish.price)}` : `🍗 Grande — ${formatPrice((dish as any).priceLarge)}`}
+                  {size === "normale" ? `??? Normale � ${formatPrice(dish.price)}` : `?? Grande � ${formatPrice((dish as any).priceLarge)}`}
                 </button>
               ))}
             </div>
@@ -665,12 +665,12 @@ function CustomizeModal({
 
           {/* Note input */}
           <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)", display: "block", marginBottom: 8 }}>
-            ✏️ {t("specialRequest")}
+            ?? {t("specialRequest")}
           </label>
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="ex: sans sel, bien cuit, sauce à part..."
+            placeholder="ex: sans sel, bien cuit, sauce � part..."
             rows={3}
             style={{
               width: "100%", background: "var(--bg-surface)",
@@ -703,7 +703,7 @@ function CustomizeModal({
               onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
               onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
             >
-              🛒 {t("addToCart")}
+              ?? {t("addToCart")}
             </button>
           </div>
         </div>
@@ -734,7 +734,7 @@ function CartView({
   if (cart.length === 0) {
     return (
       <div style={{ textAlign: "center", padding: "80px 24px" }}>
-        <div style={{ fontSize: 72, marginBottom: 16 }}>🛒</div>
+        <div style={{ fontSize: 72, marginBottom: 16 }}>??</div>
         <h3 style={{
           fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 600,
           color: "var(--text-secondary)", marginBottom: 8,
@@ -774,7 +774,7 @@ function CartView({
                   <p style={{ fontSize: 12, color: "#FF6B35", fontStyle: "italic", marginBottom: 4 }}>{item.customNote}</p>
                 )}
                 <p style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                  {item.selectedSize === "grande" ? "🍗 Grande" : "🍽️ Normale"} — {formatPrice(item.unitPrice * item.quantity)}
+                  {item.selectedSize === "grande" ? "?? Grande" : "??? Normale"} � {formatPrice(item.unitPrice * item.quantity)}
                 </p>
               </div>
               {/* Qty */}
@@ -784,7 +784,7 @@ function CartView({
                 border: "0.5px solid var(--border-subtle)",
                 borderRadius: 14, padding: 4,
               }}>
-                {[{d: -1, icon: "−"}, {d: 1, icon: "+"}].map(({d, icon}, bi) => (
+                {[{d: -1, icon: "?"}, {d: 1, icon: "+"}].map(({d, icon}, bi) => (
                   bi === 0 ? (
                     <button key={d} onClick={() => updateQty(i, d)} style={{
                       width: 32, height: 32, borderRadius: 10, border: "none",
@@ -814,7 +814,7 @@ function CartView({
       {/* Note */}
       <div style={{ marginBottom: 20 }}>
         <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)", display: "block", marginBottom: 8 }}>
-          💬 {t("note")}
+          ?? {t("note")}
         </label>
         <textarea
           value={orderNote} onChange={(e) => setOrderNote(e.target.value)}
@@ -856,7 +856,7 @@ function CartView({
         onMouseEnter={(e) => { if (!isPending) e.currentTarget.style.transform = "translateY(-3px)"; }}
         onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
       >
-        {isPending ? "⏳ " + t("loading") : "🚀 " + t("placeOrder")}
+        {isPending ? "? " + t("loading") : "?? " + t("placeOrder")}
       </button>
     </div>
   );
@@ -875,11 +875,11 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
   const steps = ["pending", "confirmed", "ready", "delivered"];
   const currentStep = steps.indexOf(order.status);
   const statusConf: Record<string, { icon: string; color: string; bg: string; label: string }> = {
-    pending:   { icon: "⏳", color: "#fbbf24", bg: "rgba(251,191,36,0.12)", label: "En attente" },
-    confirmed: { icon: "✅", color: "#60a5fa", bg: "rgba(59,130,246,0.12)", label: "Confirmée" },
-    refused:   { icon: "❌", color: "#f87171", bg: "rgba(239,68,68,0.12)",  label: "Refusée" },
-    ready:     { icon: "🔔", color: "#4ade80", bg: "rgba(34,197,94,0.12)",  label: "Prête !" },
-    delivered: { icon: "🎉", color: "#94a3b8", bg: "rgba(148,163,184,0.12)", label: "Livrée" },
+    pending:   { icon: "?", color: "#fbbf24", bg: "rgba(251,191,36,0.12)", label: "En attente" },
+    confirmed: { icon: "?", color: "#60a5fa", bg: "rgba(59,130,246,0.12)", label: "Confirm�e" },
+    refused:   { icon: "?", color: "#f87171", bg: "rgba(239,68,68,0.12)",  label: "Refus�e" },
+    ready:     { icon: "??", color: "#4ade80", bg: "rgba(34,197,94,0.12)",  label: "Pr�te !" },
+    delivered: { icon: "??", color: "#94a3b8", bg: "rgba(148,163,184,0.12)", label: "Livr�e" },
   };
   const sc = statusConf[order.status] ?? statusConf.pending;
 
@@ -929,7 +929,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
                   transition: "all 0.3s ease",
                   boxShadow: i <= currentStep ? "0 4px 12px rgba(255,107,53,0.4)" : "none",
                 }}>
-                  {i < currentStep ? "✓" : i + 1}
+                  {i < currentStep ? "?" : i + 1}
                 </div>
                 <span style={{
                   fontSize: 10, fontWeight: 600,
@@ -959,7 +959,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
           borderRadius: 16, padding: 16, marginBottom: 20,
           color: "#f87171", fontSize: 14,
         }}>
-          ⚠️ {order.refusalReason}
+          ?? {order.refusalReason}
         </div>
       )}
 
@@ -971,12 +971,12 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
         <h3 style={{
           fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 600,
           color: "var(--text-primary)", marginBottom: 14,
-        }}>🧾 Détail commande</h3>
+        }}>?? D�tail commande</h3>
         {order.items.map((item) => {
           const nameKey = `name${lang.charAt(0).toUpperCase() + lang.slice(1)}` as keyof typeof item.dish;
           const dishName = item.dish
             ? ((item.dish as unknown as Record<string, string>)[nameKey as string] || item.dish.nameEn)
-            : "—";
+            : "�";
           return (
             <div key={item.id} style={{
               display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -984,7 +984,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
               borderBottom: "0.5px solid var(--border-subtle)",
               fontSize: 14,
             }}>
-              <span style={{ color: "var(--text-primary)" }}>{item.quantity}× {dishName}</span>
+              <span style={{ color: "var(--text-primary)" }}>{item.quantity}� {dishName}</span>
               <span style={{ color: "var(--text-muted)" }}>
                 {formatPrice(Number(item.unitPrice) * item.quantity)}
               </span>
@@ -1009,7 +1009,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
           <h3 style={{
             fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 600,
             color: "var(--text-primary)", marginBottom: 14,
-          }}>⭐ {t("rateYourOrder")}</h3>
+          }}>? {t("rateYourOrder")}</h3>
           <div style={{ display: "flex", gap: 10, marginBottom: 14, justifyContent: "center" }}>
             {[1,2,3,4,5].map((star) => (
               <button key={star} onClick={() => setRating(star)} style={{
@@ -1018,7 +1018,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
                 transition: "transform 0.2s cubic-bezier(0.34,1.56,0.64,1)",
                 filter: rating >= star ? "drop-shadow(0 0 6px rgba(251,191,36,0.8))" : "none",
               }}>
-                {rating >= star ? "⭐" : "☆"}
+                {rating >= star ? "?" : "?"}
               </button>
             ))}
           </div>
@@ -1052,7 +1052,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
               opacity: rating === 0 ? 0.5 : 1,
             }}
           >
-            {ratingMutation.isSuccess ? "✓ Envoyé !" : t("submitRating")}
+            {ratingMutation.isSuccess ? "? Envoy� !" : t("submitRating")}
           </button>
         </div>
       )}
@@ -1135,7 +1135,7 @@ export default function MenuPage() {
       setCart([...cart, { dish: customizeItem, quantity: 1, customNote: note || undefined, selectedSize: size, unitPrice: price }]);
     }
     setCustomizeItem(null);
-    toast.success("🛒 " + t("addToCart"));
+    toast.success("?? " + t("addToCart"));
   };
 
   const placeOrder = () => {
@@ -1145,7 +1145,7 @@ export default function MenuPage() {
         data: {
           tableId: table.id,
           note: orderNote || undefined,
-          items: cart.map((c) => ({ dishId: c.dish.id, quantity: c.quantity, customNote: [c.selectedSize === "grande" ? "[Grande]" : "[Normale]", c.customNote].filter(Boolean).join(" — ") || undefined })),
+          items: cart.map((c) => ({ dishId: c.dish.id, quantity: c.quantity, selectedSize: c.selectedSize, customNote: [c.selectedSize === "grande" ? "[Grande]" : "[Normale]", c.customNote].filter(Boolean).join(" � ") || undefined })),
         },
       },
       {
@@ -1153,7 +1153,7 @@ export default function MenuPage() {
           setOrderId(data.id);
           setCart([]);
           setView("tracking");
-          toast.success("🚀 " + t("orderPlaced"));
+          toast.success("?? " + t("orderPlaced"));
         },
         onError: () => toast.error(t("error")),
       }
@@ -1176,7 +1176,7 @@ export default function MenuPage() {
             animation: "pulse 1.5s infinite",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 28,
-          }}>🍽️</div>
+          }}>???</div>
           <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>{t("loading")}</p>
         </div>
       </div>
@@ -1192,13 +1192,13 @@ export default function MenuPage() {
         padding: 24, fontFamily: "var(--font-body)",
       }}>
         <div style={{ textAlign: "center", maxWidth: 360 }}>
-          <div style={{ fontSize: 80, marginBottom: 20 }}>⚠️</div>
+          <div style={{ fontSize: 80, marginBottom: 20 }}>??</div>
           <h2 style={{
             fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 700,
             color: "var(--text-primary)", marginBottom: 10,
           }}>Table introuvable</h2>
           <p style={{ color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.6 }}>
-            Ce QR code est invalide ou la table a été désactivée.
+            Ce QR code est invalide ou la table a �t� d�sactiv�e.
           </p>
         </div>
       </div>
@@ -1314,7 +1314,7 @@ export default function MenuPage() {
               color: "rgba(245,245,240,0.5)", cursor: "pointer",
               fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-            {theme === "dark" ? "☀️" : "🌙"}
+            {theme === "dark" ? "??" : "??"}
           </button>
         </div>
       </header>
@@ -1328,9 +1328,9 @@ export default function MenuPage() {
       }}>
         <div style={{ display: "flex", gap: 4, padding: "10px 0", overflowX: "auto" }}>
           {[
-            { key: "menu",     icon: "🍽️", label: t("menu"),      count: 0 },
-            { key: "cart",     icon: "🛒", label: t("yourCart"),  count: cartCount },
-            { key: "tracking", icon: "📋", label: t("trackOrder"), count: 0 },
+            { key: "menu",     icon: "???", label: t("menu"),      count: 0 },
+            { key: "cart",     icon: "??", label: t("yourCart"),  count: cartCount },
+            { key: "tracking", icon: "??", label: t("trackOrder"), count: 0 },
           ].map((tab) => (
             <button key={tab.key} onClick={() => setView(tab.key as typeof view)} style={{
               padding: "9px 18px", borderRadius: 12, border: "none",
@@ -1403,7 +1403,7 @@ export default function MenuPage() {
               ))}
               {dishes?.length === 0 && (
                 <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "60px 0" }}>
-                  <div style={{ fontSize: 56, marginBottom: 12 }}>🍽️</div>
+                  <div style={{ fontSize: 56, marginBottom: 12 }}>???</div>
                   <p style={{ color: "rgba(245,245,240,0.4)", fontSize: 15 }}>{t("noData")}</p>
                 </div>
               )}
@@ -1427,7 +1427,7 @@ export default function MenuPage() {
             ? <OrderTracker order={activeOrder as unknown as OrderWithItems} formatPrice={fp} />
             : (
               <div style={{ textAlign: "center", padding: "80px 24px" }}>
-                <div style={{ fontSize: 72, marginBottom: 16 }}>📋</div>
+                <div style={{ fontSize: 72, marginBottom: 16 }}>??</div>
                 <h3 style={{
                   fontFamily: "'Playfair Display',Georgia,serif",
                   fontSize: 22, fontWeight: 600,
@@ -1458,7 +1458,7 @@ export default function MenuPage() {
           onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px) scale(1.08)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; }}
         >
-          🛒
+          ??
           <span style={{
             position: "absolute", top: -8, right: -8,
             minWidth: 22, height: 22, borderRadius: 11,
