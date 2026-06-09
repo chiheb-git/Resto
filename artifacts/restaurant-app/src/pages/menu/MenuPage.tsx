@@ -773,7 +773,7 @@ function CartView({
                   <p style={{ fontSize: 12, color: "#FF6B35", fontStyle: "italic", marginBottom: 4 }}>{item.customNote}</p>
                 )}
                 <p style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                  {item.selectedSize === "grande" ? ""🍖 Grande" : "🍽️ Normale"} � {formatPrice(item.unitPrice * item.quantity)}
+                  {item.selectedSize === "grande" ? "🍖 Grande" : "🍽️ Normale"} · {formatPrice(item.unitPrice * item.quantity)}
                 </p>
               </div>
               {/* Qty */}
