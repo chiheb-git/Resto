@@ -35,7 +35,7 @@ export default function VendorPayment() {
   };
   const updatePrice = async (id: number, price: number) => {
     try {
-      const API = import.meta.env.VITE_API_URL ?? "";
+      const API = import.meta.env.VITE_API_URL || "https://restaurantos-api-oabz.onrender.com";
       await fetch(`${API}/api/orders/${id}/price`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
