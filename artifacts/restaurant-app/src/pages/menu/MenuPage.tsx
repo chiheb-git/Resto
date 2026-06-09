@@ -339,8 +339,8 @@ function StatusBadge({ status }: { status: string }) {
     pending:   { bg: "rgba(251,191,36,0.15)",  color: "#fbbf24", icon: "?" },
     confirmed: { bg: "rgba(59,130,246,0.15)",  color: "#60a5fa", icon: "?" },
     refused:   { bg: "rgba(239,68,68,0.15)",   color: "#f87171", icon: "?" },
-    ready:     { bg: "rgba(34,197,94,0.15)",   color: "#4ade80", icon: "??" },
-    delivered: { bg: "rgba(148,163,184,0.15)", color: "#94a3b8", icon: "??" },
+    ready:     { bg: "rgba(34,197,94,0.15)",   color: "#4ade80", icon: "✅" },
+    delivered: { bg: "rgba(148,163,184,0.15)", color: "#94a3b8", icon: "✅" },
   };
   const c = conf[status] ?? conf.pending;
   return (
@@ -453,7 +453,7 @@ function DishCard({ dish, onAdd, index, formatPrice }: { dish: Dish; onAdd: (dis
               background: "rgba(255,107,53,0.9)", color: "white",
               fontSize: 10, fontWeight: 700, letterSpacing: "0.06em",
               textTransform: "uppercase", backdropFilter: "blur(8px)",
-            }}>?? POP</span>
+            }}>⭐ POP</span>
           )}
         </div>
         {/* Price on image */}
@@ -656,7 +656,7 @@ function CustomizeModal({
                     transition: "all 0.2s",
                   }}
                 >
-                  {size === "normale" ? `??? Normale � ${formatPrice(dish.price)}` : `?? Grande � ${formatPrice((dish as any).priceLarge)}`}
+                  {size === "normale" ? `🍽️ Normale � ${formatPrice(dish.price)}` : `🍖 Grande � ${formatPrice((dish as any).priceLarge)}`}
                 </button>
               ))}
             </div>
@@ -664,7 +664,7 @@ function CustomizeModal({
 
           {/* Note input */}
           <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)", display: "block", marginBottom: 8 }}>
-            ?? {t("specialRequest")}
+            ✏️ {t("specialRequest")}
           </label>
           <textarea
             value={note}
@@ -702,7 +702,7 @@ function CustomizeModal({
               onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
               onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
             >
-              ?? {t("addToCart")}
+              🛒 {t("addToCart")}
             </button>
           </div>
         </div>
@@ -733,7 +733,7 @@ function CartView({
   if (cart.length === 0) {
     return (
       <div style={{ textAlign: "center", padding: "80px 24px" }}>
-        <div style={{ fontSize: 72, marginBottom: 16 }}>??</div>
+        <div style={{ fontSize: 72, marginBottom: 16 }}>🍽️</div>
         <h3 style={{
           fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 600,
           color: "var(--text-secondary)", marginBottom: 8,
@@ -773,7 +773,7 @@ function CartView({
                   <p style={{ fontSize: 12, color: "#FF6B35", fontStyle: "italic", marginBottom: 4 }}>{item.customNote}</p>
                 )}
                 <p style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                  {item.selectedSize === "grande" ? "?? Grande" : "??? Normale"} � {formatPrice(item.unitPrice * item.quantity)}
+                  {item.selectedSize === "grande" ? ""🍖 Grande" : "🍽️ Normale"} � {formatPrice(item.unitPrice * item.quantity)}
                 </p>
               </div>
               {/* Qty */}
@@ -813,7 +813,7 @@ function CartView({
       {/* Note */}
       <div style={{ marginBottom: 20 }}>
         <label style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)", display: "block", marginBottom: 8 }}>
-          ?? {t("note")}
+          📝 {t("note")}
         </label>
         <textarea
           value={orderNote} onChange={(e) => setOrderNote(e.target.value)}
@@ -855,7 +855,7 @@ function CartView({
         onMouseEnter={(e) => { if (!isPending) e.currentTarget.style.transform = "translateY(-3px)"; }}
         onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
       >
-        {isPending ? "? " + t("loading") : "?? " + t("placeOrder")}
+        {isPending ? "⏳ " + t("loading") : "🍽️ " + t("placeOrder")}
       </button>
     </div>
   );
@@ -877,8 +877,8 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
     pending:   { icon: "?", color: "#fbbf24", bg: "rgba(251,191,36,0.12)", label: "En attente" },
     confirmed: { icon: "?", color: "#60a5fa", bg: "rgba(59,130,246,0.12)", label: "Confirm�e" },
     refused:   { icon: "?", color: "#f87171", bg: "rgba(239,68,68,0.12)",  label: "Refus�e" },
-    ready:     { icon: "??", color: "#4ade80", bg: "rgba(34,197,94,0.12)",  label: "Pr�te !" },
-    delivered: { icon: "??", color: "#94a3b8", bg: "rgba(148,163,184,0.12)", label: "Livr�e" },
+    ready:     { icon: "✅", color: "#4ade80", bg: "rgba(34,197,94,0.12)",  label: "Pr�te !" },
+    delivered: { icon: "✅", color: "#94a3b8", bg: "rgba(148,163,184,0.12)", label: "Livr�e" },
   };
   const sc = statusConf[order.status] ?? statusConf.pending;
 
@@ -958,7 +958,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
           borderRadius: 16, padding: 16, marginBottom: 20,
           color: "#f87171", fontSize: 14,
         }}>
-          ?? {order.refusalReason}
+          ⚠️ {order.refusalReason}
         </div>
       )}
 
@@ -970,7 +970,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
         <h3 style={{
           fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 600,
           color: "var(--text-primary)", marginBottom: 14,
-        }}>?? D�tail commande</h3>
+        }}>📋 Détail commande</h3>
         {order.items.map((item) => {
           const nameKey = `name${lang.charAt(0).toUpperCase() + lang.slice(1)}` as keyof typeof item.dish;
           const dishName = item.dish
@@ -1134,7 +1134,7 @@ export default function MenuPage() {
       setCart([...cart, { dish: customizeItem, quantity: 1, customNote: note || undefined, selectedSize: size, unitPrice: price }]);
     }
     setCustomizeItem(null);
-    toast.success("?? " + t("addToCart"));
+    toast.success("🛒 " + t("addToCart"));
   };
 
   const placeOrder = () => {
@@ -1152,7 +1152,7 @@ export default function MenuPage() {
           setOrderId(data.id);
           setCart([]);
           setView("tracking");
-          toast.success("?? " + t("orderPlaced"));
+          toast.success("🎉 " + t("orderPlaced"));
         },
         onError: () => toast.error(t("error")),
       }
@@ -1175,7 +1175,7 @@ export default function MenuPage() {
             animation: "pulse 1.5s infinite",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 28,
-          }}>???</div>
+          }}>🍽️</div>
           <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>{t("loading")}</p>
         </div>
       </div>
@@ -1191,7 +1191,7 @@ export default function MenuPage() {
         padding: 24, fontFamily: "var(--font-body)",
       }}>
         <div style={{ textAlign: "center", maxWidth: 360 }}>
-          <div style={{ fontSize: 80, marginBottom: 20 }}>??</div>
+          <div style={{ fontSize: 80, marginBottom: 20 }}>🍽️</div>
           <h2 style={{
             fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 700,
             color: "var(--text-primary)", marginBottom: 10,
@@ -1305,7 +1305,7 @@ export default function MenuPage() {
             }}>{l.toUpperCase()}</button>
           ))}
           <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={() => setTheme(theme === "dark" ? "☀️" : "🌙")}
             style={{
               width: 34, height: 34, borderRadius: 10,
               border: "0.5px solid rgba(255,255,255,0.08)",
@@ -1313,7 +1313,7 @@ export default function MenuPage() {
               color: "rgba(245,245,240,0.5)", cursor: "pointer",
               fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-            {theme === "dark" ? "??" : "??"}
+            {theme === "dark" ? "☀️" : "🌙"}
           </button>
         </div>
       </header>
@@ -1327,9 +1327,9 @@ export default function MenuPage() {
       }}>
         <div style={{ display: "flex", gap: 4, padding: "10px 0", overflowX: "auto" }}>
           {[
-            { key: "menu",     icon: "???", label: t("menu"),      count: 0 },
-            { key: "cart",     icon: "??", label: t("yourCart"),  count: cartCount },
-            { key: "tracking", icon: "??", label: t("trackOrder"), count: 0 },
+            { key: "menu",     icon: "🍽️", label: t("menu"),      count: 0 },
+            { key: "cart",     icon: "🛒", label: t("yourCart"),  count: cartCount },
+            { key: "tracking", icon: "📍", label: t("trackOrder"), count: 0 },
           ].map((tab) => (
             <button key={tab.key} onClick={() => setView(tab.key as typeof view)} style={{
               padding: "9px 18px", borderRadius: 12, border: "none",
@@ -1402,7 +1402,7 @@ export default function MenuPage() {
               ))}
               {dishes?.length === 0 && (
                 <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "60px 0" }}>
-                  <div style={{ fontSize: 56, marginBottom: 12 }}>???</div>
+                  <div style={{ fontSize: 56, marginBottom: 12 }}>🍽️</div>
                   <p style={{ color: "rgba(245,245,240,0.4)", fontSize: 15 }}>{t("noData")}</p>
                 </div>
               )}
@@ -1426,7 +1426,7 @@ export default function MenuPage() {
             ? <OrderTracker order={activeOrder as unknown as OrderWithItems} formatPrice={fp} />
             : (
               <div style={{ textAlign: "center", padding: "80px 24px" }}>
-                <div style={{ fontSize: 72, marginBottom: 16 }}>??</div>
+                <div style={{ fontSize: 72, marginBottom: 16 }}>🍽️</div>
                 <h3 style={{
                   fontFamily: "'Playfair Display',Georgia,serif",
                   fontSize: 22, fontWeight: 600,
@@ -1457,7 +1457,7 @@ export default function MenuPage() {
           onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px) scale(1.08)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; }}
         >
-          ??
+          🛒
           <span style={{
             position: "absolute", top: -8, right: -8,
             minWidth: 22, height: 22, borderRadius: 11,
