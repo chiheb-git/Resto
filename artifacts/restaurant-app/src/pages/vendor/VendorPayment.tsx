@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from "react";
 import { useCurrency } from "@/lib/currency";
-import { useListOrders, useUpdateOrderStatus, getListOrdersQueryKey, OrderStatusUpdateStatus } from "@workspace/api-client-react";
+import { useListOrders, useUpdateOrderStatus, getListOrdersQueryKey, OrderStatusUpdateStatus, customFetch } from "@workspace/api-client-react";
 import type { OrderWithItems } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -35,12 +35,12 @@ export default function VendorPayment() {
   };
   const updatePrice = async (id: number, price: number) => {
     try {
-      const API = import.meta.env.VITE_API_URL || "https://restaurantos-api-oabz.onrender.com";
-      await fetch(`${API}/api/orders/${id}/price`, {
+      await customFetch(`/api/orders/${id}/price`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ totalPrice: price }),
+      });
+      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
       });
       queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
       toast.success("Prix modifie !");
