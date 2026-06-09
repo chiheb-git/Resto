@@ -129,7 +129,7 @@ router.post("/orders", async (req, res): Promise<void> => {
       res.status(400).json({ error: `Dish ${dish.nameEn} is not available` });
       return;
     }
-    const itemPrice = (item.selectedSize === "grande" && (dish as any).priceLarge != null) ? Number((dish as any).priceLarge) : Number(dish.price);
+    const itemPrice = (item.customNote?.includes('[Grande]') && (dish as any).priceLarge != null) ? Number((dish as any).priceLarge) : Number(dish.price);
     totalPrice += itemPrice * item.quantity;
   }
 
