@@ -90,6 +90,7 @@ export default function VendorPayment() {
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <p style={{ fontSize: 22, fontWeight: 800, color: ORANGE, marginBottom: 8 }}>{formatPrice(order.totalPrice)}</p>
+                  <button onClick={() => setEditPrice({ id: order.id, price: String(order.totalPrice) })} style={{ fontSize: 11, color: MUTED, background: "none", border: "1px solid #333", borderRadius: 8, padding: "3px 10px", cursor: "pointer", marginBottom: 6, width: "100%" }}>✏️ Modifier prix</button>
                   <button onClick={() => setConfirmId(order.id)} style={{ padding: "10px 20px", background: GREEN, color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
                     Paiement recu
                   </button>
