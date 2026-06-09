@@ -9,6 +9,7 @@ import { getSocket } from "@/lib/socket";
 const ORANGE = "#FF6B00"; const CARD = "#141414"; const CARD2 = "#1C1C1C"; const BORDER = "#2A2A2A"; const TEXT = "#FFFFFF"; const MUTED = "#888888"; const GREEN = "#00D264";
 export default function VendorPayment() {
   const queryClient = useQueryClient();
+  const [confirmId, setConfirmId] = useState<number | null>(null);
   const lang = i18n.language as "fr" | "en" | "ar";
   const nameKey = ("name" + lang.charAt(0).toUpperCase() + lang.slice(1)) as "nameEn" | "nameFr" | "nameAr";
   const { formatPrice, ready: currencyReady } = useCurrency();
@@ -74,7 +75,7 @@ export default function VendorPayment() {
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <p style={{ fontSize: 22, fontWeight: 800, color: ORANGE, marginBottom: 8 }}>{formatPrice(order.totalPrice)}</p>
-                  <button onClick={() => markPaid(order.id)} disabled={updateStatus.isPending} style={{ padding: "10px 20px", background: GREEN, color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
+                  <button onClick={() => setConfirmId(order.id)} style={{ padding: "10px 20px", background: GREEN, color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
                     Paiement recu
                   </button>
                 </div>
@@ -108,6 +109,18 @@ export default function VendorPayment() {
             </div>
           </div>
         )}
+      {confirmId !== null && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 16, padding: 32, width: 320, textAlign: "center" }}>
+            <p style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Confirmer le paiement ?</p>
+            <p style={{ color: "#888", fontSize: 14, marginBottom: 24 }}>Cette action est irréversible.</p>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+              <button onClick={() => setConfirmId(null)} style={{ padding: "10px 20px", background: "#333", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Annuler</button>
+              <button onClick={() => { markPaid(confirmId!); setConfirmId(null); }} disabled={updateStatus.isPending} style={{ padding: "10px 20px", background: "#00D264", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Confirmer</button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
