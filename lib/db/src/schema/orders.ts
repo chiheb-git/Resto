@@ -1,4 +1,4 @@
-import { pgTable, serial, integer, text, numeric, timestamp } from "drizzle-orm/pg-core";
+﻿import { pgTable, serial, integer, text, numeric, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 import { tablesTable } from "./tables";
@@ -6,7 +6,7 @@ import { tablesTable } from "./tables";
 export const ordersTable = pgTable("orders", {
   id: serial("id").primaryKey(),
   tableId: integer("table_id").notNull().references(() => tablesTable.id),
-  status: text("status", { enum: ["pending", "confirmed", "refused", "ready", "delivered"] }).notNull().default("pending"),
+  status: text("status", { enum: ["pending", "confirmed", "refused", "ready", "delivered", "paid"] }).notNull().default("pending"),
   totalPrice: numeric("total_price", { precision: 10, scale: 2 }).notNull().default("0"),
   note: text("note"),
   refusalReason: text("refusal_reason"),

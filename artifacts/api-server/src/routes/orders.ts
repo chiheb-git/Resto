@@ -172,7 +172,7 @@ router.get("/orders/table/:tableId/active", async (req, res): Promise<void> => {
     .where(
       and(
         eq(ordersTable.tableId, params.data.tableId),
-        sql`${ordersTable.status} NOT IN ('delivered', 'refused')`
+        sql`${ordersTable.status} NOT IN ('delivered', 'refused', 'paid')`
       )
     )
     .orderBy(desc(ordersTable.createdAt))

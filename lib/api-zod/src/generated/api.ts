@@ -419,7 +419,7 @@ export const GetTableByTokenResponse = zod.object({
  * @summary List orders
  */
 export const ListOrdersQueryParams = zod.object({
-  "status": zod.enum(['pending', 'confirmed', 'refused', 'ready', 'delivered']).optional(),
+  "status": zod.enum(['pending', 'confirmed', 'refused', 'ready', 'delivered', 'paid', 'paid']).optional(),
   "tableId": zod.coerce.number().optional(),
   "date": zod.date().optional(),
   "limit": zod.coerce.number().optional(),
@@ -440,7 +440,7 @@ export const ListOrdersResponseItem = zod.object({
   "isActive": zod.boolean(),
   "status": zod.enum(['free', 'occupied', 'waiting']).optional()
 }).optional(),
-  "status": zod.enum(['pending', 'confirmed', 'refused', 'ready', 'delivered']),
+  "status": zod.enum(['pending', 'confirmed', 'refused', 'ready', 'delivered', 'paid', 'paid']),
   "totalPrice": zod.number(),
   "note": zod.string().nullish(),
   "refusalReason": zod.string().nullish(),
@@ -515,7 +515,7 @@ export const GetOrderResponse = zod.object({
   "isActive": zod.boolean(),
   "status": zod.enum(['free', 'occupied', 'waiting']).optional()
 }).optional(),
-  "status": zod.enum(['pending', 'confirmed', 'refused', 'ready', 'delivered']),
+  "status": zod.enum(['pending', 'confirmed', 'refused', 'ready', 'delivered', 'paid', 'paid']),
   "totalPrice": zod.number(),
   "note": zod.string().nullish(),
   "refusalReason": zod.string().nullish(),
@@ -562,7 +562,7 @@ export const UpdateOrderStatusParams = zod.object({
 })
 
 export const UpdateOrderStatusBody = zod.object({
-  "status": zod.enum(['confirmed', 'refused', 'ready', 'delivered']),
+  "status": zod.enum(['confirmed', 'refused', 'ready', 'delivered', 'paid']),
   "refusalReason": zod.string().optional()
 })
 
@@ -580,7 +580,7 @@ export const UpdateOrderStatusResponse = zod.object({
   "isActive": zod.boolean(),
   "status": zod.enum(['free', 'occupied', 'waiting']).optional()
 }).optional(),
-  "status": zod.enum(['pending', 'confirmed', 'refused', 'ready', 'delivered']),
+  "status": zod.enum(['pending', 'confirmed', 'refused', 'ready', 'delivered', 'paid', 'paid']),
   "totalPrice": zod.number(),
   "note": zod.string().nullish(),
   "refusalReason": zod.string().nullish(),
@@ -640,7 +640,7 @@ export const GetActiveOrderByTableResponse = zod.object({
   "isActive": zod.boolean(),
   "status": zod.enum(['free', 'occupied', 'waiting']).optional()
 }).optional(),
-  "status": zod.enum(['pending', 'confirmed', 'refused', 'ready', 'delivered']),
+  "status": zod.enum(['pending', 'confirmed', 'refused', 'ready', 'delivered', 'paid', 'paid']),
   "totalPrice": zod.number(),
   "note": zod.string().nullish(),
   "refusalReason": zod.string().nullish(),

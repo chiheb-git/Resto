@@ -22,12 +22,12 @@ export default function VendorPayment() {
     return () => { socket.off("vendor:new-order", refresh); socket.off("order:updated", refresh); };
   }, [queryClient]);
   if (!currencyReady) return null;
-  const readyOrders = (orders as OrderWithItems[]).filter((o) => o.status === "ready");
-  const paidOrders = (orders as OrderWithItems[]).filter((o) => o.status === "delivered");
+  const readyOrders = (orders as OrderWithItems[]).filter((o) => o.status === "delivered");
+  const paidOrders = (orders as OrderWithItems[]).filter((o) => o.status === "paid");
   const totalPaid = paidOrders.reduce((s, o) => s + Number(o.totalPrice), 0);
   const totalPending = readyOrders.reduce((s, o) => s + Number(o.totalPrice), 0);
   const markPaid = (id: number) => {
-    updateStatus.mutate({ id, data: { status: OrderStatusUpdateStatus.delivered } }, {
+    updateStatus.mutate({ id, data: { status: OrderStatusUpdateStatus.paid } }, {
       onSuccess: () => { queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() }); toast.success("Paiement confirme !"); },
       onError: () => toast.error("Erreur"),
     });

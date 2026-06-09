@@ -244,6 +244,7 @@ export const OrderWithItemsStatus = {
   refused: 'refused',
   ready: 'ready',
   delivered: 'delivered',
+  paid: 'paid',
 } as const;
 
 export interface Rating {
@@ -295,6 +296,7 @@ export const OrderStatusUpdateStatus = {
   refused: 'refused',
   ready: 'ready',
   delivered: 'delivered',
+  paid: 'paid',
 } as const;
 
 export interface OrderStatusUpdate {
@@ -374,6 +376,7 @@ export const ListOrdersStatus = {
   refused: 'refused',
   ready: 'ready',
   delivered: 'delivered',
+  paid: 'paid',
 } as const;
 
 export type ListRatingsParams = {
