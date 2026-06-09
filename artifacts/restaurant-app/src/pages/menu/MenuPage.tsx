@@ -1305,7 +1305,7 @@ export default function MenuPage() {
             }}>{l.toUpperCase()}</button>
           ))}
           <button
-            onClick={() => setTheme(theme === "dark" ? "☀️" : "🌙")}
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             style={{
               width: 34, height: 34, borderRadius: 10,
               border: "0.5px solid rgba(255,255,255,0.08)",
