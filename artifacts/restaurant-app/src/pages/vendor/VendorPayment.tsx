@@ -95,10 +95,9 @@ export default function VendorPayment() {
                   <button onClick={() => setConfirmId(order.id)} style={{ padding: "10px 28px", background: GREEN, color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer", width: "100%" }}>
                     Paiement recu
                   </button>
-              </div>
                 </div>
-          </div>
-        )}
+              </div>
+            )}
       </div>
       <div>
         <h2 style={{ fontSize: 16, fontWeight: 700, color: TEXT, marginBottom: 14 }}>Commandes payees - Total: {formatPrice(totalPaid)}</h2>
