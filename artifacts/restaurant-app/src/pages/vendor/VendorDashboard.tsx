@@ -91,7 +91,7 @@ function OrderCard({ order, onConfirm, onRefuse, onReady, onDeliver }: {
             {t("tableNumber")} {order.table?.number} · {timeAgo(order.createdAt)}
           </p>
         </div>
-        <span className="font-bold text-primary text-sm">{Number(order.totalPrice).toFixed(2)} €</span>
+        <span className="font-bold text-primary text-sm">{formatPrice(order.totalPrice)}</span>
       </div>
 
       <div className="space-y-0.5">
