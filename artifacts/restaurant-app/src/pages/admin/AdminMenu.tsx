@@ -280,11 +280,7 @@ export default function AdminMenu() {
   const dishes = rawDishes as Dish[];
 
   const sensors = useSensors(useSensor(PointerSensor));
-  useEffect(() => {
-    const refresh = () => { invalidateCats(); invalidateDishes(); };
-    getSocket().on("menu:updated", refresh);
-    return () => { getSocket().off("menu:updated", refresh); };
-  }, []);
+  // socket supprime cote admin — les mutations invalident deja le cache
   const invalidateCats = () => queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
   const invalidateDishes = () => queryClient.invalidateQueries({ queryKey: getListDishesQueryKey() });
 
