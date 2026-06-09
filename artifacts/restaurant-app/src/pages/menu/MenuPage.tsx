@@ -1,4 +1,4 @@
-import { useCurrency, formatPrice } from "@/lib/currency";
+ï»¿import { useCurrency, formatPrice } from "@/lib/currency";
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useLocation } from "wouter";
@@ -43,8 +43,7 @@ function getLangDesc(item: Record<string, unknown>, lang: string): string {
 }
 
 const FOOD_EMOJIS: Record<string, string> = {
-  pizza: "??", burger: "??", pasta: "??", salad: "??", soup: "??",
-  dessert: "??", drink: "??", coffee: "?", default: "???",
+  pizza: "ðŸ•", burger: "ðŸ”", pasta: "ðŸ", salad: "ðŸ¥—", soup: "ðŸ²", dessert: "ðŸ®", drink: "ðŸ¥¤", coffee: "â˜•", default: "ðŸ½ï¸",
 };
 function getFoodEmoji(name: string): string {
   const n = name.toLowerCase();
@@ -176,7 +175,7 @@ function HeroBanner({ tableNumber }: { tableNumber: number | string }) {
         }}>
           <span style={{ width:6, height:6, borderRadius:"50%", background:"#FF6B35", display:"inline-block", boxShadow:"0 0 6px #FF6B35" }}/>
           <span style={{ fontSize:10, fontWeight:700, color:"#FF9F1C", letterSpacing:"0.12em", textTransform:"uppercase" }}>
-            Table {tableNumber} · Bienvenue
+            Table {tableNumber} ï¿½ Bienvenue
           </span>
         </div>
 
@@ -203,7 +202,7 @@ function HeroBanner({ tableNumber }: { tableNumber: number | string }) {
           fontFamily:"'DM Sans',-apple-system,sans-serif",
           letterSpacing:"0.01em", lineHeight:1.5,
         }}>
-          Découvrez nos plats préparés avec passion
+          Dï¿½couvrez nos plats prï¿½parï¿½s avec passion
         </p>
 
         {/* Divider line animated */}
@@ -535,7 +534,7 @@ function DishCard({ dish, onAdd, index, formatPrice }: { dish: Dish; onAdd: (dis
                 : "0 4px 16px rgba(255,107,53,0.35)",
             }}
           >
-            {added ? "? Ajouté !" : `+ ${t("addToCart")}`}
+            {added ? "? Ajoutï¿½ !" : `+ ${t("addToCart")}`}
           </button>
         ) : (
           <div style={{
@@ -657,7 +656,7 @@ function CustomizeModal({
                     transition: "all 0.2s",
                   }}
                 >
-                  {size === "normale" ? `??? Normale — ${formatPrice(dish.price)}` : `?? Grande — ${formatPrice((dish as any).priceLarge)}`}
+                  {size === "normale" ? `??? Normale ï¿½ ${formatPrice(dish.price)}` : `?? Grande ï¿½ ${formatPrice((dish as any).priceLarge)}`}
                 </button>
               ))}
             </div>
@@ -670,7 +669,7 @@ function CustomizeModal({
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="ex: sans sel, bien cuit, sauce à part..."
+            placeholder="ex: sans sel, bien cuit, sauce ï¿½ part..."
             rows={3}
             style={{
               width: "100%", background: "var(--bg-surface)",
@@ -774,7 +773,7 @@ function CartView({
                   <p style={{ fontSize: 12, color: "#FF6B35", fontStyle: "italic", marginBottom: 4 }}>{item.customNote}</p>
                 )}
                 <p style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                  {item.selectedSize === "grande" ? "?? Grande" : "??? Normale"} — {formatPrice(item.unitPrice * item.quantity)}
+                  {item.selectedSize === "grande" ? "?? Grande" : "??? Normale"} ï¿½ {formatPrice(item.unitPrice * item.quantity)}
                 </p>
               </div>
               {/* Qty */}
@@ -876,10 +875,10 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
   const currentStep = steps.indexOf(order.status);
   const statusConf: Record<string, { icon: string; color: string; bg: string; label: string }> = {
     pending:   { icon: "?", color: "#fbbf24", bg: "rgba(251,191,36,0.12)", label: "En attente" },
-    confirmed: { icon: "?", color: "#60a5fa", bg: "rgba(59,130,246,0.12)", label: "Confirmée" },
-    refused:   { icon: "?", color: "#f87171", bg: "rgba(239,68,68,0.12)",  label: "Refusée" },
-    ready:     { icon: "??", color: "#4ade80", bg: "rgba(34,197,94,0.12)",  label: "Prête !" },
-    delivered: { icon: "??", color: "#94a3b8", bg: "rgba(148,163,184,0.12)", label: "Livrée" },
+    confirmed: { icon: "?", color: "#60a5fa", bg: "rgba(59,130,246,0.12)", label: "Confirmï¿½e" },
+    refused:   { icon: "?", color: "#f87171", bg: "rgba(239,68,68,0.12)",  label: "Refusï¿½e" },
+    ready:     { icon: "??", color: "#4ade80", bg: "rgba(34,197,94,0.12)",  label: "Prï¿½te !" },
+    delivered: { icon: "??", color: "#94a3b8", bg: "rgba(148,163,184,0.12)", label: "Livrï¿½e" },
   };
   const sc = statusConf[order.status] ?? statusConf.pending;
 
@@ -971,12 +970,12 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
         <h3 style={{
           fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 600,
           color: "var(--text-primary)", marginBottom: 14,
-        }}>?? Détail commande</h3>
+        }}>?? Dï¿½tail commande</h3>
         {order.items.map((item) => {
           const nameKey = `name${lang.charAt(0).toUpperCase() + lang.slice(1)}` as keyof typeof item.dish;
           const dishName = item.dish
             ? ((item.dish as unknown as Record<string, string>)[nameKey as string] || item.dish.nameEn)
-            : "—";
+            : "ï¿½";
           return (
             <div key={item.id} style={{
               display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -984,7 +983,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
               borderBottom: "0.5px solid var(--border-subtle)",
               fontSize: 14,
             }}>
-              <span style={{ color: "var(--text-primary)" }}>{item.quantity}× {dishName}</span>
+              <span style={{ color: "var(--text-primary)" }}>{item.quantity}ï¿½ {dishName}</span>
               <span style={{ color: "var(--text-muted)" }}>
                 {formatPrice(Number(item.unitPrice) * item.quantity)}
               </span>
@@ -1052,7 +1051,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
               opacity: rating === 0 ? 0.5 : 1,
             }}
           >
-            {ratingMutation.isSuccess ? "? Envoyé !" : t("submitRating")}
+            {ratingMutation.isSuccess ? "? Envoyï¿½ !" : t("submitRating")}
           </button>
         </div>
       )}
@@ -1145,7 +1144,7 @@ export default function MenuPage() {
         data: {
           tableId: table.id,
           note: orderNote || undefined,
-          items: cart.map((c) => ({ dishId: c.dish.id, quantity: c.quantity, selectedSize: c.selectedSize, customNote: [c.selectedSize === "grande" ? "[Grande]" : "[Normale]", c.customNote].filter(Boolean).join(" — ") || undefined })),
+          items: cart.map((c) => ({ dishId: c.dish.id, quantity: c.quantity, selectedSize: c.selectedSize, customNote: [c.selectedSize === "grande" ? "[Grande]" : "[Normale]", c.customNote].filter(Boolean).join(" ï¿½ ") || undefined })),
         },
       },
       {
@@ -1198,7 +1197,7 @@ export default function MenuPage() {
             color: "var(--text-primary)", marginBottom: 10,
           }}>Table introuvable</h2>
           <p style={{ color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.6 }}>
-            Ce QR code est invalide ou la table a été désactivée.
+            Ce QR code est invalide ou la table a ï¿½tï¿½ dï¿½sactivï¿½e.
           </p>
         </div>
       </div>
