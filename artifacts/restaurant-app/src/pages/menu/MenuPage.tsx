@@ -1264,54 +1264,48 @@ export default function MenuPage() {
       {/* ---- HEADER ---- */}
       <header style={{
         position: "sticky", top: 0, zIndex: 100,
-        background: "rgba(10,10,15,0.88)",
+        background: "rgba(10,10,15,0.92)",
         backdropFilter: "blur(24px) saturate(180%)",
         borderBottom: "0.5px solid rgba(255,255,255,0.06)",
-        padding: "0 20px", height: 68,
+        padding: "0 16px", height: 56,
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         {/* Brand */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{
-            width: 40, height: 40, borderRadius: 14,
+            width: 34, height: 34, borderRadius: 10,
             background: "linear-gradient(135deg,#FF6B35,#FF9F1C)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 18, color: "white", fontWeight: 700,
-            boxShadow: "0 0 20px rgba(255,107,53,0.4)",
+            fontSize: 15, color: "white", fontWeight: 700, flexShrink: 0,
+            boxShadow: "0 0 14px rgba(255,107,53,0.4)",
           }}>R</div>
           <div>
-            <p style={{
-              fontFamily: "'Playfair Display',Georgia,serif",
-              fontSize: 16, fontWeight: 700,
-              color: "var(--text-primary, #F5F5F0)",
-              lineHeight: 1.2,
-            }}>RestaurantOS</p>
-            <p style={{ fontSize: 11, color: "#FF6B35", fontWeight: 600, letterSpacing: "0.08em" }}>
-              TABLE {table.number}
-            </p>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary, #F5F5F0)", lineHeight: 1.1 }}>RestaurantOS</p>
+            <p style={{ fontSize: 10, color: "#FF6B35", fontWeight: 600, letterSpacing: "0.08em" }}>TABLE {table.number}</p>
           </div>
         </div>
-
         {/* Controls */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {["fr", "en", "ar"].map((l) => (
-            <button key={l} onClick={() => { i18n.changeLanguage(l); localStorage.setItem("lang", l); }} style={{
-              padding: "5px 11px", borderRadius: 8,
-              border: lang === l ? "none" : "0.5px solid rgba(255,255,255,0.1)",
-              background: lang === l ? "linear-gradient(135deg,#FF6B35,#FF9F1C)" : "transparent",
-              color: lang === l ? "white" : "rgba(245,245,240,0.5)",
-              fontSize: 11, fontWeight: 600, cursor: "pointer",
-              letterSpacing: "0.05em", transition: "all 0.2s",
-            }}>{l.toUpperCase()}</button>
-          ))}
+        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <div style={{ display: "flex", alignItems: "center", background: "rgba(255,255,255,0.06)", borderRadius: 8, padding: "2px" }}>
+            {["fr", "en", "ar"].map((l) => (
+              <button key={l} onClick={() => { i18n.changeLanguage(l); localStorage.setItem("lang", l); }} style={{
+                padding: "4px 8px", borderRadius: 6,
+                border: "none",
+                background: lang === l ? "linear-gradient(135deg,#FF6B35,#FF9F1C)" : "transparent",
+                color: lang === l ? "white" : "rgba(245,245,240,0.4)",
+                fontSize: 10, fontWeight: 700, cursor: "pointer",
+                letterSpacing: "0.04em", transition: "all 0.2s",
+              }}>{l.toUpperCase()}</button>
+            ))}
+          </div>
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             style={{
-              width: 34, height: 34, borderRadius: 10,
+              width: 30, height: 30, borderRadius: 8,
               border: "0.5px solid rgba(255,255,255,0.08)",
               background: "rgba(255,255,255,0.04)",
               color: "rgba(245,245,240,0.5)", cursor: "pointer",
-              fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center",
             }}>
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
