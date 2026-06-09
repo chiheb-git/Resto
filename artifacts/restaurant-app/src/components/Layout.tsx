@@ -150,11 +150,7 @@ export default function Layout({ children, navItems }: { children: ReactNode; na
           {t("logout")}
         </button>
       </div>
-      <div className="px-3 py-2 border-t border-border/50">
-        <p className="text-center text-xs text-muted-foreground/40 tracking-wider">
-          ✦ <span className="text-primary/50 font-medium">Meghraoui Chiheb</span> ✦
-        </p>
-      </div>
+
     </div>
   );
 
@@ -201,9 +197,9 @@ export default function Layout({ children, navItems }: { children: ReactNode; na
           </button>
         </header>
         <main className="flex-1 overflow-auto">{children}</main>
-        <footer className="hidden lg:flex items-center justify-center py-2 border-t border-border bg-card/50">
-          <p className="text-xs text-muted-foreground/50 tracking-widest uppercase font-medium">
-            Developed by <span className="text-primary/70 font-semibold">Meghraoui Chiheb</span>
+        <footer className="flex items-center justify-center py-1.5 border-t border-border/40 bg-card/30">
+          <p className="text-[10px] text-muted-foreground/35 tracking-[0.2em] uppercase font-medium select-none">
+            Developed by <span className="text-primary/55 font-bold">Meghraoui Chiheb</span>
           </p>
         </footer>
       </div>
