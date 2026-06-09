@@ -87,13 +87,13 @@ export default function VendorPayment() {
                     <p style={{ fontSize: 11, color: MUTED, marginTop: 4 }}>{new Date(order.createdAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</p>
                   </div>
                 </div>
-                <div style={{ textAlign: "right" }}>
-                  <p style={{ fontSize: 22, fontWeight: 800, color: ORANGE, marginBottom: 8 }}>{formatPrice(order.totalPrice)}</p>
-                  <button onClick={() => setEditPrice({ id: order.id, price: String(order.totalPrice) })} style={{ fontSize: 11, color: MUTED, background: "none", border: "1px solid #333", borderRadius: 8, padding: "3px 10px", cursor: "pointer", marginBottom: 6, width: "100%" }}>✏️ Modifier prix</button>
-                  <button onClick={() => setConfirmId(order.id)} style={{ padding: "10px 20px", background: GREEN, color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
+                <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <button onClick={() => setEditPrice({ id: order.id, price: String(order.totalPrice) })} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: ORANGE, background: "rgba(255,107,0,0.1)", border: "1px solid rgba(255,107,0,0.3)", borderRadius: 8, padding: "5px 12px", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}>✏️ Modifier</button>
+                    <p style={{ fontSize: 24, fontWeight: 800, color: ORANGE, margin: 0 }}>{formatPrice(order.totalPrice)}</p>
+                  </div>
+                  <button onClick={() => setConfirmId(order.id)} style={{ padding: "10px 28px", background: GREEN, color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer", width: "100%" }}>
                     Paiement recu
-                  </button>
-                </div>
               </div>
             ))}
           </div>
