@@ -10,6 +10,7 @@ const ORANGE = "#FF6B00"; const CARD = "#141414"; const CARD2 = "#1C1C1C"; const
 export default function VendorPayment() {
   const queryClient = useQueryClient();
   const [confirmId, setConfirmId] = useState<number | null>(null);
+  const [editPrice, setEditPrice] = useState<{ id: number; price: string } | null>(null);
   const lang = i18n.language as "fr" | "en" | "ar";
   const nameKey = ("name" + lang.charAt(0).toUpperCase() + lang.slice(1)) as "nameEn" | "nameFr" | "nameAr";
   const { formatPrice, ready: currencyReady } = useCurrency();
@@ -31,6 +32,20 @@ export default function VendorPayment() {
       onSuccess: () => { queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() }); toast.success("Paiement confirme !"); },
       onError: () => toast.error("Erreur"),
     });
+  };
+  const updatePrice = async (id: number, price: number) => {
+    try {
+      const API = import.meta.env.VITE_API_URL ?? "";
+      await fetch(`${API}/api/orders/${id}/price`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ totalPrice: price }),
+      });
+      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
+      toast.success("Prix modifie !");
+      setEditPrice(null);
+    } catch { toast.error("Erreur"); }
   };
   const getName = (item: any) => item.quantity + "x " + (item.dish ? (item.dish as any)[nameKey] || item.dish.nameEn : "?");
   return (

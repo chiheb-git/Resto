@@ -240,6 +240,28 @@ router.patch("/orders/:id/status", requireAuth, requireRole("vendor", "admin"), 
   res.json(full);
 });
 
+router.patch("/orders/:id/price", requireAuth, requireRole("vendor", "admin"), async (req, res): Promise<void> => {
+  const id = Number(req.params.id);
+  const newPrice = Number(req.body?.totalPrice);
+  if (!id || isNaN(newPrice) || newPrice < 0) {
+    res.status(400).json({ error: "Invalid id or price" });
+    return;
+  }
+  const [order] = await db
+    .update(ordersTable)
+    .set({ totalPrice: String(newPrice) })
+    .where(eq(ordersTable.id, id))
+    .returning();
+  if (!order) { res.status(404).json({ error: "Order not found" }); return; }
+  const full = await buildOrderResponse(order);
+  const io = getSocketServer();
+  if (io) {
+    io.to("vendors").emit("order:updated", full);
+    io.to(`order:${order.id}`).emit("order:updated", full);
+  }
+  res.json(full);
+});
+
 export default router;
 
 
