@@ -1,4 +1,4 @@
-﻿import { Router, IRouter } from "express";
+import { Router, IRouter } from "express";
 import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
 import { db, ordersTable, orderItemsTable, dishesTable, tablesTable, ratingsTable } from "@workspace/db";
 import {
