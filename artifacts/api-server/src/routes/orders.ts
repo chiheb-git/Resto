@@ -131,6 +131,7 @@ router.post("/orders", async (req, res): Promise<void> => {
     }
     const itemPrice = (item.selectedSize === "grande" && (dish as any).priceLarge != null) ? Number((dish as any).priceLarge) : Number(dish.price);
     totalPrice += itemPrice * item.quantity;
+  }
 
   const [order] = await db
     .insert(ordersTable)
