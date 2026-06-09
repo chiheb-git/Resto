@@ -163,7 +163,7 @@ function HeroBanner({ tableNumber }: { tableNumber: number | string }) {
         transform:`translateY(-50%) translate(${mouse.x*-5}px,${mouse.y*-5}px)`,
         transition:"transform 0.6s cubic-bezier(0.4,0,0.2,1)",
         zIndex:10,
-        maxWidth: 260,
+        maxWidth: "min(260px, 55vw)",
       }}>
         {/* Label */}
         <div style={{
@@ -182,7 +182,7 @@ function HeroBanner({ tableNumber }: { tableNumber: number | string }) {
         {/* Title */}
         <h1 style={{
           fontFamily:"'Playfair Display',Georgia,serif",
-          fontSize:34, fontWeight:700, lineHeight:1.15,
+          fontSize: "clamp(22px, 6vw, 34px)", fontWeight:700, lineHeight:1.15,
           color:"#F5F5F0", marginBottom:8,
           textShadow:"0 2px 24px rgba(0,0,0,0.8)",
         }}>
@@ -217,7 +217,7 @@ function HeroBanner({ tableNumber }: { tableNumber: number | string }) {
       <div
         ref={logoRef}
         style={{
-          position:"absolute", left:230, top:"50%",
+          position:"absolute", left:230, top:"50%", display: typeof window !== "undefined" && window.innerWidth < 480 ? "none" : "block",
           transform:`translateY(-50%) translate(${mouse.x*8}px,${mouse.y*8+bagFloat*0.4}px)`,
           transition:"transform 0.5s cubic-bezier(0.4,0,0.2,1)",
           zIndex:8,
@@ -241,11 +241,11 @@ function HeroBanner({ tableNumber }: { tableNumber: number | string }) {
         ref={bagRef}
         style={{
           position:"absolute",
-          right:24, top:"50%",
+          right: "clamp(8px, 3vw, 24px)", top:"50%",
           transform:`translateY(-50%) translateY(${bagFloat}px) perspective(800px) rotateX(${bagTiltX}deg) rotateY(${bagTiltY}deg)`,
           transition:"transform 0.15s linear",
           zIndex:10,
-          width:140, height:160,
+          width: "clamp(80px, 20vw, 140px)", height: "clamp(90px, 22vw, 160px)",
           display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
         }}
       >
