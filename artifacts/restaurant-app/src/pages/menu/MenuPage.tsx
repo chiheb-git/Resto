@@ -336,9 +336,9 @@ function HeroBanner({ tableNumber }: { tableNumber: number | string }) {
 function StatusBadge({ status }: { status: string }) {
   const { t } = useTranslation();
   const conf: Record<string, { bg: string; color: string; icon: string }> = {
-    pending:   { bg: "rgba(251,191,36,0.15)",  color: "#fbbf24", icon: "?" },
-    confirmed: { bg: "rgba(59,130,246,0.15)",  color: "#60a5fa", icon: "?" },
-    refused:   { bg: "rgba(239,68,68,0.15)",   color: "#f87171", icon: "?" },
+    pending:   { bg: "rgba(251,191,36,0.15)",  color: "#fbbf24", icon: "⏳" },
+    confirmed: { bg: "rgba(59,130,246,0.15)",  color: "#60a5fa", icon: "✅" },
+    refused:   { bg: "rgba(239,68,68,0.15)",   color: "#f87171", icon: "❌" },
     ready:     { bg: "rgba(34,197,94,0.15)",   color: "#4ade80", icon: "✅" },
     delivered: { bg: "rgba(148,163,184,0.15)", color: "#94a3b8", icon: "✅" },
   };
@@ -783,7 +783,7 @@ function CartView({
                 border: "0.5px solid var(--border-subtle)",
                 borderRadius: 14, padding: 4,
               }}>
-                {[{d: -1, icon: "?"}, {d: 1, icon: "+"}].map(({d, icon}, bi) => (
+                {[{d: -1, icon: "−"}, {d: 1, icon: "+"}].map(({d, icon}, bi) => (
                   bi === 0 ? (
                     <button key={d} onClick={() => updateQty(i, d)} style={{
                       width: 32, height: 32, borderRadius: 10, border: "none",
@@ -874,9 +874,9 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
   const steps = ["pending", "confirmed", "ready", "delivered"];
   const currentStep = steps.indexOf(order.status);
   const statusConf: Record<string, { icon: string; color: string; bg: string; label: string }> = {
-    pending:   { icon: "?", color: "#fbbf24", bg: "rgba(251,191,36,0.12)", label: "En attente" },
-    confirmed: { icon: "?", color: "#60a5fa", bg: "rgba(59,130,246,0.12)", label: "Confirm�e" },
-    refused:   { icon: "?", color: "#f87171", bg: "rgba(239,68,68,0.12)",  label: "Refus�e" },
+    pending:   { icon: "⏳", color: "#fbbf24", bg: "rgba(251,191,36,0.12)", label: "En attente" },
+    confirmed: { icon: "✅", color: "#60a5fa", bg: "rgba(59,130,246,0.12)", label: "Confirm�e" },
+    refused:   { icon: "❌", color: "#f87171", bg: "rgba(239,68,68,0.12)",  label: "Refus�e" },
     ready:     { icon: "✅", color: "#4ade80", bg: "rgba(34,197,94,0.12)",  label: "Pr�te !" },
     delivered: { icon: "✅", color: "#94a3b8", bg: "rgba(148,163,184,0.12)", label: "Livr�e" },
   };
@@ -928,7 +928,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
                   transition: "all 0.3s ease",
                   boxShadow: i <= currentStep ? "0 4px 12px rgba(255,107,53,0.4)" : "none",
                 }}>
-                  {i < currentStep ? "?" : i + 1}
+                  {i < currentStep ? "✓" : i + 1}
                 </div>
                 <span style={{
                   fontSize: 10, fontWeight: 600,
@@ -1017,7 +1017,7 @@ function OrderTracker({ order, formatPrice }: { order: OrderWithItems; formatPri
                 transition: "transform 0.2s cubic-bezier(0.34,1.56,0.64,1)",
                 filter: rating >= star ? "drop-shadow(0 0 6px rgba(251,191,36,0.8))" : "none",
               }}>
-                {rating >= star ? "?" : "?"}
+                {rating >= star ? "★" : "☆"}
               </button>
             ))}
           </div>
