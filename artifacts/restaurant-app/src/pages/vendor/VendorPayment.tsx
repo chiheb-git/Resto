@@ -41,7 +41,6 @@ export default function VendorPayment() {
         body: JSON.stringify({ totalPrice: price }),
       });
       queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
-      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
       toast.success("Prix modifie !");
       setEditPrice(null);
     } catch { toast.error("Erreur"); }
@@ -87,9 +86,11 @@ export default function VendorPayment() {
                     <p style={{ fontSize: 11, color: MUTED, marginTop: 4 }}>{new Date(order.createdAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</p>
                   </div>
                 </div>
-                <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <button onClick={() => setEditPrice({ id: order.id, price: String(order.totalPrice) })} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: ORANGE, background: "rgba(255,107,0,0.1)", border: "1px solid rgba(255,107,0,0.3)", borderRadius: 8, padding: "5px 12px", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}>✏️ Modifier</button>
+                    <button onClick={() => setEditPrice({ id: order.id, price: String(order.totalPrice) })} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: ORANGE, background: "rgba(255,107,0,0.1)", border: "1px solid rgba(255,107,0,0.3)", borderRadius: 8, padding: "5px 12px", cursor: "pointer", fontWeight: 600 }}>
+                      ✏️ Modifier
+                    </button>
                     <p style={{ fontSize: 24, fontWeight: 800, color: ORANGE, margin: 0 }}>{formatPrice(order.totalPrice)}</p>
                   </div>
                   <button onClick={() => setConfirmId(order.id)} style={{ padding: "10px 28px", background: GREEN, color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer", width: "100%" }}>
@@ -97,7 +98,9 @@ export default function VendorPayment() {
                   </button>
                 </div>
               </div>
-            )}
+            ))}
+          </div>
+        )}
       </div>
       <div>
         <h2 style={{ fontSize: 16, fontWeight: 700, color: TEXT, marginBottom: 14 }}>Commandes payees - Total: {formatPrice(totalPaid)}</h2>
@@ -124,6 +127,7 @@ export default function VendorPayment() {
             </div>
           </div>
         )}
+      </div>
       {confirmId !== null && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 16, padding: 32, width: 320, textAlign: "center" }}>
@@ -148,7 +152,6 @@ export default function VendorPayment() {
           </div>
         </div>
       )}
-      </div>
     </div>
   );
 }
