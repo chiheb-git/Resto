@@ -188,6 +188,20 @@ function DishModal({
               />
             </div>
             <div>
+              <div>
+                <label className={labelClass + " text-muted-foreground"}>Prix Grande (DA) — optionnel</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={form.priceLarge}
+                  onChange={(e) => setForm({ ...form, priceLarge: e.target.value })}
+                  placeholder="Laisser vide si un seul prix"
+                  className={inputClass}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
               <label className={labelClass + " text-muted-foreground"}>{t("allergens")} (virgule)</label>
               <input
                 value={form.allergens}
