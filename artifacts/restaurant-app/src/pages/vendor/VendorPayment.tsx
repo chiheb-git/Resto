@@ -137,6 +137,18 @@ export default function VendorPayment() {
           </div>
         </div>
       )}
+      {editPrice !== null && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1001 }}>
+          <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 16, padding: 32, width: 300, textAlign: "center" }}>
+            <p style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Modifier le prix</p>
+            <input type="number" value={editPrice.price} onChange={(e) => setEditPrice({ ...editPrice, price: e.target.value })} style={{ width: "100%", padding: "10px 14px", background: "#111", border: "1px solid #333", borderRadius: 10, color: "#fff", fontSize: 18, fontWeight: 700, textAlign: "center", marginBottom: 20, boxSizing: "border-box" }} />
+            <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+              <button onClick={() => setEditPrice(null)} style={{ padding: "10px 20px", background: "#333", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Annuler</button>
+              <button onClick={() => updatePrice(editPrice.id, Number(editPrice.price))} style={{ padding: "10px 20px", background: "#FF6B00", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Confirmer</button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
