@@ -621,7 +621,7 @@ function CustomizeModal({
               background: "var(--bg-glass)", color: "var(--text-secondary)",
               cursor: "pointer", fontSize: 18, display: "flex",
               alignItems: "center", justifyContent: "center",
-            }}>?</button>
+            }}>✕</button>
           </div>
 
           {/* Allergens */}
@@ -1488,4 +1488,5 @@ export default function MenuPage() {
     </div>
   );
 }
+
 
