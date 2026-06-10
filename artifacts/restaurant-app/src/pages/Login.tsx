@@ -52,7 +52,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-lg bg-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="admin@restaurant.com"
+                placeholder="Votre email"
                 required
               />
             </div>
@@ -63,7 +63,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-lg bg-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                placeholder="Votre mot de passe"
                 required
               />
             </div>
@@ -88,6 +88,7 @@ export default function Login() {
     </div>
   );
 }
+
 
 
 
