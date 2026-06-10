@@ -9,7 +9,7 @@ export default function Login() {
   const { t } = useTranslation();
   const { login } = useAuth();
   const [, navigate] = useLocation();
-  const [email, setEmail] = useState("admin@restaurant.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const mutation = useLogin();
@@ -88,5 +88,6 @@ export default function Login() {
     </div>
   );
 }
+
 
 
