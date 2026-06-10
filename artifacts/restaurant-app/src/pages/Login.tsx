@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLogin } from "@workspace/api-client-react";
 import { useAuth } from "@/context/AuthContext";
@@ -10,7 +10,7 @@ export default function Login() {
   const { login } = useAuth();
   const [, navigate] = useLocation();
   const [email, setEmail] = useState("admin@restaurant.com");
-  const [password, setPassword] = useState("admin123");
+  const [password, setPassword] = useState("");
 
   const mutation = useLogin();
 
@@ -63,7 +63,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-lg bg-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="••••••••"
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 required
               />
             </div>
@@ -81,11 +81,12 @@ export default function Login() {
           </p>
 
           <div className="mt-6 pt-4 border-t border-border text-xs text-muted-foreground space-y-1">
-            <p>Demo — Admin: admin@restaurant.com / admin123</p>
-            <p>Demo — Vendor: vendor@restaurant.com / admin123</p>
+            
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+
