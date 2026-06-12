@@ -115,15 +115,12 @@ router.get("/stats/popular-dishes", requireAuth, requireRole("admin", "vendor"),
 });
 
 router.get("/stats/orders-by-status", requireAuth, requireRole("vendor", "admin"), async (_req, res): Promise<void> => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
   const rows = await db
-    .select({
-      status: ordersTable.status,
-      count: sql<number>`COUNT(*)`,
-    })
-    .from(ordersTable)
-    .where(gte(ordersTable.createdAt, today))
+  .select({
+    status: ordersTable.status,
+    count: sql<number>`COUNT(*)`,
+  })
+  .from(ordersTable)
     .groupBy(ordersTable.status);
 
   res.json(rows.map((r) => ({ status: r.status, count: Number(r.count) })));
