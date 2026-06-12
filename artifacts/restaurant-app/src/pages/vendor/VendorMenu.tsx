@@ -1,4 +1,4 @@
-﻿import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { getSocket } from "@/lib/socket";
 import { useCurrency } from "@/lib/currency";
 import { useEffect } from "react";
@@ -61,11 +61,11 @@ export default function VendorMenu() {
                 {dish.imageUrl ? (
                   <img src={dish.imageUrl} alt={name} className="w-10 h-10 object-cover rounded-lg" />
                 ) : (
-                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-lg">🍽</div>
+                  <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-lg">??</div>
                 )}
                 <div>
                   <p className="font-medium text-sm text-foreground">{name}</p>
-                  <p className="text-xs text-muted-foreground">{Number(dish.price).toFixed(2)} €</p>
+                  <p className="text-xs text-muted-foreground">{formatPrice(dish.price)}</p>
                 </div>
               </div>
               <button
@@ -86,3 +86,4 @@ export default function VendorMenu() {
     </div>
   );
 }
+
