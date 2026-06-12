@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useCurrency } from "@/lib/currency";
 import { useTranslation } from "react-i18next";
 import {
@@ -38,7 +38,7 @@ function StarDisplay({ stars }: { stars: number }) {
     <div style={{ display: "flex", gap: 2 }}>
       {[1, 2, 3, 4, 5].map((s) => (
         <span key={s} style={{ fontSize: 14, color: s <= stars ? "#fbbf24" : "rgba(255,255,255,0.15)" }}>
-          {s <= stars ? "★" : "☆"}
+          {s <= stars ? "?" : "?"}
         </span>
       ))}
     </div>
@@ -58,7 +58,7 @@ export default function AdminStats() {
     queryKey: ["ratings"],
     queryFn: async () => {
       const token = localStorage.getItem("token");
-      const r = await fetch("/api/ratings", {
+      const r = await fetch(`${import.meta.env.VITE_API_URL}/api/ratings`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return r.json();
@@ -100,7 +100,7 @@ export default function AdminStats() {
           <div>
             <h2 className="text-sm font-semibold text-foreground">{t("revenueOverTime")}</h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Total: {formatPrice(totalRevenue)} · {totalOrders} commandes
+              Total: {formatPrice(totalRevenue)} � {totalOrders} commandes
             </p>
           </div>
           <div className="flex bg-muted rounded-lg p-0.5 gap-0.5">
@@ -210,7 +210,7 @@ export default function AdminStats() {
           <div className="h-40 bg-muted animate-pulse rounded-lg" />
         ) : typedRatings.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            <div className="text-4xl mb-2">⭐</div>
+            <div className="text-4xl mb-2">?</div>
             <p className="text-sm">Aucune notation pour le moment</p>
           </div>
         ) : (
@@ -236,7 +236,7 @@ export default function AdminStats() {
               {starCounts.map(({ star, count }) => (
                 <div key={star} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontSize: 12, color: "#fbbf24", width: 20, textAlign: "right", fontWeight: 700 }}>{star}</span>
-                  <span style={{ fontSize: 12 }}>★</span>
+                  <span style={{ fontSize: 12 }}>?</span>
                   <div style={{ flex: 1, height: 8, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
                     <div style={{
                       height: "100%", borderRadius: 4,
@@ -284,4 +284,5 @@ export default function AdminStats() {
     </div>
   );
 }
+
 
