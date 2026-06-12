@@ -129,7 +129,7 @@ export default function AdminTables() {
               <div className="flex gap-1.5 mt-3">
                 <button onClick={() => setQrTable(table)} className="flex-1 py-1.5 bg-muted text-foreground rounded-lg text-xs font-medium hover:bg-accent">QR</button>
                 <button onClick={() => toggleActive(table)} className="flex-1 py-1.5 border border-border text-muted-foreground rounded-lg text-xs font-medium hover:bg-accent">{table.isActive ? "Disable" : "Enable"}</button>
-                <button onClick={() => deleteTable(table.id)} className="py-1.5 px-2 text-destructive rounded-lg text-xs font-medium hover:bg-destructive/10">?</button>
+                <button onClick={() => deleteTable(table.id)} className="py-1.5 px-2 text-destructive rounded-lg text-xs font-medium hover:bg-destructive/10">✕</button>
               </div>
             </div>
           ))}
