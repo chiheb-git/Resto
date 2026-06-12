@@ -6,7 +6,7 @@ import { logger } from "./lib/logger";
 const app: Express = express();
 app.use(pinoHttp({ logger, serializers: { req(req) { return { id: req.id, method: req.method, url: req.url?.split("?")[0] }; }, res(res) { return { statusCode: res.statusCode }; } } }));
 app.use(cors({
-  origin: ["http://localhost:5173", "https://resto-restaurant-app-ten.vercel.app", "https://restaurantos-api-oabz.onrender.com", "https://ploofy-restaurant-six.vercel.app"],
+  origin: ["http://localhost:5173", "https://resto-restaurant-app-ten.vercel.app", "https://restaurantos-api-oabz.onrender.com", "https://houssine1.vercel.app", "https://ploofy-restaurant-six.vercel.app"],
   credentials: true,
 }));
 app.use(express.json());
