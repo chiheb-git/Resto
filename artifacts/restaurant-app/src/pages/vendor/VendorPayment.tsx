@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from "react";
 import { useCurrency } from "@/lib/currency";
-import { useListOrders, useListCategories, useListDishes, useUpdateOrderStatus, getListOrdersQueryKey, OrderStatusUpdateStatus, customFetch } from "@workspace/api-client-react";
+import { useListOrders, useListCATEGORIEs, useListDishes, useUpdateOrderStatus, getListOrdersQueryKey, OrderStatusUpdateStatus, customFetch } from "@workspace/api-client-react";
 import type { OrderWithItems } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ export default function VendorPayment() {
   const [manualTable, setManualTable] = useState("");
   const [manualCatId, setManualCatId] = useState<number | null>(null);
   const [manualSelected, setManualSelected] = useState<{id:number;name:string;price:number;qty:number}[]>([]);
-  const { data: categories = [] } = useListCategories({ includeInactive: false });
+  const { data: CATEGORIEs = [] } = useListCATEGORIEs({ includeInactive: false });
   const { data: dishes = [] } = useListDishes(manualCatId ? { categoryId: manualCatId } : {});
   const lang = i18n.language as "fr" | "en" | "ar";
   const nameKey = ("name" + lang.charAt(0).toUpperCase() + lang.slice(1)) as "nameEn" | "nameFr" | "nameAr";
@@ -201,22 +201,22 @@ export default function VendorPayment() {
             <div style={{ padding: "20px 24px", borderBottom: "1px solid #2A2A2A", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div>
                 <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 800, margin: 0 }}>Commande manuelle</h2>
-                <p style={{ color: "#888", fontSize: 12, margin: "4px 0 0" }}>S�lectionner table et plats</p>
+                <p style={{ color: "#888", fontSize: 12, margin: "4px 0 0" }}>Selectionner table et plats</p>
               </div>
               <button onClick={() => { setShowManual(false); setManualSelected([]); setManualCatId(null); setManualTable(""); }} style={{ background: "#2A2A2A", border: "none", color: "#fff", width: 32, height: 32, borderRadius: 8, cursor: "pointer", fontSize: 16 }}>?</button>
             </div>
             <div style={{ overflowY: "auto", flex: 1, padding: 24 }}>
-              {/* Num�ro de table */}
+              {/* NUMERO DE TABLE */}
               <div style={{ marginBottom: 20 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Num�ro de table</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>NUMERO DE TABLE</label>
                 <input type="number" min="1" placeholder="Ex: 3" value={manualTable} onChange={e => setManualTable(e.target.value)}
                   style={{ width: "100%", padding: "12px 16px", background: "#1C1C1C", border: "1px solid #333", borderRadius: 12, color: "#fff", fontSize: 16, fontWeight: 700, boxSizing: "border-box" }} />
               </div>
-              {/* Cat�gories */}
+              {/* CATEGORIEs */}
               <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Cat�gorie</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>CATEGORIE</label>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {(categories as any[]).map((cat: any) => (
+                  {(CATEGORIEs as any[]).map((cat: any) => (
                     <button key={cat.id} onClick={() => setManualCatId(cat.id === manualCatId ? null : cat.id)}
                       style={{ padding: "8px 16px", borderRadius: 20, border: "1px solid", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s",
                         background: manualCatId === cat.id ? "#FF6B00" : "#1C1C1C",
@@ -248,9 +248,9 @@ export default function VendorPayment() {
                           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                             {selected && (
                               <div onClick={e => e.stopPropagation()} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                <button onClick={() => changeQty(dish.id, -1)} style={{ width: 26, height: 26, borderRadius: 6, background: "#333", border: "none", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 700 }}>?</button>
+                                <button onClick={() => changeQty(dish.id, -1)} style={{ width: 26, height: 26, borderRadius: 6, background: "#333", border: "none", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 700 }}>-</button>
                                 <span style={{ color: "#fff", fontWeight: 700, minWidth: 20, textAlign: "center" }}>{selected.qty}</span>
-                                <button onClick={() => changeQty(dish.id, 1)} style={{ width: 26, height: 26, borderRadius: 6, background: "#333", border: "none", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 700 }}>+</button>
+                                <button onClick={() => changeQty(dish.id, 1)} style={{ width: 26, height: 26, borderRadius: 6, background: "#333", border: "none", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 700 }}>-</button>
                               </div>
                             )}
                             <span style={{ color: "#FF6B00", fontWeight: 700, fontSize: 14 }}>{formatPrice(dish.price)}</span>
@@ -264,7 +264,7 @@ export default function VendorPayment() {
               {/* S�lection r�sum� */}
               {manualSelected.length > 0 && (
                 <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 12, padding: 16, marginBottom: 8 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "#888", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>R�capitulatif</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#888", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>RECAPITULATIF</div>
                   {manualSelected.map(d => (
                     <div key={d.id} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #2A2A2A" }}>
                       <span style={{ color: "#ccc", fontSize: 13 }}>{d.qty}� {d.name}</span>
