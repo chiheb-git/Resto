@@ -11,6 +11,7 @@ export default function VendorPayment() {
   const queryClient = useQueryClient();
   const [confirmId, setConfirmId] = useState<number | null>(null);
   const [editPrice, setEditPrice] = useState<{ id: number; price: string } | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const [showManual, setShowManual] = useState(false);
   const [manualTable, setManualTable] = useState("");
   const [manualCatId, setManualCatId] = useState<number | null>(null);
@@ -38,6 +39,14 @@ export default function VendorPayment() {
       onSuccess: () => { queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() }); toast.success("Paiement confirme !"); },
       onError: () => toast.error("Erreur"),
     });
+  };
+  const deleteOrder = async (id: number) => {
+    try {
+      await customFetch(`/api/orders/${id}`, { method: "DELETE" });
+      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
+      toast.success("Commande supprimee !");
+      setDeleteId(null);
+    } catch { toast.error("Erreur suppression"); }
   };
   const updatePrice = async (id: number, price: number) => {
     try {
@@ -195,6 +204,9 @@ TOTAL          ${total} DA
                   <button onClick={() => setConfirmId(order.id)} style={{ padding: "10px 28px", background: GREEN, color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer", width: "100%" }}>
                     Paiement recu
                   </button>
+                  <button onClick={(e) => { e.stopPropagation(); setDeleteId(order.id); }} style={{ padding: "8px 28px", background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 12, fontWeight: 700, fontSize: 12, cursor: "pointer", width: "100%", marginTop: 6 }}>
+                    Supprimer
+                  </button>
                 </div>
               </div>
             ))}
@@ -227,7 +239,20 @@ TOTAL          ${total} DA
           </div>
         )}
       </div>
-      {confirmId !== null && (
+      {deleteId !== null && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1001 }}>
+          <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 20, padding: 28, width: 340, textAlign: "center" }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>X</div>
+            <p style={{ color: "#fff", fontSize: 17, fontWeight: 800, marginBottom: 6 }}>Supprimer la commande ?</p>
+            <p style={{ color: "#888", fontSize: 13, marginBottom: 20 }}>Cette action est irreversible.</p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={() => setDeleteId(null)} style={{ flex: 1, padding: "11px", background: "#2A2A2A", color: "#888", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Annuler</button>
+              <button onClick={() => deleteOrder(deleteId!)} style={{ flex: 1, padding: "11px", background: "rgba(239,68,68,0.2)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)", borderRadius: 12, fontWeight: 800, cursor: "pointer" }}>Supprimer</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {      {confirmId !== null && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 20, padding: 28, width: 360, textAlign: "center" }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🧾</div>
