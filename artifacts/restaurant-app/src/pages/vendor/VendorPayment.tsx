@@ -267,7 +267,7 @@ export default function VendorPayment() {
                   <div style={{ fontSize: 12, fontWeight: 700, color: "#888", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>RECAPITULATIF</div>
                   {manualSelected.map(d => (
                     <div key={d.id} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #2A2A2A" }}>
-                      <span style={{ color: "#ccc", fontSize: 13 }}>{d.qty}� {d.name}</span>
+                      <span style={{ color: "#ccc", fontSize: 13 }}>{d.qty}x {d.name}</span>
                       <span style={{ color: "#FF6B00", fontWeight: 700, fontSize: 13 }}>{formatPrice(d.price * d.qty)}</span>
                     </div>
                   ))}
