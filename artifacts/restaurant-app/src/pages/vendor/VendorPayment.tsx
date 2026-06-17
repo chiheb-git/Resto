@@ -203,7 +203,7 @@ export default function VendorPayment() {
                 <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 800, margin: 0 }}>Commande manuelle</h2>
                 <p style={{ color: "#888", fontSize: 12, margin: "4px 0 0" }}>Selectionner table et plats</p>
               </div>
-              <button onClick={() => { setShowManual(false); setManualSelected([]); setManualCatId(null); setManualTable(""); }} style={{ background: "#2A2A2A", border: "none", color: "#fff", width: 32, height: 32, borderRadius: 8, cursor: "pointer", fontSize: 16 }}>?</button>
+              <button onClick={() => { setShowManual(false); setManualSelected([]); setManualCatId(null); setManualTable(""); }} style={{ background: "#2A2A2A", border: "none", color: "#fff", width: 32, height: 32, borderRadius: 8, cursor: "pointer", fontSize: 16 }}>X</button>
             </div>
             <div style={{ overflowY: "auto", flex: 1, padding: 24 }}>
               {/* NUMERO DE TABLE */}
@@ -216,7 +216,7 @@ export default function VendorPayment() {
               <div style={{ marginBottom: 16 }}>
                 <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>CATEGORIE</label>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {(CATEGORIEs as any[]).map((cat: any) => (
+                  {(categories as any[]).map((cat: any) => (
                     <button key={cat.id} onClick={() => setManualCatId(cat.id === manualCatId ? null : cat.id)}
                       style={{ padding: "8px 16px", borderRadius: 20, border: "1px solid", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s",
                         background: manualCatId === cat.id ? "#FF6B00" : "#1C1C1C",
@@ -250,7 +250,7 @@ export default function VendorPayment() {
                               <div onClick={e => e.stopPropagation()} style={{ display: "flex", alignItems: "center", gap: 6 }}>
                                 <button onClick={() => changeQty(dish.id, -1)} style={{ width: 26, height: 26, borderRadius: 6, background: "#333", border: "none", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 700 }}>-</button>
                                 <span style={{ color: "#fff", fontWeight: 700, minWidth: 20, textAlign: "center" }}>{selected.qty}</span>
-                                <button onClick={() => changeQty(dish.id, 1)} style={{ width: 26, height: 26, borderRadius: 6, background: "#333", border: "none", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 700 }}>-</button>
+                                <button onClick={() => changeQty(dish.id, 1)} style={{ width: 26, height: 26, borderRadius: 6, background: "#333", border: "none", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 700 }}>+</button>
                               </div>
                             )}
                             <span style={{ color: "#FF6B00", fontWeight: 700, fontSize: 14 }}>{formatPrice(dish.price)}</span>
