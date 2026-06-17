@@ -30,9 +30,9 @@ export default function VendorHistory() {
   const typedOrders = orders as OrderWithItems[];
 
   /* ---- Stats ---- */
-  const totalRevenue = typedOrders.reduce((s, o) => s + Number(o.totalPrice), 0);
   const totalRevenue = typedOrders.filter(o => ["delivered","paid"].includes(o.status)).reduce((s, o) => s + Number(o.totalPrice), 0);
   const delivered = typedOrders.filter(o => ["delivered","paid"].includes(o.status)).length;
+
 
   /* ---- Export XLSX professionnel ---- */
   const exportXLSX = async () => {
