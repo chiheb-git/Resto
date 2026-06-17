@@ -252,7 +252,7 @@ TOTAL          ${total} DA
           </div>
         </div>
       )}
-      {      {confirmId !== null && (
+      {confirmId !== null && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 20, padding: 28, width: 360, textAlign: "center" }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🧾</div>
