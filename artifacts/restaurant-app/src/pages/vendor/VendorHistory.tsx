@@ -12,9 +12,9 @@ const STATUS_BADGE: Record<string, { bg: string; color: string; label: string }>
   ready:     { bg: "rgba(34,197,94,0.12)",   color: "#4ade80", label: "Prête"      },
   delivered: { bg: "rgba(148,163,184,0.12)", color: "#94a3b8", label: "Livree" },
   paid: { bg: "rgba(0,210,100,0.12)", color: "#00D264", label: "Payee" },
+};
 
 const STATUS_ICONS: Record<string, string> = {
-  pending: "⏳", confirmed: "✅", refused: "❌", ready: "🔔", delivered: "🎉",
 };
 
 export default function VendorHistory() {
