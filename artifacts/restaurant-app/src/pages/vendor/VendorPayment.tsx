@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+ï»¿import { useEffect, useState } from "react";
 import { useCurrency } from "@/lib/currency";
 import { useListOrders, useListCategories, useListDishes, useUpdateOrderStatus, getListOrdersQueryKey, OrderStatusUpdateStatus, customFetch } from "@workspace/api-client-react";
 import type { OrderWithItems } from "@workspace/api-client-react";
@@ -87,12 +87,12 @@ export default function VendorPayment() {
         body: JSON.stringify({ status: "delivered" }),
       });
       queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
-      toast.success("Commande manuelle ajoutée !");
+      toast.success("Commande manuelle ajoutï¿½e !");
       setShowManual(false);
       setManualTable("");
       setManualSelected([]);
       setManualCatId(null);
-    } catch (e) { toast.error("Erreur lors de la création"); }
+    } catch (e) { toast.error("Erreur lors de la crï¿½ation"); }
   };
 
   return (
@@ -186,7 +186,7 @@ export default function VendorPayment() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 16, padding: 32, width: 320, textAlign: "center" }}>
             <p style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Confirmer le paiement ?</p>
-            <p style={{ color: "#888", fontSize: 14, marginBottom: 24 }}>Cette action est irréversible.</p>
+            <p style={{ color: "#888", fontSize: 14, marginBottom: 24 }}>Cette action est irrï¿½versible.</p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
               <button onClick={() => setConfirmId(null)} style={{ padding: "10px 20px", background: "#333", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Annuler</button>
               <button onClick={() => { markPaid(confirmId!); setConfirmId(null); }} disabled={updateStatus.isPending} style={{ padding: "10px 20px", background: "#00D264", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Confirmer</button>
@@ -201,20 +201,20 @@ export default function VendorPayment() {
             <div style={{ padding: "20px 24px", borderBottom: "1px solid #2A2A2A", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div>
                 <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 800, margin: 0 }}>? Commande manuelle</h2>
-                <p style={{ color: "#888", fontSize: 12, margin: "4px 0 0" }}>Sélectionner table et plats</p>
+                <p style={{ color: "#888", fontSize: 12, margin: "4px 0 0" }}>Sï¿½lectionner table et plats</p>
               </div>
               <button onClick={() => { setShowManual(false); setManualSelected([]); setManualCatId(null); setManualTable(""); }} style={{ background: "#2A2A2A", border: "none", color: "#fff", width: 32, height: 32, borderRadius: 8, cursor: "pointer", fontSize: 16 }}>?</button>
             </div>
             <div style={{ overflowY: "auto", flex: 1, padding: 24 }}>
-              {/* Numéro de table */}
+              {/* Numï¿½ro de table */}
               <div style={{ marginBottom: 20 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Numéro de table</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Numï¿½ro de table</label>
                 <input type="number" min="1" placeholder="Ex: 3" value={manualTable} onChange={e => setManualTable(e.target.value)}
                   style={{ width: "100%", padding: "12px 16px", background: "#1C1C1C", border: "1px solid #333", borderRadius: 12, color: "#fff", fontSize: 16, fontWeight: 700, boxSizing: "border-box" }} />
               </div>
-              {/* Catégories */}
+              {/* Catï¿½gories */}
               <div style={{ marginBottom: 16 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Catégorie</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Catï¿½gorie</label>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   {(categories as any[]).map((cat: any) => (
                     <button key={cat.id} onClick={() => setManualCatId(cat.id === manualCatId ? null : cat.id)}
@@ -261,13 +261,13 @@ export default function VendorPayment() {
                   </div>
                 </div>
               )}
-              {/* Sélection résumé */}
+              {/* Sï¿½lection rï¿½sumï¿½ */}
               {manualSelected.length > 0 && (
                 <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 12, padding: 16, marginBottom: 8 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "#888", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>Récapitulatif</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#888", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>Rï¿½capitulatif</div>
                   {manualSelected.map(d => (
                     <div key={d.id} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #2A2A2A" }}>
-                      <span style={{ color: "#ccc", fontSize: 13 }}>{d.qty}× {d.name}</span>
+                      <span style={{ color: "#ccc", fontSize: 13 }}>{d.qty}ï¿½ {d.name}</span>
                       <span style={{ color: "#FF6B00", fontWeight: 700, fontSize: 13 }}>{formatPrice(d.price * d.qty)}</span>
                     </div>
                   ))}
