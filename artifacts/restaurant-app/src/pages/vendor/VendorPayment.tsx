@@ -15,7 +15,7 @@ export default function VendorPayment() {
   const [manualTable, setManualTable] = useState("");
   const [manualCatId, setManualCatId] = useState<number | null>(null);
   const [manualSelected, setManualSelected] = useState<{id:number;name:string;price:number;qty:number}[]>([]);
-  const { data: CATEGORIEs = [] } = useListCATEGORIEs({ includeInactive: false });
+  const { data: categories = [] } = useListCategories({ includeInactive: false });
   const { data: dishes = [] } = useListDishes(manualCatId ? { categoryId: manualCatId } : {});
   const lang = i18n.language as "fr" | "en" | "ar";
   const nameKey = ("name" + lang.charAt(0).toUpperCase() + lang.slice(1)) as "nameEn" | "nameFr" | "nameAr";
