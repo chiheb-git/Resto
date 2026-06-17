@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from "react";
 import { useCurrency } from "@/lib/currency";
-import { useListOrders, useListCATEGORIEs, useListDishes, useUpdateOrderStatus, getListOrdersQueryKey, OrderStatusUpdateStatus, customFetch } from "@workspace/api-client-react";
+import { useListOrders, useListCategories, useListDishes, useUpdateOrderStatus, getListOrdersQueryKey, OrderStatusUpdateStatus, customFetch } from "@workspace/api-client-react";
 import type { OrderWithItems } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
