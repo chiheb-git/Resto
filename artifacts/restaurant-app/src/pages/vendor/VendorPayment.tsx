@@ -1,6 +1,6 @@
-Ôªøimport { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCurrency } from "@/lib/currency";
-import { useListOrders, useUpdateOrderStatus, getListOrdersQueryKey, OrderStatusUpdateStatus, customFetch } from "@workspace/api-client-react";
+import { useListOrders, useListCategories, useListDishes, useUpdateOrderStatus, getListOrdersQueryKey, OrderStatusUpdateStatus, customFetch } from "@workspace/api-client-react";
 import type { OrderWithItems } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -11,6 +11,12 @@ export default function VendorPayment() {
   const queryClient = useQueryClient();
   const [confirmId, setConfirmId] = useState<number | null>(null);
   const [editPrice, setEditPrice] = useState<{ id: number; price: string } | null>(null);
+  const [showManual, setShowManual] = useState(false);
+  const [manualTable, setManualTable] = useState("");
+  const [manualCatId, setManualCatId] = useState<number | null>(null);
+  const [manualSelected, setManualSelected] = useState<{id:number;name:string;price:number;qty:number}[]>([]);
+  const { data: categories = [] } = useListCategories({ includeInactive: false });
+  const { data: dishes = [] } = useListDishes(manualCatId ? { categoryId: manualCatId } : {});
   const lang = i18n.language as "fr" | "en" | "ar";
   const nameKey = ("name" + lang.charAt(0).toUpperCase() + lang.slice(1)) as "nameEn" | "nameFr" | "nameAr";
   const { formatPrice, ready: currencyReady } = useCurrency();
@@ -46,11 +52,59 @@ export default function VendorPayment() {
     } catch { toast.error("Erreur"); }
   };
   const getName = (item: any) => item.quantity + "x " + (item.dish ? (item.dish as any)[nameKey] || item.dish.nameEn : "?");
+
+  const manualTotal = manualSelected.reduce((s, i) => s + i.price * i.qty, 0);
+
+  const toggleDish = (dish: any) => {
+    const name = (dish as any)[nameKey] || dish.nameEn;
+    const price = Number(dish.price);
+    setManualSelected(prev => {
+      const exists = prev.find(d => d.id === dish.id);
+      if (exists) return prev.filter(d => d.id !== dish.id);
+      return [...prev, { id: dish.id, name, price, qty: 1 }];
+    });
+  };
+
+  const changeQty = (id: number, delta: number) => {
+    setManualSelected(prev => prev.map(d => d.id === id ? { ...d, qty: Math.max(1, d.qty + delta) } : d));
+  };
+
+  const submitManual = async () => {
+    if (!manualTable || manualSelected.length === 0) { toast.error("Choisir table et au moins un plat"); return; }
+    try {
+      const tablesRes = await customFetch<any[]>("/api/tables");
+      const table = tablesRes.find((t: any) => String(t.number) === String(manualTable));
+      if (!table) { toast.error("Table introuvable"); return; }
+      const items = manualSelected.map(d => ({ dishId: d.id, quantity: d.qty }));
+      const order = await customFetch<any>("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tableId: table.id, items }),
+      });
+      await customFetch(`/api/orders/${order.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "delivered" }),
+      });
+      queryClient.invalidateQueries({ queryKey: getListOrdersQueryKey() });
+      toast.success("Commande manuelle ajoutÈe !");
+      setShowManual(false);
+      setManualTable("");
+      setManualSelected([]);
+      setManualCatId(null);
+    } catch (e) { toast.error("Erreur lors de la crÈation"); }
+  };
+
   return (
     <div style={{ minHeight: "100vh", background: "#0A0A0A", padding: 24, fontFamily: "Inter, sans-serif" }}>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: TEXT, marginBottom: 4 }}>Paiements</h1>
-        <p style={{ fontSize: 13, color: MUTED }}>Tables en attente de paiement et historique du jour</p>
+      <div style={{ marginBottom: 24, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: TEXT, marginBottom: 4 }}>Paiements</h1>
+          <p style={{ fontSize: 13, color: MUTED }}>Tables en attente de paiement et historique du jour</p>
+        </div>
+        <button onClick={() => setShowManual(true)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 20px", background: "linear-gradient(135deg,#FF6B00,#FF9F1C)", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
+          ? Commande manuelle
+        </button>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 28 }}>
         {[
@@ -89,7 +143,7 @@ export default function VendorPayment() {
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <button onClick={() => setEditPrice({ id: order.id, price: String(order.totalPrice) })} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: ORANGE, background: "rgba(255,107,0,0.1)", border: "1px solid rgba(255,107,0,0.3)", borderRadius: 8, padding: "5px 12px", cursor: "pointer", fontWeight: 600 }}>
-                      ‚úèÔ∏è Modifier
+                      ?? Modifier
                     </button>
                     <p style={{ fontSize: 24, fontWeight: 800, color: ORANGE, margin: 0 }}>{formatPrice(order.totalPrice)}</p>
                   </div>
@@ -132,10 +186,105 @@ export default function VendorPayment() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 16, padding: 32, width: 320, textAlign: "center" }}>
             <p style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Confirmer le paiement ?</p>
-            <p style={{ color: "#888", fontSize: 14, marginBottom: 24 }}>Cette action est irr√©versible.</p>
+            <p style={{ color: "#888", fontSize: 14, marginBottom: 24 }}>Cette action est irrÈversible.</p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
               <button onClick={() => setConfirmId(null)} style={{ padding: "10px 20px", background: "#333", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Annuler</button>
               <button onClick={() => { markPaid(confirmId!); setConfirmId(null); }} disabled={updateStatus.isPending} style={{ padding: "10px 20px", background: "#00D264", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Confirmer</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showManual && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1002, padding: 16 }}>
+          <div style={{ background: "#141414", border: "1px solid #2A2A2A", borderRadius: 20, width: "100%", maxWidth: 560, maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+            {/* Header */}
+            <div style={{ padding: "20px 24px", borderBottom: "1px solid #2A2A2A", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div>
+                <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 800, margin: 0 }}>? Commande manuelle</h2>
+                <p style={{ color: "#888", fontSize: 12, margin: "4px 0 0" }}>SÈlectionner table et plats</p>
+              </div>
+              <button onClick={() => { setShowManual(false); setManualSelected([]); setManualCatId(null); setManualTable(""); }} style={{ background: "#2A2A2A", border: "none", color: "#fff", width: 32, height: 32, borderRadius: 8, cursor: "pointer", fontSize: 16 }}>?</button>
+            </div>
+            <div style={{ overflowY: "auto", flex: 1, padding: 24 }}>
+              {/* NumÈro de table */}
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>NumÈro de table</label>
+                <input type="number" min="1" placeholder="Ex: 3" value={manualTable} onChange={e => setManualTable(e.target.value)}
+                  style={{ width: "100%", padding: "12px 16px", background: "#1C1C1C", border: "1px solid #333", borderRadius: 12, color: "#fff", fontSize: 16, fontWeight: 700, boxSizing: "border-box" }} />
+              </div>
+              {/* CatÈgories */}
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>CatÈgorie</label>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {(categories as any[]).map((cat: any) => (
+                    <button key={cat.id} onClick={() => setManualCatId(cat.id === manualCatId ? null : cat.id)}
+                      style={{ padding: "8px 16px", borderRadius: 20, border: "1px solid", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.15s",
+                        background: manualCatId === cat.id ? "#FF6B00" : "#1C1C1C",
+                        borderColor: manualCatId === cat.id ? "#FF6B00" : "#333",
+                        color: manualCatId === cat.id ? "#fff" : "#888" }}>
+                      {(cat as any)[nameKey] || cat.nameEn}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {/* Plats */}
+              {manualCatId && (
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "#FF6B00", letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Plats</label>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {(dishes as any[]).filter((d: any) => d.isAvailable).map((dish: any) => {
+                      const selected = manualSelected.find(d => d.id === dish.id);
+                      const dname = (dish as any)[nameKey] || dish.nameEn;
+                      return (
+                        <div key={dish.id} onClick={() => toggleDish(dish)}
+                          style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", background: selected ? "rgba(255,107,0,0.1)" : "#1C1C1C",
+                            border: "1px solid", borderColor: selected ? "#FF6B00" : "#2A2A2A", borderRadius: 12, cursor: "pointer", transition: "all 0.15s" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                            <div style={{ width: 28, height: 28, borderRadius: 8, background: selected ? "#FF6B00" : "#2A2A2A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>
+                              {selected ? "?" : ""}
+                            </div>
+                            <span style={{ color: "#fff", fontWeight: 600, fontSize: 14 }}>{dname}</span>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            {selected && (
+                              <div onClick={e => e.stopPropagation()} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                <button onClick={() => changeQty(dish.id, -1)} style={{ width: 26, height: 26, borderRadius: 6, background: "#333", border: "none", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 700 }}>?</button>
+                                <span style={{ color: "#fff", fontWeight: 700, minWidth: 20, textAlign: "center" }}>{selected.qty}</span>
+                                <button onClick={() => changeQty(dish.id, 1)} style={{ width: 26, height: 26, borderRadius: 6, background: "#333", border: "none", color: "#fff", fontSize: 14, cursor: "pointer", fontWeight: 700 }}>+</button>
+                              </div>
+                            )}
+                            <span style={{ color: "#FF6B00", fontWeight: 700, fontSize: 14 }}>{formatPrice(dish.price)}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              {/* SÈlection rÈsumÈ */}
+              {manualSelected.length > 0 && (
+                <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 12, padding: 16, marginBottom: 8 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#888", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>RÈcapitulatif</div>
+                  {manualSelected.map(d => (
+                    <div key={d.id} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #2A2A2A" }}>
+                      <span style={{ color: "#ccc", fontSize: 13 }}>{d.qty}◊ {d.name}</span>
+                      <span style={{ color: "#FF6B00", fontWeight: 700, fontSize: 13 }}>{formatPrice(d.price * d.qty)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            {/* Footer */}
+            <div style={{ padding: "16px 24px", borderTop: "1px solid #2A2A2A", background: "#0A0A0A", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div>
+                <div style={{ fontSize: 11, color: "#888", marginBottom: 2 }}>TOTAL</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: "#FF6B00" }}>{formatPrice(manualTotal)}</div>
+              </div>
+              <button onClick={submitManual}
+                style={{ padding: "12px 32px", background: manualSelected.length > 0 && manualTable ? "linear-gradient(135deg,#FF6B00,#FF9F1C)" : "#2A2A2A",
+                  color: "#fff", border: "none", borderRadius: 14, fontWeight: 800, fontSize: 15, cursor: "pointer" }}>
+                ? Valider la commande
+              </button>
             </div>
           </div>
         </div>
