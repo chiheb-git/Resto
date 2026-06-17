@@ -15,8 +15,8 @@ const STATUS_BADGE: Record<string, { bg: string; color: string; label: string }>
 };
 
 const STATUS_ICONS: Record<string, string> = {
+  pending: "...", confirmed: "OK", refused: "X", ready: "!", delivered: "OK", paid: "OK",
 };
-
 export default function VendorHistory() {
   const { t } = useTranslation();
   const { formatPrice, ready: currencyReady } = useCurrency();
