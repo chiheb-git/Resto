@@ -262,6 +262,14 @@ router.patch("/orders/:id/price", requireAuth, requireRole("vendor", "admin"), a
   res.json(full);
 });
 
+router.delete("/orders/:id", requireAuth, requireRole("vendor", "admin"), async (req, res): Promise<void> => {
+  const id = Number(req.params.id);
+  if (isNaN(id)) { res.status(400).json({ error: "Invalid id" }); return; }
+  await db.delete(orderItemsTable).where(eq(orderItemsTable.orderId, id));
+  await db.delete(ordersTable).where(eq(ordersTable.id, id));
+  res.json({ success: true });
+});
+
 export default router;
 
 
