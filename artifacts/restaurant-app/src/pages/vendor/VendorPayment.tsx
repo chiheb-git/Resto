@@ -12,6 +12,7 @@ export default function VendorPayment() {
   const [confirmId, setConfirmId] = useState<number | null>(null);
   const [editPrice, setEditPrice] = useState<{ id: number; price: string } | null>(null);
   const [showManual, setShowManual] = useState(false);
+  const [histFilter, setHistFilter] = useState<"day" | "week">("day");
   const [manualTable, setManualTable] = useState("");
   const [manualCatId, setManualCatId] = useState<number | null>(null);
   const [manualSelected, setManualSelected] = useState<{id:number;name:string;price:number;qty:number}[]>([]);
@@ -30,7 +31,14 @@ export default function VendorPayment() {
   }, [queryClient]);
   if (!currencyReady) return null;
   const readyOrders = (orders as OrderWithItems[]).filter((o) => o.status === "delivered");
-  const paidOrders = (orders as OrderWithItems[]).filter((o) => o.status === "paid");
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfWeek = new Date(startOfDay); startOfWeek.setDate(startOfDay.getDate() - startOfDay.getDay());
+  const paidOrders = (orders as OrderWithItems[]).filter((o) => {
+    if (o.status !== "paid") return false;
+    const d = new Date(o.createdAt);
+    return histFilter === "day" ? d >= startOfDay : d >= startOfWeek;
+  });
   const totalPaid = paidOrders.reduce((s, o) => s + Number(o.totalPrice), 0);
   const totalPending = readyOrders.reduce((s, o) => s + Number(o.totalPrice), 0);
   const markPaid = (id: number) => {
@@ -202,7 +210,13 @@ TOTAL          ${total} DA
         )}
       </div>
       <div>
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: TEXT, marginBottom: 14 }}>Commandes payees - Total: {formatPrice(totalPaid)}</h2>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: TEXT }}>Commandes payees - {formatPrice(totalPaid)}</h2>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => setHistFilter("day")} style={{ padding: "6px 16px", borderRadius: 20, border: "1px solid", fontSize: 12, fontWeight: 700, cursor: "pointer", background: histFilter === "day" ? "#FF6B00" : "#1C1C1C", borderColor: histFilter === "day" ? "#FF6B00" : "#333", color: "#fff" }}>Aujourdhui</button>
+            <button onClick={() => setHistFilter("week")} style={{ padding: "6px 16px", borderRadius: 20, border: "1px solid", fontSize: 12, fontWeight: 700, cursor: "pointer", background: histFilter === "week" ? "#FF6B00" : "#1C1C1C", borderColor: histFilter === "week" ? "#FF6B00" : "#333", color: "#fff" }}>Semaine</button>
+          </div>
+        </div>
         {paidOrders.length === 0 ? (
           <div style={{ background: CARD, border: "1px solid " + BORDER, borderRadius: 16, padding: 32, textAlign: "center" }}>
             <p style={{ color: MUTED }}>Aucune commande payee</p>
