@@ -21,7 +21,7 @@ async function getTableStatus(tableId: number): Promise<"free" | "occupied" | "w
     .select()
     .from(ordersTable)
     .where(eq(ordersTable.tableId, tableId));
-  const active = activeOrders.filter((o) => !["delivered", "refused"].includes(o.status));
+  const active = activeOrders.filter((o) => !["delivered", "refused", "paid"].includes(o.status));
   if (active.length === 0) return "free";
   const hasPending = active.some((o) => o.status === "pending");
   if (hasPending) return "waiting";
@@ -136,5 +136,6 @@ router.delete("/tables/:id", requireAuth, requireRole("admin"), async (req, res)
   res.json({ success: true });
 });
 export default router;
+
 
 
