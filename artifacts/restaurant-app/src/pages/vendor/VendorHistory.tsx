@@ -10,8 +10,8 @@ const STATUS_BADGE: Record<string, { bg: string; color: string; label: string }>
   confirmed: { bg: "rgba(59,130,246,0.12)",  color: "#60a5fa", label: "Confirmée"  },
   refused:   { bg: "rgba(239,68,68,0.12)",   color: "#f87171", label: "Refusée"    },
   ready:     { bg: "rgba(34,197,94,0.12)",   color: "#4ade80", label: "Prête"      },
-  delivered: { bg: "rgba(148,163,184,0.12)", color: "#94a3b8", label: "Livrée"     },
-};
+  delivered: { bg: "rgba(148,163,184,0.12)", color: "#94a3b8", label: "Livree" },
+  paid: { bg: "rgba(0,210,100,0.12)", color: "#00D264", label: "Payee" },
 
 const STATUS_ICONS: Record<string, string> = {
   pending: "⏳", confirmed: "✅", refused: "❌", ready: "🔔", delivered: "🎉",
@@ -31,8 +31,8 @@ export default function VendorHistory() {
 
   /* ---- Stats ---- */
   const totalRevenue = typedOrders.reduce((s, o) => s + Number(o.totalPrice), 0);
-  const delivered    = typedOrders.filter(o => o.status === "delivered").length;
-  const pending      = typedOrders.filter(o => o.status === "pending").length;
+  const totalRevenue = typedOrders.filter(o => ["delivered","paid"].includes(o.status)).reduce((s, o) => s + Number(o.totalPrice), 0);
+  const delivered = typedOrders.filter(o => ["delivered","paid"].includes(o.status)).length;
 
   /* ---- Export XLSX professionnel ---- */
   const exportXLSX = async () => {
