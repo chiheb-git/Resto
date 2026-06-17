@@ -81,7 +81,7 @@ export default function VendorPayment() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tableId: table.id, items }),
       });
-      await customFetch(`/api/orders/${order.id}`, {
+      await customFetch(`/api/orders/${order.id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "delivered" }),
