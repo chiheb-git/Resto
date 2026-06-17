@@ -53,6 +53,51 @@ export default function VendorPayment() {
   };
   const getName = (item: any) => item.quantity + "x " + (item.dish ? (item.dish as any)[nameKey] || item.dish.nameEn : "?");
 
+  const printTicket = (orderId: number) => {
+    const order = (orders as OrderWithItems[]).find(o => o.id === orderId);
+    if (!order) return;
+    const lang2 = i18n.language as "fr" | "en" | "ar";
+    const nk = ("name" + lang2.charAt(0).toUpperCase() + lang2.slice(1)) as "nameEn" | "nameFr" | "nameAr";
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("fr-FR");
+    const timeStr = now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+    const tableNum = (order as any).table?.number ?? "?";
+    const items = order.items.map(i => {
+      const name = i.dish ? ((i.dish as any)[nk] || i.dish.nameEn) : "?";
+      const total = (Number(i.unitPrice) * i.quantity).toFixed(2);
+      return `${i.quantity}x ${name.padEnd(20)} ${total} DA`;
+    }).join("\n");
+    const total = Number(order.totalPrice).toFixed(2);
+    const ticket = `
+================================
+      RESTAURANT PLOOFY
+================================
+Date : ${dateStr}   Heure : ${timeStr}
+Table : ${tableNum}
+Commande #${order.id}
+--------------------------------
+${items}
+--------------------------------
+TOTAL          ${total} DA
+================================
+     Merci de votre visite !
+================================
+    `.trim();
+    const win = window.open("", "_blank", "width=400,height=600");
+    if (!win) return;
+    win.document.write(`
+      <html><head><title>Ticket</title>
+      <style>
+        body { font-family: "Courier New", monospace; font-size: 14px; padding: 20px; background: #fff; color: #000; white-space: pre; }
+        @media print { body { margin: 0; padding: 10px; } }
+      </style></head>
+      <body>${ticket}</body></html>
+    `);
+    win.document.close();
+    win.focus();
+    win.print();
+  };
+
   const manualTotal = manualSelected.reduce((s, i) => s + i.price * i.qty, 0);
 
   const toggleDish = (dish: any) => {
@@ -183,16 +228,16 @@ export default function VendorPayment() {
         )}
       </div>
       {confirmId !== null && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
-          <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 16, padding: 32, width: 320, textAlign: "center" }}>
-            <p style={{ color: "#fff", fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Confirmer le paiement ?</p>
-            <p style={{ color: "#888", fontSize: 14, marginBottom: 24 }}>Cette action est irr�versible.</p>
-            <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-              <button onClick={() => setConfirmId(null)} style={{ padding: "10px 20px", background: "#333", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Annuler</button>
-              <button onClick={() => { markPaid(confirmId!); setConfirmId(null); }} disabled={updateStatus.isPending} style={{ padding: "10px 20px", background: "#00D264", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Confirmer</button>
-            </div>
-          </div>
-        </div>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: "#1C1C1C", border: "1px solid #2A2A2A", borderRadius: 20, padding: 28, width: 360, textAlign: "center" }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>🧾</div>
+            <p style={{ color: "#fff", fontSize: 18, fontWeight: 800, marginBottom: 6 }}>Confirmer le paiement ?</p>
+            <p style={{ color: "#888", fontSize: 13, marginBottom: 20 }}>Cette action est irreversible.</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <button onClick={() => { markPaid(confirmId!); printTicket(confirmId!); setConfirmId(null); }} disabled={updateStatus.isPending} style={{ padding: "13px 20px", background: "#00D264", color: "#fff", border: "none", borderRadius: 12, fontWeight: 800, fontSize: 15, cursor: "pointer" }}>Confirmer + Imprimer ticket</button>
+              <button onClick={() => { markPaid(confirmId!); setConfirmId(null); }} disabled={updateStatus.isPending} style={{ padding: "11px 20px", background: "#1a4a2a", color: "#00D264", border: "1px solid #00D264", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Confirmer sans imprimer</button>
+              <button onClick={() => setConfirmId(null)} style={{ padding: "10px 20px", background: "#2A2A2A", color: "#888", border: "none", borderRadius: 12, fontWeight: 700, cursor: "pointer" }}>Annuler</button>
+            </div></div></div>
       )}
       {showManual && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1002, padding: 16 }}>
