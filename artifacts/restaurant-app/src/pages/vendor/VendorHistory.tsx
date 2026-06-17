@@ -32,7 +32,7 @@ export default function VendorHistory() {
   /* ---- Stats ---- */
   const totalRevenue = typedOrders.filter(o => ["delivered","paid"].includes(o.status)).reduce((s, o) => s + Number(o.totalPrice), 0);
   const delivered = typedOrders.filter(o => ["delivered","paid"].includes(o.status)).length;
-
+  const pending = typedOrders.filter(o => o.status === "pending").length;
 
   /* ---- Export XLSX professionnel ---- */
   const exportXLSX = async () => {
