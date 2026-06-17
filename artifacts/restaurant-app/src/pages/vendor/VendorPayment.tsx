@@ -143,7 +143,7 @@ export default function VendorPayment() {
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <button onClick={() => setEditPrice({ id: order.id, price: String(order.totalPrice) })} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: ORANGE, background: "rgba(255,107,0,0.1)", border: "1px solid rgba(255,107,0,0.3)", borderRadius: 8, padding: "5px 12px", cursor: "pointer", fontWeight: 600 }}>
-                      ?? Modifier
+                      Modifier
                     </button>
                     <p style={{ fontSize: 24, fontWeight: 800, color: ORANGE, margin: 0 }}>{formatPrice(order.totalPrice)}</p>
                   </div>
@@ -241,7 +241,7 @@ export default function VendorPayment() {
                             border: "1px solid", borderColor: selected ? "#FF6B00" : "#2A2A2A", borderRadius: 12, cursor: "pointer", transition: "all 0.15s" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                             <div style={{ width: 28, height: 28, borderRadius: 8, background: selected ? "#FF6B00" : "#2A2A2A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>
-                              {selected ? "?" : ""}
+                              {selected ? "v" : ""}
                             </div>
                             <span style={{ color: "#fff", fontWeight: 600, fontSize: 14 }}>{dname}</span>
                           </div>
