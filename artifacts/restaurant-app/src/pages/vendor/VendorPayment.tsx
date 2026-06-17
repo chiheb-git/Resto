@@ -103,7 +103,7 @@ export default function VendorPayment() {
           <p style={{ fontSize: 13, color: MUTED }}>Tables en attente de paiement et historique du jour</p>
         </div>
         <button onClick={() => setShowManual(true)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 20px", background: "linear-gradient(135deg,#FF6B00,#FF9F1C)", color: "#fff", border: "none", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
-          ? Commande manuelle
+          Commande manuelle
         </button>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 28 }}>
@@ -200,7 +200,7 @@ export default function VendorPayment() {
             {/* Header */}
             <div style={{ padding: "20px 24px", borderBottom: "1px solid #2A2A2A", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div>
-                <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 800, margin: 0 }}>? Commande manuelle</h2>
+                <h2 style={{ color: "#fff", fontSize: 18, fontWeight: 800, margin: 0 }}>Commande manuelle</h2>
                 <p style={{ color: "#888", fontSize: 12, margin: "4px 0 0" }}>S�lectionner table et plats</p>
               </div>
               <button onClick={() => { setShowManual(false); setManualSelected([]); setManualCatId(null); setManualTable(""); }} style={{ background: "#2A2A2A", border: "none", color: "#fff", width: 32, height: 32, borderRadius: 8, cursor: "pointer", fontSize: 16 }}>?</button>
@@ -283,7 +283,7 @@ export default function VendorPayment() {
               <button onClick={submitManual}
                 style={{ padding: "12px 32px", background: manualSelected.length > 0 && manualTable ? "linear-gradient(135deg,#FF6B00,#FF9F1C)" : "#2A2A2A",
                   color: "#fff", border: "none", borderRadius: 14, fontWeight: 800, fontSize: 15, cursor: "pointer" }}>
-                ? Valider la commande
+                Valider la commande
               </button>
             </div>
           </div>
